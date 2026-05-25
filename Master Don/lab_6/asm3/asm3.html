@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab6.3</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            padding: 40px 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        h1 {
+            color: #1a3c6e;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px 20px;
+            width: 320px;
+            margin: auto;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        input:focus, select:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+            outline: none;
+            
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            background: linear-gradient(90deg, #4caf50, #43a047);
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #43a047, #388e3c);
+            transform: translateY(-2px);
+        }
+
+        .output-box {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #ffffff;
+            width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+            text-align: left;
+            font-size: 14px;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Travel Reservation</h1>
+
+    <div class="form-box">
+        <label> Country
+            <select id="country">
+                <option value="Denmark">Denmark</option>
+                <option value="Australia">Australia</option>
+                <option value="Japan">Japan</option>
+            </select>
+        </label>
+
+        <label> Number of Nights:
+            <input type="number" id="night" min="1">
+        </label>
+        <label> Number of Travellers:
+            <input type="number" id="travellers" min="1">
+        </label>
+
+        <button onclick="cal()">Calculate</button>
+    </div>
+
+    <div class="output-box">
+        <pre id="output">Result</pre>
+    </div>
+
+    <script>
+        function cal(){
+            const country = document.getElementById("country").value;
+            const night = Number(document.getElementById("night").value);
+            const travellers = Number(document.getElementById("travellers").value);
+
+            let airfare = 0, hotel = 0;
+
+            if(country == "Denmark"){
+                airfare = 1500; 
+                hotel = 50;
+            }else if(country == "Australia"){
+                airfare = 1000;
+                hotel = 60;
+            }else if(country == "Japan"){
+                airfare = 700;
+                hotel = 30;
+            }
+
+            let totalticket = airfare * travellers ;
+            let totalhotel = hotel * night * travellers;
+
+            let discountRate = 0;
+            let discountText = "0%";
+
+            if(country == "Japan"){
+                discountRate = (night > 5) ? 0.2 : 0.1;
+                discountText = (night > 5) ? "20%" : "10%";
+            }
+
+            let subtotal = totalticket + totalhotel;
+
+            let discount = subtotal * discountRate;
+            let totalCost = subtotal - discount;
+
+            let result = "Travel Information\n\n";
+            result += "Country : " + country + "\n";
+            result += "Number of Night : " + night + "\n";
+            result += "Number of Traveller : " + travellers + "\n";
+            result += "------------------------------\n";
+            result += "Airline Ticket(/person) : $" + airfare + "\n";
+            result += "Hotel Charge(/person) : $" + hotel + "\n";
+            result += "COVID-19 Discount : " + discountText + "\n";
+            result += "------------------------------\n";
+            result += "Total Cost = $" + totalCost.toFixed(0) + "\n";
+        
+            document.getElementById("output").innerText = result;
+        }
+    </script>
+</body>
+</body>
+</html>

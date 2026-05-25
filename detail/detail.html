@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>detail</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+   <header>
+        <div class="header-top">
+
+            <div class="logo">
+                <img src="image/schoolLogo.png" alt="school logo">
+            </div>
+
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+            </div>
+
+            <div class="header-actions">
+                <a href="cart.html" class="btn cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-label">ตะกร้า</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+
+                <a href="about.html" class="btn btn-secondary">
+                    <span>เกี่ยวกับเรา</span>
+                </a>
+
+                <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-user"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </a>
+            </div>
+        </div>
+        
+    </header>
+
+
+    <!-- Product Detail Section -->
+    <main class="container product-section">
+        <div class="product-detail">
+            <div class="product-images">
+                <img src="image/คะน้า.jpg" alt="คะน้า" class="main-image">
+                <div class="thumbnail-images">
+                    <img src="image/คะน้า1jpg.jpg" alt="คะน้า">
+                    <img src="image/คะน้า2.jpg" alt="คะน้า">
+                    <img src="image/คะน้า3.jpg" alt="คะน้า">
+                    <img src="image/คะน้า.jpg" alt="คะน้า">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1 class="product-title">คะน้า</h1>
+                <p class="product-price">30 บาท / กก.</p>
+                <p class="product-description">
+                    คะน้าสดใหม่ปลอดสารเคมี<br>
+                    ปลูกด้วยระบบ SmartFarm จากโรงเรียนบ้านแม่ฮ้อยเงิน<br>
+                </p>
+
+                <div class="quantity-selector">
+                    <button class="qty-btn" onclick="decreaseQty()">−</button>
+                    <input type="number" id="quantity" value="1" min="1">
+                    <button class="qty-btn" onclick="increaseQty()">+</button>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-outline-green">🛒 เพิ่มลงตะกร้า</button>
+                    <button class="btn btn-primary">ซื้อสินค้า</button>
+                </div>
+
+                <p class="stock-info">เพิ่มได้สูงสุด 18 กก.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+   <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>เกี่ยวกับเรา</h3>
+                <p>โรงเรียนบ้านฮ้อยเงิน โครงการ Smart Farm นำเสนอผักและผลไม้ที่ปลูกด้วยเทคโนโลยีสมัยใหม่</p>
+            </div>
+            <div class="footer-section">
+                <h3>ติดต่อเรา</h3>
+                <p>📍 โรงเรียนบ้านฮ้อยเงิน เชียงใหม่</p>
+                <p>📞 053-XXX-XXX</p>
+                <p>📧 smartfarm@baanhoingern.ac.th</p>
+            </div>
+            <div class="footer-section">
+                <h3>ลิงก์ที่มีประโยชน์</h3>
+                <a href="#">นโยบายความเป็นส่วนตัว</a>
+                <a href="#">เงื่อนไขการใช้บริการ</a>
+                <a href="#">วิธีการชำระเงิน</a>
+            </div>
+            <div class="footer-section">
+                <h3>ติดตามเรา</h3>
+                <p><i class="fab fa-facebook"></i> Facebook</p>
+                <p><i class="fab fa-instagram"></i> Instagram</p>
+                <p><i class="fab fa-line"></i> Line Official</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

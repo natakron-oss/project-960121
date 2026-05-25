@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.header{
+    text-align: center;
+    background-color: #252323;
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.container{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.about-me{
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.about-me h2{
+    text-align: left;
+    margin-bottom: 10px;
+}
+.about-content{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.about-me img{
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.grid-container{
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.hobbies, .projects{
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 300px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.hobbies h2, .projects h2{
+    margin-top: 10px;
+    text-align: center;
+}
+.projects a{
+    color: blue;
+    text-decoration: none;
+}
+.projects a:hover{
+    text-decoration: underline;
+}
+
+.contact{
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+label{
+    font-weight: bold;
+}
+
+input, textarea {
+  width: 100%;            /* ให้กว้างเต็มบรรทัด */
+  padding: 8px;           /* เพิ่มช่องว่างในช่องกรอก */
+  border: 1px solid #ccc; /* เส้นขอบสีเทาอ่อน */
+  border-radius: 5px;     /* มุมช่องกรอกโค้งนิดๆ */
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 80px;       /* กำหนดความสูงขั้นต่ำของกล่องข้อความ */
+}
+
+button {
+  width: 100px;           /* ปุ่มกว้าง 100px */
+  padding: 8px;
+  background-color: #333; /* สีพื้นหลังของปุ่ม */
+  color: #fff;            /* ตัวอักษรสีขาว */
+  border: none;           /* ไม่มีเส้นขอบ */
+  border-radius: 5px;     /* มุมโค้งมน */
+  cursor: pointer;        /* เปลี่ยนเคอร์เซอร์เป็นมือเวลาเอาเมาส์ไปชี้ */
+}
+
+button:hover {
+  background-color: #555; /* เวลาชี้ปุ่มให้สีอ่อนลง */
+}
+
+/* ======= ส่วนท้ายเว็บ (Footer) ======= */
+.footer {
+  text-align: center;     /* จัดเนื้อหาตรงกลาง */
+  background-color: #333; /* สีพื้นดำเทา */
+  color: #fff;            /* ตัวอักษรขาว */
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.footer a {
+  color: #66ccff;         /* สีลิงก์ใน footer เป็นฟ้าอ่อน */
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

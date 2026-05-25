@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeggieEdu Farm Hub - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-md">
+    
+    <!-- Header -->
+    <div class="bg-green-600 text-white p-6 text-center">
+      <div class="flex justify-center mb-4">
+        <i class="fa-solid fa-school text-blue-600"></i>
+        <img src="image/schoolLogo.png" class ="w-30 h-20" alt="school logo">
+      </div>
+      <h1 class="text-2xl font-bold">ยินดีต้อนรับสู่สวนผักบ้านแม่ฮ้อยเงิน</h1>
+      <p class="text-green-100 mt-1">เข้าสู่ระบบเพื่อเลือกซื้อผักผลไม้สดจากฟาร์มของเรา</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginContainer" class="p-6">
+      <form method="post" class="space-y-5" id="loginForm">
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 mb-2">อีเมลของคุณ</label>
+          <div class="relative">
+            <i data-feather="mail" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="email" name="email" id="email" required placeholder="อีเมล@email.com"
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none">
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="password" class="block text-gray-700 mb-2">รหัสผ่าน</label>
+          <div class="relative">
+            <i data-feather="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="password" name="password" id="password" required placeholder="••••••••"
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none">
+          </div>
+        </div>
+        <button type="submit"
+          class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center">
+          <i data-feather="log-in" class="mr-2"></i> เข้าสู่ระบบ
+        </button>
+        <div class="text-center mt-4">
+          <p class="text-gray-600">ไม่มีบัญชีใช่หรือไม่ <a href="#" id="showRegister" class="text-green-600 hover:underline">สมัครใหม่</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerContainer" class="p-6 hidden">
+      <form method="post" action="backend/register.php" class="space-y-5" id="registerForm">
+        <div class="mb-4">
+          <label for="regName" class="block text-gray-700 mb-2">ชื่อ - นามสกุล</label>
+          <div class="relative">
+            <i data-feather="user" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" name="name" id="regName" required placeholder="นางสมศรี ดีกรี"
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="regEmail" class="block text-gray-700 mb-2">อีเมลของคุณ</label>
+          <div class="relative">
+            <i data-feather="mail" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="email" name="email" id="regEmail" required placeholder="อีเมล@email.com"
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none">
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="regPassword" class="block text-gray-700 mb-2">รหัสผ่าน</label>
+          <div class="relative">
+            <i data-feather="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="password" name="password" id="regPassword" required placeholder="••••••••"
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none">
+          </div>
+        </div>
+        <button type="submit"
+          class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center">
+          <i data-feather="user-plus" class="mr-2"></i> สร้างบัญชี
+        </button>
+        <div class="text-center mt-4">
+          <p class="text-gray-600">หากมีบัญชีผู้ใช้แล้ว คุณสามารถ<a href="#" id="showLogin" class="text-green-600 hover:underline">เข้าสู่ระบบ</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-50 px-6 py-4 text-center text-sm text-gray-600">
+      <a href="index.html" class="hover:text-green-600">กลับหน้าหลัก</a>
+      <span class="mx-2">•</span>
+      <a href="#" class="hover:text-green-600">ลืมรหัสผ่าน</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById('showRegister').addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('loginContainer').classList.add('hidden');
+      document.getElementById('registerContainer').classList.remove('hidden');
+    });
+
+    document.getElementById('showLogin').addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('registerContainer').classList.add('hidden');
+      document.getElementById('loginContainer').classList.remove('hidden');
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+
+      if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          const res = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await res.json();
+
+          if (data.status === "success") {
+            localStorage.setItem("auth_token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            Swal.fire({
+              icon: "success",
+              title: "เข้าสู่ระบบสำเร็จ",
+              text: data.message,
+              timer: 1500,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "index.html";
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "เกิดข้อผิดพลาด",
+              text: data.message
+            });
+          }
+        });
+      }
+
+      if (registerForm) {
+        registerForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("regName").value;
+          const email = document.getElementById("regEmail").value;
+          const password = document.getElementById("regPassword").value;
+
+          const res = await fetch("http://localhost:3000/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password }),
+          });
+
+          const data = await res.json();
+
+          if (data.status === "success") {
+            Swal.fire({
+              icon: "success",
+              title: "สมัครสมาชิกสำเร็จ",
+              text: data.message,
+              timer: 1500,
+              showConfirmButton: false
+            }).then(() => {
+              document.getElementById("registerContainer").classList.add("hidden");
+              document.getElementById("loginContainer").classList.remove("hidden");
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "เกิดข้อผิดพลาด",
+              text: data.message
+            });
+          }
+        });
+      }
+    });
+
+    feather.replace();
+  </script>
+
+</body>
+</html>

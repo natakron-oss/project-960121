@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab6.1</title>
+  <style>
+    body{
+      font-family: sans-serif;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container{
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10 px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    h1{
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label{
+      display: block;
+      margin-bottom: bold;
+      font-weight: bold;
+    }   
+    input{
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    } 
+    button{
+      width: 100%;
+      padding: 10px;
+      margin-top:  15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    buttom:hover{
+      background: #0056b3;
+    }
+    p {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <h1>Student Score</h1>
+
+  <label>Name<input type="text" id="name"></label><br><br>
+  <label>Midterm: <input type="number" id="mid"></label><br><br>
+  <label>Final: <input type="number" id="final"></label><br><br>
+  <label>Report: <input type="number" id="report"> </label><br><br>
+
+  <button onclick="calc()">Calculate</button>
+  <p id="total"></p>
+  <p id="grade"></p>
+  </div>
+  <script>
+    function calc(){
+      const mid = Number(document.getElementById('mid').value);
+      const final = Number(document.getElementById('final').value);
+      const report = Number(document.getElementById('report').value);
+
+      const total = mid+final+report;
+      let grade;
+
+      if (total >= 80) grade ='A';
+      else if (total >= 70) grade = 'B';
+      else if (total >= 60) grade ='C';
+      else if (total >=50) grade ='D';
+      else grade='F';
+
+      document.getElementById('total').innerText ='Total Score:' + total;
+      document.getElementById('grade').innerText = 'Your Grade:' + grade;
+    }
+  </script>
+  
+</body>
+</html>

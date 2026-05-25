@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>checkout</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+
+            <div class="logo">
+                <img src="image/schoolLogo.png" alt="school logo">
+            </div>
+
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+            </div>
+
+            <div class="header-actions">
+                <a href="cart.html" class="btn cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-label">ตะกร้า</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+
+                <a href="about.html" class="btn btn-secondary">
+                    <span>เกี่ยวกับเรา</span>
+                </a>
+
+                <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-user"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </a>
+            </div>
+        </div>
+        
+    </header>
+
+    <!-- Main Content -->
+    <div class="checkout-container">
+        <!-- Left Side - Customer Information -->
+        <div class="checkout-left">
+            <!-- Customer Information -->
+            <div class="section">
+                <h2 class="section-title">ข้อมูลผู้สั่งสินค้า</h2>
+                <form id="customerForm" class="form">
+                    <div class="form-group">
+                        <label for="fullname">ชื่อ - นามสกุล</label>
+                        <input type="text" id="fullname" class="form-input" placeholder="เช่น นางสาว/นาย" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">เบอร์โทรศัพท์</label>
+                        <input type="tel" id="phone" class="form-input" placeholder="+66" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>เลือกวิธีการจัดส่ง</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="shipping" value="pickupschool" checked>
+                                <span class="radio-text">เลือกรับที่รร.</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="shipping" value="pickuphome">
+                                <span class="radio-text">จัดส่งตามที่อยู่</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">ที่อยู่</label>
+                        <div class="input-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" id="address" class="form-input form-textarea" placeholder="กรุณากรอกที่อยู่" required>
+                    </div>
+                    </div>
+<div class="form-group">
+    <label>เลือกวิธีการชำระเงิน</label>
+    <div class="radio-group">
+        <label class="radio-label">
+            <input type="radio" name="shipping" value="cod" checked>
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            <span class="radio-text">เก็บเงินปลายทาง</span>
+        </label>
+
+        <label class="radio-label">
+            <input type="radio" name="shipping" value="transfer">
+            <i class="fa-solid fa-building-columns"></i>
+            <span class="radio-text">จ่ายผ่านธนาคาร</span>
+        </label>
+
+        <label class="radio-label">
+            <input type="radio" name="shipping" value="qrcode">
+            <i class="fa-solid fa-qrcode"></i>
+            <span class="radio-text">สแกนเงิน QR CODE</span>
+        </label>
+    </div>
+</div>
+
+
+
+                    <button type="submit" class="btn-submit">ยืนยันการสั่งซื้อ</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Side - Order Summary -->
+        <div class="checkout-right">
+            <div class="summary-box">
+                <h2 class="summary-title">รวมรายการสินค้า</h2>
+
+                <!-- Products List -->
+                <div class="products-list" id="productsList">
+                    <!-- Products will be generated here -->
+                </div>
+
+                <!-- Summary Table -->
+                <div class="summary-table">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>ชื่อสินค้า</td>
+                                <td>จำนวน</td>
+                                <td>ราคา</td>
+                            </tr>
+                            <tr id="summaryRow">
+                                <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
+                                    ตะกร้าว่างเปล่า
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals -->
+                <div class="summary-totals">
+                    <div class="total-row">
+                        <span>รวมการสินค้า</span>
+                        <span id="subtotal">0.00 บาท</span>
+                    </div>
+                    <div class="total-row">
+                        <span>ค่าจัดส่ง</span>
+                        <span id="shipping">0.00 บาท</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>ยอดชำระรวมทั้งหมด</span>
+                        <span id="grandTotal">฿0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+   <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>เกี่ยวกับเรา</h3>
+                <p>โรงเรียนบ้านฮ้อยเงิน โครงการ Smart Farm นำเสนอผักและผลไม้ที่ปลูกด้วยเทคโนโลยีสมัยใหม่</p>
+            </div>
+            <div class="footer-section">
+                <h3>ติดต่อเรา</h3>
+                <p>📍 โรงเรียนบ้านฮ้อยเงิน เชียงใหม่</p>
+                <p>📞 053-XXX-XXX</p>
+                <p>📧 smartfarm@baanhoingern.ac.th</p>
+            </div>
+            <div class="footer-section">
+                <h3>ลิงก์ที่มีประโยชน์</h3>
+                <a href="#">นโยบายความเป็นส่วนตัว</a>
+                <a href="#">เงื่อนไขการใช้บริการ</a>
+                <a href="#">วิธีการชำระเงิน</a>
+            </div>
+            <div class="footer-section">
+                <h3>ติดตามเรา</h3>
+                <p><i class="fab fa-facebook"></i> Facebook</p>
+                <p><i class="fab fa-instagram"></i> Instagram</p>
+                <p><i class="fab fa-line"></i> Line Official</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="checkout-script.js"></script>
+</body>
+</html>

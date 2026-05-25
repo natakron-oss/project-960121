@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <title>Lab6.2</title>
+        <style>
+            body{
+                font-family: "Segeo UI", Tahoma ,sans-serif;
+                background: linear-gradient(135deg, #f9f9f9, #d6f0ff);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            .container {
+                background: white;
+                padding: 25px 30px;
+                border-radius:12px;
+                box-shadow:0 4px 15px rgba(0,0,0,0.1);
+                width:350px;
+            }
+            h1{
+                text-align: center;
+                color: #2c3e50;
+                margin-bottom: 20px;
+            }
+
+            label{
+                display : block;
+                margin-bottom: 12px;
+                font-weight: bold;
+                color:#333;
+            }
+            input{
+                width: 100%;
+                padding:8px;
+                margin-top: 5px;
+                border:1px solid #ccc;
+                border-radius:6px;
+                box-sizing: border-box;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                margin-top: 15px;
+                background: #3498db;
+                color: white;
+                border:none;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            button:hover{
+                background: #217dbb;
+            }
+            #Result{
+                margin-top: 15px;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 20px;
+                background: linear-gradient(135deg,#ffe4ec, #fff0f5);
+                border-radius: 15px;
+                border: 2px dashed #ff9bb4;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                line-height: 1.6;
+                white-space: pre-line;
+                color: #2c3e50;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                
+            }
+            #Result span {
+                display: block;
+                margin: 5px 0;
+                text-align: center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+        <h1>Happy Animal Hospital</h1>
+
+        <label>Pet Name
+            <input type ="text" id="name">
+        </label>
+        <br><br>
+
+        <label>Type:
+            <input type ="text" id="type">
+        </label>
+        <br><br>
+
+        <label>Age:
+            <input type ="number" id="age">
+        </label>
+        <br><br>
+
+        <label>Weight:
+            <input type="number" id="weight">
+        </label>
+        <br><br>
+
+        <button onclick="calmed()">Calculate</button>
+        <p id="Result"></p>
+        </div>
+        <script>
+            function calmed(){
+                const age = Number(document.getElementById("age").value);
+                const weight = Number(document.getElementById("weight").value);
+                let spoons;
+
+                if (age > 10) {
+                    if (weight>15){
+                        spoons =3;
+                    }else{
+                        spoons =2;
+                    }
+                }else {
+                    if (weight > 7) {
+                        spoons = 1.5;
+                    }else {
+                        spoons =1;
+                    }
+                }
+
+                document.getElementById("Result").innerText = 
+                "อายุ: " + age + " ปี"+ " น้ำหนัก: " + weight + " กก."+" ปริมาณยา: "+  spoons +" ช้อน";
+            }
+        </script>
+    </body>
+</html>

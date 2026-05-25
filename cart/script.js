@@ -1,0 +1,235 @@
+
+const SAMPLE_CART = [
+    {
+        id: 1,
+        name: 'คะน้า',
+        price: 30,
+        quantity: 2,
+        image: 'image/คะน้า.jpg',
+        stock: 15,
+        unit: 'กก.'
+    },
+    {
+        id: 2,
+        name: 'กะหล่ำปลี',
+        price: 6,
+        quantity: 20,
+        image: 'fruit.jpg',
+        stock: 5,
+        unit: 'กก.'
+    },
+    {
+        id: 3,
+        name: 'ผักกาดขาว',
+        price: 8,
+        quantity: 3,
+        image: 'potato.jpg',
+        stock: 10,
+        unit: 'กก.'
+    }
+];
+
+class CartManager {
+    constructor() {
+        this.initializeCart();
+        this.renderCart();
+        this.setupEventListeners();
+    }
+
+    initializeCart() {
+        // ถ้าไม่มีข้อมูลตะกร้า ให้ใช้ข้อมูลตัวอย่าง
+        if (!localStorage.getItem('cart')) {
+            localStorage.setItem('cart', JSON.stringify(SAMPLE_CART));
+        }
+    }
+
+    getCart() {
+        return JSON.parse(localStorage.getItem('cart')) || [];
+    }
+
+    saveCart(cart) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    renderCart() {
+        const cart = this.getCart();
+        const cartContent = document.getElementById('cart-items');
+
+        if (!cartContent) return;
+
+        if (cart.length === 0) {
+            this.showEmptyCart();
+            return;
+        }
+
+        // สร้าง header
+        const header = document.createElement('div');
+        header.className = 'cart-header';
+        header.innerHTML = `
+            <div></div>
+            <div>ชื่อสินค้า</div>
+            <div>ราคา</div>
+            <div>จำนวน</div>
+            <div>รวม</div>
+            <div></div>
+        `;
+        cartContent.innerHTML = '';
+        cartContent.appendChild(header);
+
+        // สร้างรายการสินค้า
+        cart.forEach((item, index) => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <input type="checkbox" class="item-checkbox" data-index="${index}" checked>
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-meta">คลัง ${item.stock} ${item.unit}</div>
+                </div>
+                <div class="cart-item-price">${item.price}.00 บาท</div>
+                <div class="cart-item-qty">
+                    <button class="qty-btn minus-btn" data-index="${index}">−</button>
+                    <span class="qty-display">${item.quantity}</span>
+                    <button class="qty-btn plus-btn" data-index="${index}">+</button>
+                </div>
+                <div class="cart-item-total">${(item.price * item.quantity).toFixed(2)} บาท</div>
+                <button class="delete-btn" data-index="${index}">ลบสินค้า</button>
+            `;
+            cartContent.appendChild(cartItem);
+        });
+
+        this.updateCartSummary();
+    }
+
+    showEmptyCart() {
+        const cartContent = document.getElementById('cart-items');
+        cartContent.innerHTML = `
+            <div class="empty-cart">
+                <div class="empty-cart-icon">🛒</div>
+                <div class="empty-cart-text">ตะกร้าว่างเปล่า</div>
+                <a href="index.html" class="continue-shopping">กลับไปช้อปปิ้ง</a>
+            </div>
+        `;
+
+        const cartSummary = document.getElementById('cart-summary');
+        if (cartSummary) {
+            cartSummary.innerHTML = `
+                <div class="cart-summary">
+                    <div class="summary-title">สรุปคำสั่งซื้อ</div>
+                    <button class="checkout-btn" disabled>สั่งซื้อ</button>
+                </div>
+            `;
+        }
+    }
+
+    updateCartSummary() {
+        const cart = this.getCart();
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = 0; // ส่วนเพิ่มเติม: คำนวณค่าส่ง
+        const total = subtotal + shipping;
+
+        const subtotalEl = document.getElementById('subtotal');
+        const shippingEl = document.getElementById('shipping');
+        const totalEl = document.getElementById('total');
+
+        if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2);
+        if (shippingEl) shippingEl.textContent = shipping.toFixed(2);
+        if (totalEl) totalEl.textContent = total.toFixed(2);
+    }
+
+    increaseQty(index) {
+        const cart = this.getCart();
+        if (cart[index]) {
+            cart[index].quantity++;
+            this.saveCart(cart);
+            this.renderCart();
+        }
+    }
+
+    decreaseQty(index) {
+        const cart = this.getCart();
+        if (cart[index] && cart[index].quantity > 1) {
+            cart[index].quantity--;
+            this.saveCart(cart);
+            this.renderCart();
+        }
+    }
+
+    removeItem(index) {
+        if (confirm('ยืนยันการลบสินค้า?')) {
+            const cart = this.getCart();
+            cart.splice(index, 1);
+            this.saveCart(cart);
+            this.renderCart();
+        }
+    }
+
+    setupEventListeners() {
+        const cartContent = document.getElementById('cart-items');
+        if (!cartContent) return;
+
+        // Event delegation สำหรับปุ่มต่างๆ
+        cartContent.addEventListener('click', (e) => {
+            const index = e.target.dataset.index;
+
+            if (e.target.classList.contains('plus-btn')) {
+                this.increaseQty(parseInt(index));
+            } else if (e.target.classList.contains('minus-btn')) {
+                this.decreaseQty(parseInt(index));
+            } else if (e.target.classList.contains('delete-btn')) {
+                this.removeItem(parseInt(index));
+            }
+        });
+
+        // Checkbox สำหรับเลือกสินค้า
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateCheckoutButton();
+            });
+        });
+    }
+
+    updateCheckoutButton() {
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+        const checkoutBtn = document.querySelector('.checkout-btn');
+        
+        if (checkoutBtn) {
+            checkoutBtn.disabled = checkboxes.length === 0;
+        }
+    }
+
+    proceedToCheckout() {
+        const cart = this.getCart();
+        
+        if (cart.length === 0) {
+            alert('ตะกร้าว่างเปล่า');
+            return;
+        }
+
+        // บันทึกตะกร้าก่อนไปหน้าชำระเงิน
+        localStorage.setItem('cart', JSON.stringify(cart));
+        window.location.href = 'page3.html';
+    }
+}
+
+// เรียกใช้เมื่อโหลดหน้า
+document.addEventListener('DOMContentLoaded', function() {
+    const cartManager = new CartManager();
+
+    // ตั้งค่า checkout button
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    if (checkoutBtn && !checkoutBtn.disabled) {
+        checkoutBtn.addEventListener('click', () => {
+            cartManager.proceedToCheckout();
+        });
+    }
+
+    // ปุ่มกลับ
+    const backBtn = document.querySelector('.back-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+});

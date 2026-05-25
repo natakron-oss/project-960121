@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    let students = [
+        { name: "Keng",  score: 85 },
+        { name: "Mimi",  score: 42 },
+        { name: "John",  score: 73 },
+        { name: "Anna",  score: 55 },
+        { name: "Smith", score: 30 }
+    ];
+
+    // loop เช็กนักเรียนทีละคน
+    for (let i = 0; i < students.length; i++) {
+        let student = students[i];
+        
+        if (student.score >= 50) {
+            console.log(`ชื่อ: ${student.name} ผ่าน (score: ${student.score})`);
+        } else {
+            console.log(`ชื่อ: ${student.name} ไม่ผ่าน (score: ${student.score})`);
+        }
+    }
+</script>
+
+</body>
+</html>
