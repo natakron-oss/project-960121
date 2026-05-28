@@ -27,6 +27,25 @@ function init() {
     renderProducts(products);
     updateCartBadge();
     updateNavMenu();
+    setupSearch();
+    setupSort();
+}
+// Search Products
+function setupSearch() {
+    const searchInput = document.getElementById('searchInput');
+
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', function () {
+
+        const keyword = this.value.toLowerCase();
+
+        const filteredProducts = products.filter(product =>
+            product.name.toLowerCase().includes(keyword)
+        );
+
+        renderProducts(filteredProducts);
+    });
 }
 
 // Render Products
@@ -94,6 +113,87 @@ function filterProducts(category) {
     }
     renderProducts(filteredProducts);
 }
+// Add To Cart
+function addToCart(productId) {
 
+    const product = products.find(p => p.id === productId);
+
+    if (!product) return;
+
+    cart.push(product);
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    updateCartBadge();
+
+    alert(product.name + ' ถูกเพิ่มลงตะกร้าแล้ว');
+}
+// Update Cart Badge
+function updateCartBadge() {
+
+    const badge = document.getElementById('cartBadge');
+
+    if (!badge) return;
+
+    badge.textContent = cart.length;
+}
+// Show Product Detail
+function showDetail(productId) {
+
+    const product = products.find(p => p.id === productId);
+
+    if (!product) return;
+
+    const modal = document.getElementById('detailModal');
+    const detailContent = document.getElementById('detailContent');
+
+    detailContent.innerHTML = `
+        <div class="detail-container">
+
+            <img src="${product.image}" 
+                 alt="${product.name}" 
+                 style="width:100%; max-width:300px; border-radius:10px;">
+
+            <h2>${product.name}</h2>
+
+            <p>${product.description}</p>
+
+            <h3>${product.price} บาท / กก.</h3>
+
+            <button onclick="addToCart(${product.id})">
+                เพิ่มลงตะกร้า
+            </button>
+
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+}
+function closeModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+// Setup Sort
+function setupSort() {
+
+    const sortSelect = document.getElementById('sortSelect');
+
+    if (!sortSelect) return;
+
+    sortSelect.addEventListener('change', function () {
+
+        let sortedProducts = [...products];
+
+        if (this.value === 'low-high') {
+            sortedProducts.sort((a, b) => a.price - b.price);
+        }
+
+        if (this.value === 'high-low') {
+            sortedProducts.sort((a, b) => b.price - a.price);
+        }
+
+        renderProducts(sortedProducts);
+    });
+}
 // Run init when DOM is ready
 window.addEventListener('DOMContentLoaded', init);

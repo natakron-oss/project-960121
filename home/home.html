@@ -54,8 +54,20 @@
                 <span>รายการสินค้า</span>
             </div>
             <div class="category-filter">
-                <button class="category-btn active" onclick="toggleDropdaown()">หมวดหมู่<i class="fas fa-caret-down"></i></button>
-            </div>
+
+    <button class="category-btn active"
+            onclick="toggleDropdown()">
+        หมวดหมู่
+        <i class="fas fa-caret-down"></i>
+    </button>
+
+    <select id="sortSelect">
+        <option value="">เรียงลำดับ</option>
+        <option value="low-high">ราคาน้อย → มาก</option>
+        <option value="high-low">ราคามาก → น้อย</option>
+    </select>
+
+</div>
         </div>
         <!-- Products Grid -->
         <div class="products-grid" id="productsGrid">
