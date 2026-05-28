@@ -5,12 +5,12 @@ const app = express();
 const PORT = 3000;
 
 // ใช้ static folder
-app.use(express.static(path.join(__dirname, 'project-960121-main')));
+app.use(express.static(__dirname));
 
 // หน้าแรก
 app.get('/', (req, res) => {
     res.sendFile(
-        path.join(__dirname, 'project-960121-main', 'home', 'home.html')
+        path.join(__dirname, 'home', 'home.html')
     );
 });
 
