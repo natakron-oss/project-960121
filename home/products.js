@@ -6,7 +6,7 @@ const products = [
         category: 'ผัก', 
         price: 30, 
         stock: 15, 
-        image: 'image/คะน้า.jpg', 
+        image: 'home/image/คะน้า.jpg', 
         description: 'ผักกาดสดใหม่จาก Smart Farm ปลูกโดยวิธีการเกษตรไร่ฉกรรจ์ ปลอดสารพิษ' 
     },
     { 
@@ -15,7 +15,7 @@ const products = [
         category: 'ผัก', 
         price: 6, 
         stock: 20, 
-    image: 'image/กะหล่ำปลี.png', 
+        image: 'home/image/กะหล่ำปลี.png', 
         description: 'กะหล่ำปลีสดใจหวาน เก็บเชื้อสดใหม่ มีคุณค่าทางอาหารสูง' 
     },
     { 
@@ -24,7 +24,7 @@ const products = [
         category: 'ผัก', 
         price: 8, 
         stock: 10, 
-    image: 'image/ผักกาดขาว.png', 
+        image: 'home/image/ผักกาดขาว.png', 
         description: 'ผักกวางตุ้งสดอร่อย เหมาะสำหรับทำน้ำสลัดหรือนึ่ง' 
     },
     { 
@@ -33,7 +33,7 @@ const products = [
         category: 'ผัก', 
         price: 16, 
         stock: 8, 
-    image: 'image/ผักกวางตุ้ง.png', 
+        image: 'home/image/ผักกวางตุ้ง.png', 
         description: 'ผักกาดร้านข้างเขียวสด ปลูกในแปลงปลอดโรค' 
     },
     { 
@@ -42,7 +42,7 @@ const products = [
         category: 'ผัก', 
         price: 30, 
         stock: 10, 
-    image: 'image/ต้นหอม.png', 
+        image: 'home/image/ต้นหอม.png', 
         description: 'ตะไคร้สดใหม่ เหมาะสำหรับทำแกงหรือชาตะไคร้' 
     },
     { 
@@ -51,7 +51,7 @@ const products = [
         category: 'ผัก', 
         price: 46, 
         stock: 12, 
-    image: 'image/ผักบุ้ง.png', 
+        image: 'home/image/ผักบุ้ง.png', 
         description: 'หนอนขั้วอร่อยและมีคุณค่าทางอาหารสูง' 
     },
     { 
@@ -60,7 +60,7 @@ const products = [
         category: 'ผัก', 
         price: 130, 
         stock: 30, 
-    image: 'image/ผักชี.png', 
+        image: 'home/image/ผักชี.png', 
         description: 'กวางตุ้งสดใหม่ตรงจากไร่ Smart Farm' 
     },
     { 
@@ -69,7 +69,7 @@ const products = [
         category: 'ผัก', 
         price: 40, 
         stock: 18, 
-    image: 'image/ถั่วฝักยาว.png', 
+        image: 'home/image/ถั่วฝักยาว.png', 
         description: 'ต้นหอมสดอร่อยและมีกลิ่นหอมเต่อ' 
     },
     { 
@@ -78,7 +78,7 @@ const products = [
         category: 'ผลไม้', 
         price: 10, 
         stock: 22, 
-        image: 'image/มะม่วงน้ำดอกไม้ดิบ.png', 
+        image: 'home/image/มะม่วงน้ำดอกไม้ดิบ.png', 
         description: 'มะม่วงหาม้วนเนื้อเหลืองนุ่มและหวาน' 
     },
     { 
@@ -87,7 +87,7 @@ const products = [
         category: 'ผลไม้', 
         price: 45, 
         stock: 40, 
-    image: 'image/กล้วยน้ำว้า.png', 
+        image: 'home/image/กล้วยน้ำว้า.png', 
         description: 'กล้วยน้ำว้าสุกหวาน มีคุณค่าทางอาหารสูง' 
     },
     { 
@@ -96,7 +96,7 @@ const products = [
         category: 'ผลไม้', 
         price: 12, 
         stock: 15, 
-    image: 'image/ส้มเขียวหวาน.png', 
+        image: 'home/image/ส้มเขียวหวาน.png', 
         description: 'ส้มซ่านเปรี้ยวหวาน มีวิตามินซีสูง' 
     },
     { 
@@ -105,7 +105,7 @@ const products = [
         category: 'ผลไม้', 
         price: 35, 
         stock: 10, 
-    image: 'image/เงาะแม่แตง.png', 
+        image: 'home/image/เงาะแม่แตง.png', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -114,7 +114,7 @@ const products = [
         category: 'ผัก', 
         price: 90, 
         stock: 22, 
-    image: 'image/พริกขี้หนู.jpg', 
+        image: 'home/image/พริกขี้หนู.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -123,7 +123,7 @@ const products = [
         category: 'ผัก', 
         price: 110, 
         stock: 40, 
-    image: 'image/กรีนโอ๊ค.jpeg', 
+        image: 'home/image/กรีนโอ๊ค.jpeg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -132,7 +132,7 @@ const products = [
         category: 'ผัก', 
         price: 28, 
         stock: 15, 
-    image: 'image/มะเขือเทศ.jpg', 
+        image: 'home/image/มะเขือเทศ.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -141,7 +141,7 @@ const products = [
         category: 'ผัก', 
         price: 50, 
         stock: 10, 
-    image: 'image/กะหล่ำดอก.jpg', 
+        image: 'home/image/กะหล่ำดอก.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -150,7 +150,7 @@ const products = [
         category: 'ผลไม้', 
         price: 140, 
         stock: 15, 
-    image: 'image/กล้วยหอม.png', 
+        image: 'home/image/กล้วยหอม.png', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -159,7 +159,7 @@ const products = [
         category: 'ผลไม้', 
         price: 28, 
         stock: 20, 
-    image: 'image/ฝรั่งกิมจู.jpg', 
+        image: 'home/image/ฝรั่งกิมจู.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -168,7 +168,7 @@ const products = [
         category: 'ผลไม้', 
         price: 45, 
         stock: 10, 
-    image: 'image/ลำไย.jpg', 
+        image: 'home/image/ลำไย.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -177,7 +177,7 @@ const products = [
         category: 'ผลไม้', 
         price: 120, 
         stock: 8, 
-    image: 'image/องุ่น.png', 
+        image: 'home/image/องุ่น.png', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -186,7 +186,7 @@ const products = [
         category: 'ผลไม้', 
         price: 50, 
         stock: 10, 
-    image: 'image/มะขามหวาน.jpg', 
+        image: 'home/image/มะขามหวาน.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -195,7 +195,7 @@ const products = [
         category: 'ผลไม้', 
         price: 70, 
         stock: 12, 
-    image: 'image/อะโวคาโด.jpg', 
+        image: 'home/image/อะโวคาโด.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -204,7 +204,7 @@ const products = [
         category: 'ผลไม้', 
         price: 60, 
         stock: 30, 
-    image: 'image/ทับทิม.jpg', 
+        image: 'home/image/ทับทิม.jpg', 
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     },
     { 
@@ -213,7 +213,7 @@ const products = [
         category: 'ผลไม้', 
         price: 40, 
         stock: 18, 
-    image: 'image/มะเฟือง.jpg',
+        image: 'home/image/มะเฟือง.jpg',
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     }
 ];
