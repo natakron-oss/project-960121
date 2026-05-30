@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>detail</title>
+    <title>home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="detail/style.css">
+    <link rel="stylesheet" href="home/style.css">
 </head>
 <body>
     <!-- Header -->
-   <header>
+    <header>
         <div class="header-top">
 
             <div class="logo">
-                <img src="image/schoolLogo.png" alt="school logo">
+                <img src="home/image/schoolLogo.png" alt="school logo" width="50" height="50">
             </div>
 
             <div class="search-bar">
@@ -22,65 +22,70 @@
             </div>
 
             <div class="header-actions">
-                <a href="/cart/cart.html" class="btn cart-btn">
+                <a href="cart.html" class="btn cart-btn">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-label">ตะกร้า</span>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
 
-                <a href="about.html" class="btn btn-secondary">
-                    <span>เกี่ยวกับเรา</span>
-                </a>
-
-                <a href="/login/login.html" class="btn btn-primary">
+                <a href="login.html" class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     <span>เข้าสู่ระบบ</span>
                 </a>
             </div>
         </div>
-        
+        <div class="nav-menu">
+        </div>
     </header>
 
-
-    <!-- Product Detail Section -->
-    <main class="container product-section">
-        <div class="product-detail">
-            <div class="product-images">
-                <img src="image/คะน้า.jpg" alt="คะน้า" class="main-image">
-                <div class="thumbnail-images">
-                    <img src="image/คะน้า1.jpg" alt="คะน้า">
-                    <img src="image/คะน้า2.jpg" alt="คะน้า">
-                    <img src="image/คะน้า3.jpg" alt="คะน้า">
-                    <img src="image/คะน้า.jpg" alt="คะน้า">
-                </div>
+    <!-- Hero Banner -->
+    <div class="hero">
+        <h1>สดจากฟาร์มสู่มือคุณ</h1>
+        <p>ผักผลไม้ออแกนิคจากโรงเรียนบ้านแม่ฮ้อยเงิน ปลูกด้วยนวัตกรรม Smart Farm</p>
+    </div>
+    <!-- Main Container -->
+    <div class="container">
+        <div class="section-title-row">
+            <div class="section-title">
+                <span>รายการสินค้า</span>
             </div>
+            <div class="category-filter">
 
-            <div class="product-info">
-                <h1 class="product-title">คะน้า</h1>
-                <p class="product-price">30 บาท / กก.</p>
-                <p class="product-description">
-                    คะน้าสดใหม่ปลอดสารเคมี<br>
-                    ปลูกด้วยระบบ SmartFarm จากโรงเรียนบ้านแม่ฮ้อยเงิน<br>
-                </p>
+    <button class="category-btn active"
+            onclick="toggleDropdown()">
+        หมวดหมู่
+        <i class="fas fa-caret-down"></i>
+    </button>
 
-                <div class="quantity-selector">
-                    <button class="qty-btn" onclick="decreaseQty()">−</button>
-                    <input type="number" id="quantity" value="1" min="1">
-                    <button class="qty-btn" onclick="increaseQty()">+</button>
-                </div>
+    <select id="sortSelect">
+        <option value="">เรียงลำดับ</option>
+        <option value="low-high">ราคาน้อย → มาก</option>
+        <option value="high-low">ราคามาก → น้อย</option>
+    </select>
 
-                <div class="action-buttons">
-                    <button class="btn btn-outline-green">🛒 เพิ่มลงตะกร้า</button>
-                    <button class="btn btn-primary">ซื้อสินค้า</button>
-                </div>
+</div>
+        </div>
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be generated here -->
+        </div>
+    </div>
 
-                <p class="stock-info">เพิ่มได้สูงสุด 18 กก.</p>
+    <!-- Product Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>เพิ่มเข้าตะกร้า</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="detailContent">
+                <!-- Detail content will be loaded here -->
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Footer -->
-   <footer>
+    <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>เกี่ยวกับเรา</h3>
@@ -105,12 +110,12 @@
                 <p><i class="fab fa-line"></i> Line Official</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
             <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="detail/script.js"></script>
+    <script src="home/products.js"></script>
+    <script src="home/script.js"></script>
 </body>
 </html>

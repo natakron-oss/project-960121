@@ -20,6 +20,12 @@
       <h1 class="text-2xl font-bold">ยินดีต้อนรับสู่สวนผักบ้านแม่ฮ้อยเงิน</h1>
       <p class="text-green-100 mt-1">เข้าสู่ระบบเพื่อเลือกซื้อผักผลไม้สดจากฟาร์มของเรา</p>
     </div>
+    <div style="display:flex; justify-content:flex-start; padding:8px 16px; background:transparent;">
+      <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#ffffff;font-weight:600;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/></svg>
+        <span>กลับหน้าหลัก</span>
+      </a>
+    </div>
 
     <!-- Login Form -->
     <div id="loginContainer" class="p-6">
@@ -89,7 +95,7 @@
 
     <!-- Footer -->
     <div class="bg-gray-50 px-6 py-4 text-center text-sm text-gray-600">
-      <a href="index.html" class="hover:text-green-600">กลับหน้าหลัก</a>
+      <a href="home.html" class="hover:text-green-600">กลับหน้าหลัก</a>
       <span class="mx-2">•</span>
       <a href="#" class="hover:text-green-600">ลืมรหัสผ่าน</a>
     </div>
@@ -136,7 +142,7 @@
               timer: 1500,
               showConfirmButton: false
             }).then(() => {
-              window.location.href = "index.html";
+              window.location.href = "home.html";
             });
           } else {
             Swal.fire({

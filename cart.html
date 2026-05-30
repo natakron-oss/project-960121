@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>cart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="home/style.css">
+    <link rel="stylesheet" href="cart/style.css">
 </head>
 <body>
     <!-- Header -->
@@ -13,7 +13,7 @@
         <div class="header-top">
 
             <div class="logo">
-                <img src="home/image/schoolLogo.png" alt="school logo" width="50" height="50">
+                <img src="cart/image/schoolLogo.png" alt="school logo">
             </div>
 
             <div class="search-bar">
@@ -22,71 +22,69 @@
             </div>
 
             <div class="header-actions">
-                <a href="/cart/cart.html" class="btn cart-btn">
+                <a href="cart.html" class="btn cart-btn">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-label">ตะกร้า</span>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
-
-                <a href="about.html" class="btn btn-secondary">
-                    <span>เกี่ยวกับเรา</span>
-                </a>
-
-                <a href="/login/login.html" class="btn btn-primary">
+                <a href="login.html" class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     <span>เข้าสู่ระบบ</span>
                 </a>
             </div>
         </div>
+        <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
+            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>กลับหน้าหลัก</span>
+            </a>
+        </div>
         <div class="nav-menu">
         </div>
     </header>
 
-    <!-- Hero Banner -->
-    <div class="hero">
-        <h1>สดจากฟาร์มสู่มือคุณ</h1>
-        <p>ผักผลไม้ออแกนิคจากโรงเรียนบ้านแม่ฮ้อยเงิน ปลูกด้วยนวัตกรรม Smart Farm</p>
-    </div>
-    <!-- Main Container -->
-    <div class="container">
-        <div class="section-title-row">
-            <div class="section-title">
-                <span>รายการสินค้า</span>
+    <!-- Cart Section -->
+    <main class="container cart-section">
+        <h1 class="cart-title">ตะกร้าของคุณ</h1>
+
+        <div class="cart-tabs">
+            <button class="active">สินค้าของคุณ</button>
+        </div>
+        
+        <div class="cart-content">
+            <div style="display: grid; grid-template-columns: auto 1fr auto;">
+                
             </div>
-            <div class="category-filter">
+            <div id="cart-items">
+                <!-- รายการตะกร้าจะแสดงที่นี่ -->
+            </div>
+        </div>
 
-    <button class="category-btn active"
-            onclick="toggleDropdown()">
-        หมวดหมู่
-        <i class="fas fa-caret-down"></i>
-    </button>
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+  <!-- ฝั่งซ้าย -->
+  <div class="summary-left">
+    <div class="summary-row">
+      <span>รวมราคาสินค้า</span>
+      <span id="cart-subtotal">0.00 บาท</span>
+    </div>
+    <div class="summary-row">
+      <span>ค่าจัดส่ง</span>
+      <span id="shipping-fee">0.00 บาท</span>
+    </div>
+  </div>
 
-    <select id="sortSelect">
-        <option value="">เรียงลำดับ</option>
-        <option value="low-high">ราคาน้อย → มาก</option>
-        <option value="high-low">ราคามาก → น้อย</option>
-    </select>
-
+  <!-- ฝั่งขวา -->
+  <div class="summary-right">
+    <div class="summary-row total">
+      <span>ยอดชำระเงินสุทธิ</span>
+      <span id="cart-grand">0.00 บาท</span>
+    </div>
+    <button class="checkout-btn" onclick="proceedToCheckout()">สั่งซื้อ</button>
+  </div>
 </div>
-        </div>
-        <!-- Products Grid -->
-        <div class="products-grid" id="productsGrid">
-            <!-- Products will be generated here -->
-        </div>
-    </div>
 
-    <!-- Product Detail Modal -->
-    <div class="modal" id="detailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>เพิ่มเข้าตะกร้า</h2>
-                <button class="close-btn" onclick="closeModal()">×</button>
-            </div>
-            <div id="detailContent">
-                <!-- Detail content will be loaded here -->
-            </div>
-        </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -114,12 +112,11 @@
                 <p><i class="fab fa-line"></i> Line Official</p>
             </div>
         </div>
+        
         <div class="footer-bottom">
             <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
         </div>
     </footer>
-
-    <script src="home/products.js"></script>
-    <script src="home/script.js"></script>
+    <script src="cart/script.js"></script>
 </body>
 </html>

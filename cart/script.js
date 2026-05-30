@@ -107,7 +107,7 @@ class CartManager {
             <div class="empty-cart">
                 <div class="empty-cart-icon">🛒</div>
                 <div class="empty-cart-text">ตะกร้าว่างเปล่า</div>
-                <a href="index.html" class="continue-shopping">กลับไปช้อปปิ้ง</a>
+                <a href="home.html" class="continue-shopping">กลับไปช้อปปิ้ง</a>
             </div>
         `;
 
