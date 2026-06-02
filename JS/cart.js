@@ -1,33 +1,6 @@
 
-const SAMPLE_CART = [
-    {
-        id: 1,
-        name: 'คะน้า',
-        price: 30,
-        quantity: 2,
-        image: 'image/คะน้า.jpg',
-        stock: 15,
-        unit: 'กก.'
-    },
-    {
-        id: 2,
-        name: 'กะหล่ำปลี',
-        price: 6,
-        quantity: 20,
-        image: 'fruit.jpg',
-        stock: 5,
-        unit: 'กก.'
-    },
-    {
-        id: 3,
-        name: 'ผักกาดขาว',
-        price: 8,
-        quantity: 3,
-        image: 'potato.jpg',
-        stock: 10,
-        unit: 'กก.'
-    }
-];
+// ไม่มีข้อมูลตัวอย่างสินค้าในไฟล์ cart.js — ใช้ข้อมูลจาก products.js
+const SAMPLE_CART = [];
 
 class CartManager {
     constructor() {
@@ -49,6 +22,13 @@ class CartManager {
 
     saveCart(cart) {
         localStorage.setItem('cart', JSON.stringify(cart));
+        // แจ้งให้ส่วนอื่นๆ ทราบว่าตะกร้าเปลี่ยนแปลงแล้ว
+        try {
+            window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart } }));
+        } catch (e) {
+            // old browsers fallback
+            window.dispatchEvent(new Event('cartUpdated'));
+        }
     }
 
     renderCart() {
@@ -125,16 +105,30 @@ class CartManager {
     updateCartSummary() {
         const cart = this.getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = 0; // ส่วนเพิ่มเติม: คำนวณค่าส่ง
+        const SHIPPING_COST = 50;
+        const shipping = cart.length > 0 ? SHIPPING_COST : 0;
         const total = subtotal + shipping;
 
+        // Update header/checkout IDs used elsewhere
         const subtotalEl = document.getElementById('subtotal');
         const shippingEl = document.getElementById('shipping');
         const totalEl = document.getElementById('total');
-
         if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2);
         if (shippingEl) shippingEl.textContent = shipping.toFixed(2);
         if (totalEl) totalEl.textContent = total.toFixed(2);
+
+        // Update cart page summary elements (IDs used in cart.html)
+        const cartSubtotalEl = document.getElementById('cart-subtotal');
+        const shippingFeeEl = document.getElementById('shipping-fee');
+        const cartGrandEl = document.getElementById('cart-grand');
+        if (cartSubtotalEl) cartSubtotalEl.textContent = subtotal.toFixed(2) + ' บาท';
+        if (shippingFeeEl) shippingFeeEl.textContent = shipping.toFixed(2) + ' บาท';
+        if (cartGrandEl) cartGrandEl.textContent = total.toFixed(2) + ' บาท';
+
+        // Update cart badge count (total quantity)
+        const badge = document.getElementById('cartBadge');
+        const qty = cart.reduce((s, item) => s + (item.quantity || 0), 0);
+        if (badge) badge.textContent = qty;
     }
 
     increaseQty(index) {
@@ -209,7 +203,7 @@ class CartManager {
 
         // บันทึกตะกร้าก่อนไปหน้าชำระเงิน
         localStorage.setItem('cart', JSON.stringify(cart));
-        window.location.href = 'page3.html';
+        window.location.href = 'checkout.html';
     }
 }
 

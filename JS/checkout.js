@@ -1,26 +1,4 @@
-// Sample products data
-const sampleProducts = [
-    {
-        id: 1,
-        name: 'Organic Carrots',
-        quantity: 1,
-        price: 7.00
-    },
-    {
-        id: 2,
-        name: 'Fresh Broccoli',
-        quantity: 2,
-        price: 4.00
-    },
-    {
-        id: 3,
-        name: 'Sweet Potatoes',
-        quantity: 1,
-        price: 8.25
-    }
-];
-
-// Shipping cost
+// ใช้ข้อมูลตะกร้าจาก localStorage (`cart`) และ/หรือ catalog จาก products.js
 const SHIPPING_COST = 50;
 
 // Initialize
@@ -29,14 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
     attachFormListener();
 });
 
-// Load cart items from localStorage or use sample data
-function loadCartItems() {
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || sampleProducts;
-    
-    if (cartItems.length === 0) {
-        cartItems = sampleProducts;
-    }
+// Listen for cart updates (from other parts of the app)
+window.addEventListener('cartUpdated', function (e) {
+    loadCartItems();
+});
 
+// Also listen to storage events (cross-tab)
+window.addEventListener('storage', function (e) {
+    if (e.key === 'cart') {
+        loadCartItems();
+    }
+});
+
+// Load cart items from localStorage (no fallback products here)
+function loadCartItems() {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     displayProducts(cartItems);
     calculateTotals(cartItems);
 }
@@ -46,12 +31,13 @@ function displayProducts(products) {
     const productsList = document.getElementById('productsList');
     const summaryRow = document.getElementById('summaryRow');
 
-    if (products.length === 0) {
+    if (!products || products.length === 0) {
         summaryRow.innerHTML = `
             <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
                 ตะกร้าว่างเปล่า
             </td>
         `;
+        productsList.innerHTML = '';
         return;
     }
 
@@ -83,15 +69,19 @@ function displayProducts(products) {
 // Calculate and display totals
 function calculateTotals(products) {
     const subtotal = products.reduce((sum, product) => {
-        return sum + (product.price * product.quantity);
+        const qty = product.quantity || 1;
+        return sum + (product.price * qty);
     }, 0);
 
     const shipping = products.length > 0 ? SHIPPING_COST : 0;
     const grandTotal = subtotal + shipping;
 
-    document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' บาท';
-    document.getElementById('shipping').textContent = shipping.toFixed(2) + ' บาท';
-    document.getElementById('grandTotal').textContent = '฿' + grandTotal.toFixed(2);
+    const subtotalEl = document.getElementById('subtotal');
+    const shippingEl = document.getElementById('shipping');
+    const grandEl = document.getElementById('grandTotal');
+    if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + ' บาท';
+    if (shippingEl) shippingEl.textContent = shipping.toFixed(2) + ' บาท';
+    if (grandEl) grandEl.textContent = '฿' + grandTotal.toFixed(2);
 }
 
 // Attach form submit listener
@@ -117,13 +107,15 @@ function submitOrder() {
     }
 
     // Save order
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
     const order = {
         id: 'ORD-' + Date.now(),
         fullname: fullname,
         phone: phone,
         address: address,
         shippingMethod: shippingMethod,
-        items: JSON.parse(localStorage.getItem('cartItems')) || sampleProducts,
+        items: cartItems,
         date: new Date().toLocaleDateString('th-TH'),
         status: 'pending'
     };
@@ -138,10 +130,13 @@ function submitOrder() {
 
     // Clear form and cart
     document.getElementById('customerForm').reset();
-    localStorage.removeItem('cartItems');
+    localStorage.removeItem('cart');
+
+    // Show a simple confirmation modal/alert and keep orders saved
+    // (orders already saved above)
 
     // Redirect to home page
-    window.location.href = 'index.html';
+    window.location.href = 'home.html';
 }
 
 // Format currency
@@ -154,10 +149,10 @@ function formatCurrency(amount) {
 
 // Get cart summary
 function getCartSummary() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || sampleProducts;
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
     const shipping = cartItems.length > 0 ? SHIPPING_COST : 0;
-    
+
     return {
         items: cartItems,
         subtotal: subtotal,
@@ -178,39 +173,46 @@ function updateCartDisplay() {
 
 // Add product to cart (can be called from other pages)
 function addToCart(product) {
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
+    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
     const existingProduct = cartItems.find(item => item.id === product.id);
-    
+
     if (existingProduct) {
         existingProduct.quantity += product.quantity || 1;
     } else {
         cartItems.push(product);
     }
-    
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+    // notify other parts
+    try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
+    catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
     updateCartDisplay();
 }
 
 // Remove product from cart
 function removeFromCart(productId) {
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     cartItems = cartItems.filter(item => item.id !== productId);
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+    try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
+    catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
     updateCartDisplay();
 }
 
 // Update product quantity
 function updateProductQuantity(productId, quantity) {
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
+    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
     const product = cartItems.find(item => item.id === productId);
     if (product) {
         product.quantity = quantity;
         if (quantity <= 0) {
             removeFromCart(productId);
         } else {
-            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
+            catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
             updateCartDisplay();
         }
     }

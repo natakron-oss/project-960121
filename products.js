@@ -1,4 +1,4 @@
-// Product Data
+// Product Data (extracted from combined home.js)
 const products = [
     { 
         id: 1, 
@@ -212,7 +212,7 @@ const products = [
         name: 'มะเฟือง', 
         category: 'ผลไม้', 
         price: 40, 
-        stock: 18, 
+        stock: 18,
         image: 'home/image/มะเฟือง.jpg',
         description: 'สตรอเบอร์รี่แดงสด ปลอดสารเคมี' 
     }
