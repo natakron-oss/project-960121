@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>tradehistory</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="CSS/trade.css">
+</head>
+<body>
+	<!-- Header -->
+	<header>
+		<div class="header-top">
+
+			<div class="logo">
+				<img src="image/schoolLogo.png" alt="school logo">
+			</div>
+
+			<div class="search-bar">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+			</div>
+
+			<div class="header-actions">
+				<a href="cart.html" class="btn cart-btn">
+					<i class="fas fa-shopping-cart"></i>
+					<span class="cart-label">ตะกร้า</span>
+					<span class="cart-badge" id="cartBadge">0</span>
+				</a>
+				<a href="login.html" class="btn btn-primary">
+					<i class="fas fa-user"></i>
+					<span>เข้าสู่ระบบ</span>
+				</a>
+			</div>
+		</div>
+		<div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
+			<a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+				<i class="fa-solid fa-arrow-left"></i>
+				<span>กลับหน้าหลัก</span>
+			</a>
+		</div>
+		<div class="nav-menu">
+		</div>
+	</header>
+
+	<!-- Trade Section (reuses cart layout/IDs so cart.js can render) -->
+	<main class="container cart-section">
+		<h1 class="cart-title">หน้าเทรด (Trade)</h1>
+
+		<div class="cart-tabs">
+			<button class="active">รายการแลกของคุณ</button>
+		</div>
+        
+        
+		<div class="history-section" style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+			<div id="pending-trade"></div>
+			<div id="trade-history"></div>
+		</div>
+
+	</main>
+
+	<!-- Footer -->
+	<footer>
+		<div class="footer-content">
+			<div class="footer-section">
+				<h3>เกี่ยวกับเรา</h3>
+				<p>โรงเรียนบ้านฮ้อยเงิน โครงการ Smart Farm นำเสนอผักและผลไม้ที่ปลูกด้วยเทคโนโลยีสมัยใหม่</p>
+			</div>
+			<div class="footer-section">
+				<h3>ติดต่อเรา</h3>
+				<p>📍 โรงเรียนบ้านฮ้อยเงิน เชียงใหม่</p>
+				<p>📞 053-XXX-XXX</p>
+				<p>📧 smartfarm@baanhoingern.ac.th</p>
+			</div>
+			<div class="footer-section">
+				<h3>ลิงก์ที่มีประโยชน์</h3>
+				<a href="#">นโยบายความเป็นส่วนตัว</a>
+				<a href="#">เงื่อนไขการใช้บริการ</a>
+				<a href="#">วิธีการชำระเงิน</a>
+			</div>
+			<div class="footer-section">
+				<h3>ติดตามเรา</h3>
+				<p><i class="fab fa-facebook"></i> Facebook</p>
+				<p><i class="fab fa-instagram"></i> Instagram</p>
+				<p><i class="fab fa-line"></i> Line Official</p>
+			</div>
+		</div>
+        
+		<div class="footer-bottom">
+			<p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
+		</div>
+	</footer>
+	<script src="products.js"></script>
+	<script src="JS/tradehistory.js"></script>
+</body>
+</html>
