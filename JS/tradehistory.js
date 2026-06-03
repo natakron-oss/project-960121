@@ -1,131 +1,118 @@
-// Render trade history and pending trade on tradehistory.html
-document.addEventListener('DOMContentLoaded', function() {
-    function getTradeOrders() {
-        try {
-            return JSON.parse(localStorage.getItem('tradeOrders')) || [];
-        } catch (e) { return []; }
-    }
+// tradehistory.js
+// Renders three sections: open orders, incoming requests, completed trades
 
-    function getPendingTrade() {
-        try { return JSON.parse(localStorage.getItem('trade')) || []; } catch (e) { return []; }
-    }
+document.addEventListener('DOMContentLoaded', () => {
+	// Sample data — replace with real API calls as needed
+	const openOrders = [
+		{
+			id: 'ORD-1001',
+			createdAt: '2026-06-01T10:12:00',
+			items: [ 'BTC 0.005', 'USDT 50' ],
+			price: '฿150,000',
+			details: 'สั่งขาย BTC ขนาดเล็กเพื่อทดสอบระบบ — ต้องการขายเมื่อราคาแตะ 150,000 บาท โปรดอย่าปรับราคาอัตโนมัติ การตั้งค่านี้มีการแบ่งส่ง 2 ครั้งในกรณีมีคำสั่งซื้อจำนวนมาก',
+			counterparty: null,
+			status: 'pending'
+		},
+		{
+			id: 'ORD-1002',
+			createdAt: '2026-06-02T14:05:00',
+			items: [ 'ETH 0.2' ],
+			price: '฿6,400',
+			details: 'คำสั่งซื้อแบบ limit เพื่อสะสมเหรียญระยะกลาง — ไม่ยอมรับการเทรดทางเดียว ต้องยืนยันก่อนการจ่ายเงิน',
+			counterparty: null,
+			status: 'pending'
+		}
+	];
 
-    function formatDate(iso) {
-        try { const d = new Date(iso); return d.toLocaleString(); } catch (e) { return iso; }
-    }
+	const incoming = [
+		{
+			id: 'REQ-9001',
+			from: 'user_alice',
+			createdAt: '2026-06-02T16:20:00',
+			offer: 'ต้องการซื้อ BTC 0.005 ในราคา ฿150,000',
+			message: 'สนใจซื้อด่วนครับ ขอทราบวิธีจ่ายเงินและระยะเวลาการส่งเหรียญ — ผมมีประวัติเทรด 45 ครั้ง ไม่มีปัญหา',
+			status: 'requested'
+		}
+	];
 
-    function renderPending() {
-        const pending = getPendingTrade();
-        const container = document.getElementById('pending-trade');
-        if (!container) return;
-        if (pending.length === 0) {
-            container.innerHTML = '<div class="empty-cart-text">ยังไม่มีการลงเทรดรอส่ง</div>';
-            return;
-        }
-        let html = '<div class="card">';
-        html += '<h3>รายการรอส่ง</h3>';
-        pending.forEach((it, idx) => {
-            html += `<div class="trade-item"><strong>${it.name}</strong> — จำนวน ${it.quantity} ${it.unit || ''} <span class="meta">(คลัง ${it.stock || '-'})</span></div>`;
-        });
-        html += `<div style="margin-top:12px; display:flex; gap:8px;"><button id="send-pending-btn" class="btn btn-outline-green">ส่งคำขอแลก</button><button id="clear-pending-btn" class="btn">ล้างรายการ</button></div>`;
-        html += '</div>';
-        container.innerHTML = html;
-    }
+	const completed = [
+		{
+			id: 'TX-7001',
+			createdAt: '2026-05-28T09:30:00',
+			executedAt: '2026-05-28T09:45:12',
+			items: [ 'BTC 0.01' ],
+			price: '฿300,000',
+			details: 'เทรดเสร็จสมบูรณ์ — ผู้ซื้อชำระผ่านพร้อมเพย์ เอกสารการโอนแนบในแชท การส่งเหรียญเสร็จสิ้นในเวลา 09:45:12 โดย TXID: abc123def456ghi789',
+			counterparty: 'user_bob',
+			status: 'completed'
+		}
+	];
 
-    function renderHistory() {
-        const orders = getTradeOrders();
-        const container = document.getElementById('trade-history');
-        if (!container) return;
-        if (orders.length === 0) {
-            container.innerHTML = '<div class="empty-cart-text">ยังไม่มีประวัติการเทรด</div>';
-            return;
-        }
-        let html = '';
-        orders.slice().reverse().forEach(order => {
-            const statusClass = order.status === 'completed' ? 'completed' : 'pending';
-            html += `<div class="trade-order" data-id="${order.id}">
-                <div class="trade-order-header">
-                    <div>ID: ${order.id}</div>
-                    <div>สถานะ: <span class="status-badge ${statusClass}">${order.status}</span></div>
-                    <div>วันที่: ${formatDate(order.createdAt)}</div>
-                </div>
-                <div class="trade-order-items">`;
-            order.items.forEach(it => {
-                html += `<div class="trade-item">• ${it.name} — จำนวน ${it.quantity} ${it.unit || ''}</div>`;
-            });
-            html += `</div>
-                <div style="margin-top:8px; display:flex; gap:8px;">
-                    ${order.status !== 'completed' ? `<button class="btn btn-outline-green mark-complete-btn" data-id="${order.id}">ทำเครื่องหมายเสร็จ</button>` : ''}
-                    <button class="btn delete-order-btn" data-id="${order.id}">ลบ</button>
-                </div>
-            </div>`;
-        });
-        container.innerHTML = html;
-    }
+	function formatDate(iso) {
+		const d = new Date(iso);
+		return d.toLocaleString('th-TH');
+	}
 
-    // Actions
-    function sendPendingAsOrder() {
-        const pending = getPendingTrade();
-        if (!pending || pending.length === 0) { alert('ไม่มีรายการที่จะส่ง'); return; }
-        const orders = getTradeOrders();
-        const newOrder = {
-            id: 'TO_' + Date.now(),
-            items: pending,
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        };
-        orders.push(newOrder);
-        localStorage.setItem('tradeOrders', JSON.stringify(orders));
-        localStorage.setItem('trade', JSON.stringify([]));
-        renderPending(); renderHistory();
-        alert('ส่งคำขอแลกเรียบร้อย');
-    }
+	function renderCartStyleList(containerId, items, type) {
+		const container = document.getElementById(containerId);
+		container.innerHTML = '';
+		if (!items || items.length === 0) {
+			const emp = document.createElement('div');
+			emp.className = 'empty-cart-text';
+			emp.textContent = 'ยังไม่มีรายการ';
+			container.appendChild(emp);
+			return;
+		}
 
-    function clearPending() {
-        if (!confirm('ต้องการล้างรายการรอส่งหรือไม่?')) return;
-        localStorage.setItem('trade', JSON.stringify([]));
-        renderPending();
-    }
+		// header
+		const header = document.createElement('div');
+		header.className = 'cart-header';
+		header.innerHTML = `
+			<div></div>
+			<div>รายละเอียด</div>
+			<div>ราคา/เงื่อนไข</div>
+			<div>สถานะ</div>
+			<div>เวลา</div>
+			<div></div>
+		`;
+		container.appendChild(header);
 
-    function markOrderComplete(id) {
-        const orders = getTradeOrders();
-        const idx = orders.findIndex(o => o.id === id);
-        if (idx === -1) return;
-        orders[idx].status = 'completed';
-        orders[idx].updatedAt = new Date().toISOString();
-        localStorage.setItem('tradeOrders', JSON.stringify(orders));
-        renderHistory();
-    }
+		items.forEach((o, idx) => {
+			const row = document.createElement('div');
+			row.className = 'cart-item';
+			const name = Array.isArray(o.items) ? o.items.join(', ') : (o.offer || o.items || '');
+			const statusLabel = o.status === 'completed' ? 'เสร็จแล้ว' : (type === 'incoming' ? 'คำขอ' : 'รอดำเนินการ');
+			const timeText = o.executedAt ? formatDate(o.executedAt) : formatDate(o.createdAt);
 
-    function deleteOrder(id) {
-        if (!confirm('ลบคำขอเทรดนี้จริงหรือไม่?')) return;
-        const orders = getTradeOrders().filter(o => o.id !== id);
-        localStorage.setItem('tradeOrders', JSON.stringify(orders));
-        renderHistory();
-    }
+			row.innerHTML = `
+				<input type="checkbox" class="item-checkbox" data-index="${idx}" ${type==='completed' ? '' : 'checked'}>
+				<div class="cart-item-info">
+					<div class="cart-item-name">${o.id} — ${name}</div>
+					<div class="cart-item-meta">${o.counterparty ? 'คู่สัญญา: ' + o.counterparty : (o.from ? 'ผู้เสนอ: ' + o.from : '')}</div>
+				</div>
+				<div class="cart-item-price">${o.price || ''}</div>
+				<div class="cart-item-qty"><span class="status-badge ${o.status==='completed' ? 'completed' : 'pending'}">${statusLabel}</span></div>
+				<div class="cart-item-total">${timeText}</div>
+				<div>
+					${type==='open' && o.status!=='completed' ? '<button class="delete-btn">ยกเลิก</button>' : '<button class="btn-small" disabled>ดู</button>'}
+				</div>
+			`;
 
-    renderPending();
-    renderHistory();
+			container.appendChild(row);
 
-    // (seed button removed) For safety, no sample-data handler is registered here.
+			// long details row
+			const details = document.createElement('div');
+			details.style.padding = '12px 20px 18px 70px';
+			details.style.background = '#fff';
+			details.style.borderBottom = '1px solid #eee';
+			details.innerHTML = `<div style="color:#666; white-space:pre-line;">${o.details || o.message || ''}</div>`;
+			container.appendChild(details);
+		});
+	}
 
-    // wire action buttons (delegation)
-    document.addEventListener('click', (e) => {
-        if (e.target && e.target.id === 'send-pending-btn') {
-            sendPendingAsOrder();
-        } else if (e.target && e.target.id === 'clear-pending-btn') {
-            clearPending();
-        } else if (e.target && e.target.classList.contains('mark-complete-btn')) {
-            const id = e.target.dataset.id; if (id) markOrderComplete(id);
-        } else if (e.target && e.target.classList.contains('delete-order-btn')) {
-            const id = e.target.dataset.id; if (id) deleteOrder(id);
-        }
-    });
+	// Render all sections (cart-like UI)
+	renderCartStyleList('open-list', openOrders, 'open');
+	renderCartStyleList('incoming-list', incoming, 'incoming');
+	renderCartStyleList('completed-list', completed, 'completed');
 
-    // Refresh when storage changes (from other tabs/actions)
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'trade' || e.key === 'tradeOrders' || e.key === 'tradeOrders') {
-            renderPending(); renderHistory();
-        }
-    });
 });

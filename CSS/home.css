@@ -588,6 +588,9 @@
 .card-btn-request:hover {
     background-color: #234026;
 }
+
+/* Swap button (secondary accent) */
+/* Swap styles removed (button deleted) */
         /* Footer */
         footer {
             background: var(--dark);
