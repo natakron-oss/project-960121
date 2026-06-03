@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="home/style.css">
-
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <!-- Header -->
@@ -19,8 +17,8 @@
         
         <div class="header-top">
 
-            <div class="logo">
-                <img src="home/image/schoolLogo.png" alt="school logo" width="50" height="50">
+                <div class="logo">
+                <img src="image/schoolLogo.png" alt="school logo" width="50" height="50">
             </div>
 
             <div class="search-bar">
@@ -81,17 +79,6 @@
         <option value="low-high">ราคาน้อย → มาก</option>
         <option value="high-low">ราคามาก → น้อย</option>
     </select>
-    <div class="secondary-filters" style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
-        <div style="display: flex; flex-direction: column; font-size: 0.8rem; color: var(--dark);">
-            <label>ระยะทาง: <span id="distance-val">10.0</span> กม.</label>
-            <input type="range" id="distance-slider" min="100" max="10000" step="100" value="10000" />
-        </div>
-        <select id="type-select" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); font-family: inherit;">
-            <option value="all">รูปแบบทั้งหมด</option>
-            <option value="swap">แลกเปลี่ยน / ฟรี</option>
-            <option value="sell">ขาย (Direct Sale)</option>
-        </select>
-    </div>
 
 </div>
         </div>
@@ -199,7 +186,7 @@
         </div>
     </footer>
 
-    <script src="home/products.js"></script>
-    <script src="home/script.js"></script>
+    <script src="products.js"></script>
+    <script src="JS/home.js"></script>
 </body>
 </html>

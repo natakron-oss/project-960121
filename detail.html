@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>detail</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="detail/style.css">
+    <link rel="stylesheet" href="CSS/detail.css">
 </head>
 <body>
     <!-- Header -->
    <header>
         <div class="header-top">
 
-            <div class="logo">
-                <img src="detail/image/schoolLogo.png" alt="school logo">
+                <div class="logo">
+                <img src="image/schoolLogo.png" alt="school logo">
             </div>
 
             <div class="search-bar">
@@ -47,13 +47,7 @@
     <main class="container product-section">
         <div class="product-detail">
             <div class="product-images">
-                <img src="detail/image/คะน้า.jpg" alt="คะน้า" class="main-image">
-                <div class="thumbnail-images">
-                    <img src="detail/image/คะน้า1.jpg" alt="คะน้า">
-                    <img src="detail/image/คะน้า2.jpg" alt="คะน้า">
-                    <img src="detail/image/คะน้า3.jpg" alt="คะน้า">
-                    <img src="detail/image/คะน้า.jpg" alt="คะน้า">
-                </div>
+                <img src="image/คะน้า.jpg" alt="คะน้า" class="main-image">
             </div>
 
             <div class="product-info">
@@ -71,8 +65,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-outline-green">🛒 เพิ่มลงตะกร้า</button>
-                    <button class="btn btn-primary">ซื้อสินค้า</button>
+                    <button class="btn btn-primary" onclick="addToCartDetail()">ซื้อสินค้า</button>
                 </div>
 
                 <p class="stock-info">เพิ่มได้สูงสุด 18 กก.</p>
@@ -112,6 +105,7 @@
         </div>
     </footer>
 
-    <script src="detail/script.js"></script>
+    <script src="products.js"></script>
+    <script src="JS/detail.js"></script>
 </body>
 </html>

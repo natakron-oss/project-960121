@@ -72,8 +72,8 @@ function renderProducts(productsToRender) {
                 <div class="product-price">${product.price} บาท /กก.</div>
                 <div class="product-stock">📦 เหลือ ${product.stock} กก.</div>
                 <div class="product-actions">
-                    
-                    <button class="btn-add" onclick="addToCart(${product.id})">แลกเปลี่ยนได้</button>
+                    <button class="btn-detail" onclick="showDetail(${product.id})">ใส่ตะกร้า</button>
+                    <button class="btn-add" onclick="addToCart(${product.id})">ซื้อสินค้า</button>
                 </div>
             </div>
         `;
