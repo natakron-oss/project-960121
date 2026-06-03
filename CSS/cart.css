@@ -565,7 +565,21 @@
     transition: background-color 0.3s;
 }
 
-.summary-right .checkout-btn{
+.swap-btn {
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.summary-right .checkout-btn .swap-btn {
   margin-top: auto;                 /* << ดันปุ่มไปติดก้นกล่อง */
   width: 100%;
 }
@@ -575,6 +589,15 @@
 }
 
 .checkout-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.swap-btn:hover {
+    background-color: #218838;
+}
+
+.swap-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
