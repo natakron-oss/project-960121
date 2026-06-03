@@ -169,6 +169,38 @@ function showDetail(productId) {
 
     modal.style.display = 'flex';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. ค้นหาปุ่มทั้ง 2 ตัวจาก HTML
+    const fabAddItem = document.getElementById('fab-add-item');
+    const btnAddHarvest = document.getElementById('btn-add-harvest');
+    
+    // สมมติว่าเรามี Modal Container อยู่ใน HTML (id="add-item-modal")
+    const addItemModal = document.getElementById('add-item-modal');
+
+    // 2. สร้างฟังก์ชันสำหรับเปิด Modal
+    function openAddListingModal() {
+        console.log('Opening Add Item Modal...');
+        // ลบคลาส hidden เพื่อแสดง Modal
+        if (addItemModal) {
+            addItemModal.classList.remove('hidden');
+            // ทำงานอื่นๆ เช่น reset ค่าในฟอร์ม
+        } else {
+            // ถ้ายังไม่ได้สร้าง Modal UI ใน HTML จะเด้ง Alert แทนก่อน
+            alert('โชว์หน้าต่าง List Your Garden Harvest!');
+        }
+    }
+
+    // 3. ผูก Event Click ให้กับปุ่ม ถ้าปุ่มนั้นมีอยู่บนหน้าจอ
+    if (fabAddItem) {
+        fabAddItem.addEventListener('click', openAddListingModal);
+    }
+
+    if (btnAddHarvest) {
+        btnAddHarvest.addEventListener('click', openAddListingModal);
+    }
+});
+
 function closeModal() {
     document.getElementById('detailModal').style.display = 'none';
 }
