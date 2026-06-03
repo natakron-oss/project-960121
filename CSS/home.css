@@ -92,7 +92,7 @@
         }
 
         .logo img{
-            width: 70px;
+            width: 120px;
             height: auto;
             object-fit: contain;
         }
@@ -247,14 +247,41 @@
         /* Hero Banner */
         .hero {
             background: linear-gradient(135deg, rgba(181, 188, 129, 0.8), rgba(123, 174, 117, 0.8)), 
-                        url("image/farm.png");
+                        url("image/farm.png") no-repeat;
             background-size: cover;
             background-position: center;
             color: var(--white);
             padding: 6rem 2rem;
             text-align: center;
             margin-bottom: 3rem;
+
+           position: relative; 
+            overflow: hidden; /* ซ่อนส่วนของรูปภาพที่อาจจะล้นออกนอกแบนเนอร์ */
+    
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .hero-bg-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* จัดให้อยู่กึ่งกลางกรอบแบบพอดีเป๊ะ */
+    
+            width: px; /* ปรับความใหญ่ของรูปลายน้ำได้ตามต้องการ */
+            height: auto;
+    
+            opacity: 0.15; /* ปรับความจาง (0.1 คือจางมาก 1.0 คือชัดสุด) */
+            z-index: 0; /* ดันไปอยู่เลเยอร์หลังสุด */
+            pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1; /* ดันขึ้นมาอยู่เลเยอร์หน้าสุด (ทับรูปโลโก้) */
+    color: var(--white);
+    max-width: 600px; /* จำกัดความกว้างข้อความให้อ่านง่าย */
+}
 
         .hero h1 {
             font-size: 4rem;
@@ -467,16 +494,16 @@
     object-fit: cover;
 }
 
-.card-badge-orange {
+.card-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: #F49D73; /* สีส้มตามรูป */
-    color: #5C2710; /* สีตัวหนังสือสีน้ำตาลเข้ม */
     padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 700;
+    z-index: 10;
+    /* ห้ามใส่ background-color หรือ color ตายตัวในนี้นะครับ เพราะเราย้ายให้ JavaScript จัดการแทนแล้ว */
 }
 
 /* ส่วนเนื้อหาด้านล่างรูปภาพ */
@@ -592,56 +619,76 @@
 /* Swap button (secondary accent) */
 /* Swap styles removed (button deleted) */
         /* Footer */
-        footer {
-            background: var(--dark);
-            color: var(--white);
-            padding: 3rem 2rem;
-            margin-top: 3rem;
-        }
+        /* เพิ่ม Selector footer ที่หายไปตอนแรก */
+footer {
+    background: var(--dark);
+    color: var(--white);
+    padding: 4rem 2rem 2rem; /* เพิ่มพื้นที่ว่างด้านบนให้ดูโปร่งขึ้น */
+    margin-top: 3rem;
+}
 
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    /* แบ่ง 4 คอลัมน์เท่าๆ กัน และจะพับลงอัตโนมัติเมื่อจอเล็ก */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
 
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            display: block;
-            transition: color 0.3s;
-        }
+.footer-section h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    position: relative;
+}
 
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            gap: 2rem;
-        }
+/* จัดระเบียบเนื้อหาด้านในให้อ่านง่ายขึ้น */
+.footer-section p, 
+.footer-section a {
+    display: block; /* บังคับให้ข้อความและลิงก์เรียงลงมาทีละบรรทัด */
+    color: #cccccc; /* ดรอปสีลงนิดนึง เพื่อให้หัวข้อ h3 ดูโดดเด่น */
+    text-decoration: none;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
 
-        .search-bar {
-            flex: 1;
-            max-width: 700px;
-            margin: 0 0 0 3rem;
-            display: flex;
-            justify-content: center;
-        }
+/* เพิ่มลูกเล่นเมื่อนำเมาส์ไปชี้ลิงก์หรือข้อความ */
+.footer-section a:hover,
+.footer-section p:hover {
+    color: var(--primary);
+    transform: translateX(5px); /* เลื่อนขวานิดๆ ให้มีมิติ */
+    cursor: pointer;
+}
 
-        .footer-section a:hover {
-            color: var(--primary);
-        }
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* ทำให้เส้นคั่นดูนุ่มนวลขึ้น */
+    padding-top: 2rem;
+    color: #999;
+    font-size: 0.9rem;
+}
 
-        .footer-bottom {
-            text-align: center;
-            border-top: 1px solid #444;
-            padding-top: 2rem;
-            color: #999;
-        }
+/* ส่วนของ Header (ยกของเดิมของคุณมาให้ครบ) */
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.search-bar {
+    flex: 1;
+    max-width: 700px;
+    margin: 0 0 0 3rem;
+    display: flex;
+    justify-content: center;
+}
 
         /* Modal */
         .modal {

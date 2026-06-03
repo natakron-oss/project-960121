@@ -219,6 +219,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const swapBtn = document.querySelector('.swap-btn');
+    if (swapBtn) {
+        swapBtn.addEventListener('click', () => {
+            cartManager.proceedToCheckout();
+        });
+    }
+
     // ปุ่มกลับ
     const backBtn = document.querySelector('.back-btn');
     if (backBtn) {
