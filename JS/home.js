@@ -77,7 +77,6 @@ productsGrid.innerHTML = products.map(product => {
                 
                 <div class="card-title-row">
                     <h3>${product.name}</h3>
-                    <span class="card-type-label">Swap</span>
                 </div>
                 
                 <div class="card-owner-row">
@@ -90,9 +89,7 @@ productsGrid.innerHTML = products.map(product => {
                     <button class="card-btn-cart" onclick="addToCart(${product.id})">
                         <i class="fa-solid fa-shopping-cart"></i> ใส่ตะกร้า
                     </button>
-                    <button class="card-btn-swap" onclick="addToTrade(${product.id})" title="ขอแลก/Swap">
-                        <i class="fa-solid fa-exchange-alt"></i> แลก/Swap
-                    </button>
+                    <!-- Swap button removed -->
                     <button class="card-btn-buy" onclick="buyNow(${product.id})">
                         ซื้อสินค้า
                     </button>

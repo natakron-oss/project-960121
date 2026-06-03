@@ -2,55 +2,73 @@
 // Renders three sections: open orders, incoming requests, completed trades
 
 document.addEventListener('DOMContentLoaded', () => {
-	// Sample data — replace with real API calls as needed
-	const openOrders = [
-		{
-			id: 'ORD-1001',
-			createdAt: '2026-06-01T10:12:00',
-			items: [ 'BTC 0.005', 'USDT 50' ],
-			price: '฿150,000',
-			details: 'สั่งขาย BTC ขนาดเล็กเพื่อทดสอบระบบ — ต้องการขายเมื่อราคาแตะ 150,000 บาท โปรดอย่าปรับราคาอัตโนมัติ การตั้งค่านี้มีการแบ่งส่ง 2 ครั้งในกรณีมีคำสั่งซื้อจำนวนมาก',
-			counterparty: null,
-			status: 'pending'
-		},
-		{
-			id: 'ORD-1002',
-			createdAt: '2026-06-02T14:05:00',
-			items: [ 'ETH 0.2' ],
-			price: '฿6,400',
-			details: 'คำสั่งซื้อแบบ limit เพื่อสะสมเหรียญระยะกลาง — ไม่ยอมรับการเทรดทางเดียว ต้องยืนยันก่อนการจ่ายเงิน',
-			counterparty: null,
-			status: 'pending'
-		}
-	];
-
-	const incoming = [
-		{
-			id: 'REQ-9001',
-			from: 'user_alice',
-			createdAt: '2026-06-02T16:20:00',
-			offer: 'ต้องการซื้อ BTC 0.005 ในราคา ฿150,000',
-			message: 'สนใจซื้อด่วนครับ ขอทราบวิธีจ่ายเงินและระยะเวลาการส่งเหรียญ — ผมมีประวัติเทรด 45 ครั้ง ไม่มีปัญหา',
-			status: 'requested'
-		}
-	];
-
-	const completed = [
-		{
-			id: 'TX-7001',
-			createdAt: '2026-05-28T09:30:00',
-			executedAt: '2026-05-28T09:45:12',
-			items: [ 'BTC 0.01' ],
-			price: '฿300,000',
-			details: 'เทรดเสร็จสมบูรณ์ — ผู้ซื้อชำระผ่านพร้อมเพย์ เอกสารการโอนแนบในแชท การส่งเหรียญเสร็จสิ้นในเวลา 09:45:12 โดย TXID: abc123def456ghi789',
-			counterparty: 'user_bob',
-			status: 'completed'
-		}
-	];
+	// Sample data using product IDs from products.js — displays vegetable names
 
 	function formatDate(iso) {
 		const d = new Date(iso);
 		return d.toLocaleString('th-TH');
+	}
+
+	// Ensure products.js is loaded (in case page didn't include it)
+	function ensureProductsLoaded(cb) {
+		if (window.products && Array.isArray(window.products)) return cb();
+		const s = document.createElement('script');
+		s.src = 'products.js';
+		s.onload = () => cb();
+		s.onerror = () => { console.error('Cannot load products.js'); cb(); };
+		document.head.appendChild(s);
+	}
+
+	function buildSampleData() {
+		const p = window.products || [];
+		const pick = i => (p[i] ? p[i].id : (i+1));
+
+		const openOrders = [
+			{
+				id: 'ORD-1001',
+				createdAt: '2026-06-01T10:12:00',
+				items: [ { productId: pick(0), qty: 2 }, { productId: pick(5), qty: 1 } ],
+				price: p[0] ? `฿${p[0].price * 2}` : '฿0',
+				details: 'สั่งขาย/แลกเปลี่ยนผักตามรายการด้านล่าง กรุณาติดต่อเพื่อยืนยันการนัดรับ',
+				counterparty: null,
+				status: 'pending'
+			},
+			{
+				id: 'ORD-1002',
+				createdAt: '2026-06-02T14:05:00',
+				items: [ { productId: pick(2), qty: 1 } ],
+				price: p[2] ? `฿${p[2].price}` : '฿0',
+				details: 'คำสั่งแบบจองล่วงหน้า รอการยืนยันจากผู้ขาย',
+				counterparty: null,
+				status: 'pending'
+			}
+		];
+
+		const incoming = [
+			{
+				id: 'REQ-9001',
+				from: 'user_alice',
+				createdAt: '2026-06-02T16:20:00',
+				offer: { productId: pick(0), qty: 1, price: p[0] ? `฿${p[0].price}` : '' },
+				message: 'สนใจแลกคะน้า 1 กก. ขอวิธีการรับสินค้าและเวลานัดรับ',
+				status: 'requested'
+			}
+		];
+
+		const completed = [
+			{
+				id: 'TX-7001',
+				createdAt: '2026-05-28T09:30:00',
+				executedAt: '2026-05-28T09:45:12',
+				items: [ { productId: pick(9), qty: 6 } ],
+				price: p[9] ? `฿${p[9].price * 6}` : '฿0',
+				details: 'เทรดเสร็จสมบูรณ์ — ผู้ซื้อชำระผ่านพร้อมเพย์ เอกสารการโอนแนบในแชท การรับสินค้าเรียบร้อย',
+				counterparty: 'user_bob',
+				status: 'completed'
+			}
+		];
+
+		return { openOrders, incoming, completed };
 	}
 
 	function renderCartStyleList(containerId, items, type) {
@@ -77,10 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		`;
 		container.appendChild(header);
 
+		function getProductName(id) {
+			const arr = window.products || [];
+			const p = arr.find(x => x.id === id);
+			return p ? p.name : 'ไม่ทราบสินค้า';
+		}
+
+		function itemsToLabel(items) {
+			if (!Array.isArray(items)) return '';
+			return items.map(it => {
+				const pid = it.productId || it.id;
+				const qty = it.qty ? (' x' + it.qty) : '';
+				return `${getProductName(pid)}${qty}`;
+			}).join(', ');
+		}
+
 		items.forEach((o, idx) => {
 			const row = document.createElement('div');
 			row.className = 'cart-item';
-			const name = Array.isArray(o.items) ? o.items.join(', ') : (o.offer || o.items || '');
+			const name = Array.isArray(o.items) ? itemsToLabel(o.items) : (o.offer ? (o.offer.productId ? `${getProductName(o.offer.productId)} x${o.offer.qty}` : o.offer) : '');
 			const statusLabel = o.status === 'completed' ? 'เสร็จแล้ว' : (type === 'incoming' ? 'คำขอ' : 'รอดำเนินการ');
 			const timeText = o.executedAt ? formatDate(o.executedAt) : formatDate(o.createdAt);
 
@@ -110,9 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	// Render all sections (cart-like UI)
-	renderCartStyleList('open-list', openOrders, 'open');
-	renderCartStyleList('incoming-list', incoming, 'incoming');
-	renderCartStyleList('completed-list', completed, 'completed');
+	// Ensure products loaded, build sample data and render
+	ensureProductsLoaded(() => {
+		const data = buildSampleData();
+		renderCartStyleList('open-list', data.openOrders, 'open');
+		renderCartStyleList('incoming-list', data.incoming, 'incoming');
+		renderCartStyleList('completed-list', data.completed, 'completed');
+	});
 
 });
