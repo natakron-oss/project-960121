@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ลงประกาศสินค้า</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body class="bg-green-50">
+
+<div class="max-w-xl mx-auto bg-white p-6 mt-10 rounded-xl shadow">
+
+    <h1 class="text-2xl font-bold mb-5">
+        ลงประกาศสินค้า
+    </h1>
+
+    <form id="productForm">
+
+        <input
+            type="text"
+            id="name"
+            placeholder="ชื่อสินค้า"
+            class="w-full border p-3 mb-3 rounded"
+            required
+        >
+
+        <select
+            id="category"
+            class="w-full border p-3 mb-3 rounded"
+        >
+            <option value="ผัก">ผัก</option>
+            <option value="ผลไม้">ผลไม้</option>
+        </select>
+
+        <input
+            type="number"
+            id="quantity"
+            placeholder="จำนวน (กก.)"
+            class="w-full border p-3 mb-3 rounded"
+            required
+        >
+
+        
+
+        <textarea
+            id="description"
+            placeholder="รายละเอียดสินค้า"
+            class="w-full border p-3 mb-3 rounded"
+        ></textarea>
+        <label class="block mb-2 font-semibold">
+    วันหมดอายุสินค้า
+</label>
+
+<input
+    type="date"
+    id="expire_date"
+    class="w-full border p-3 mb-3 rounded"
+    required
+>
+<label class="block mb-2 font-semibold">
+    รูปสินค้า
+</label>
+
+<input
+    type="file"
+    id="image"
+    accept="image/*"
+    class="w-full border p-3 mb-3 rounded"
+    required
+>
+
+        <button
+            type="submit"
+            class="bg-green-600 text-white px-6 py-3 rounded"
+        >
+            ลงประกาศ
+        </button>
+
+    </form>
+
+</div>
+
+<script src="add-product.js"></script>
+
+</body>
+</html>
