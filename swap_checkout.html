@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="CSS/swap.css">
 </head>
+
 <body>
     <!-- Header -->
-  <header>
-        
+    <header>
+
         <div class="header-top">
 
-                <div class="logo">
+            <div class="logo">
                 <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
             </div>
 
@@ -34,15 +36,16 @@
                     <span>History</span>
                 </a>
 
-                 <a href="login.html" class="btn btn-primary">
+                <a href="login.html" class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     <span>เข้าสู่ระบบ</span>
                 </a>
             </div>
         </div>
         </div>
-        <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
-            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+        <div style="display:flex; justify-content:flex-start; padding:8px 16px;">
+            <a href="home.html" class="back-btn"
+                style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>กลับหน้าหลัก</span>
             </a>
@@ -52,158 +55,89 @@
     </header>
 
     <!-- Main Content -->
-    <div class="swap-container">
-        <!-- Left Side - Customer Information -->
-        <div class="swap-left">
-            <!-- Customer Information -->
-            <div class="section">
-                <h2 class="section-title">ข้อมูลผู้สั่งสินค้า</h2>
-                <form id="customerForm" class="form">
-                    <div class="form-group">
-                        <label for="fullname">ชื่อ - นามสกุล</label>
-                        <input type="text" id="fullname" class="form-input" placeholder="เช่น นางสาว/นาย" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">เบอร์โทรศัพท์</label>
-                        <input type="tel" id="phone" class="form-input" placeholder="+66" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="address">รายละเอียดสินค้า</label>
-                        <div class="input-icon">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" id="address" class="form-input form-textarea" placeholder="กรุณากรอกรายละเอียด" required>
-
-                    
-                    
-                    <div class="form-group">
-                        <label>เลือกวิธีการจัดส่ง</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="shipping" value="pickupschool" checked>
-                                <span class="radio-text">ไปรับด้วยตนเอง</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="shipping" value="pickuphome">
-                                <span class="radio-text">จัดส่งตามที่อยู่</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="address">ที่อยู่</label>
-                        <div class="input-icon">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" id="address" class="form-input form-textarea" placeholder="กรุณากรอกที่อยู่" required>
-                    </div>
-                    </div>
-<div class="form-group">
-    <label>เลือกวิธีการชำระเงิน</label>
-    <div class="radio-group">
-        <label class="radio-label">
-            <input type="radio" name="shipping" value="cod" checked>
-            <i class="fa-solid fa-hand-holding-dollar"></i>
-            <span class="radio-text">เก็บเงินปลายทาง</span>
-        </label>
-
-        <label class="radio-label">
-            <input type="radio" name="shipping" value="transfer">
-            <i class="fa-solid fa-building-columns"></i>
-            <span class="radio-text">จ่ายผ่านธนาคาร</span>
-        </label>
-
-        <label class="radio-label">
-            <input type="radio" name="shipping" value="qrcode">
-            <i class="fa-solid fa-qrcode"></i>
-            <span class="radio-text">สแกนเงิน QR CODE</span>
-        </label>
-    </div>
-</div>
-
-
-
-                    <button type="submit" class="btn-submit">ยืนยันการสั่งซื้อ</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Right Side - Order Summary -->
-        <div class="swap-right">
-            <div class="summary-box">
-                <h2 class="summary-title">รวมรายการสินค้า</h2>
-
-                <!-- Products List -->
-               
-
-                <!-- Summary Table -->
-                <div class="summary-table">
-    <table style="width: 100%;">
-        <thead>
-            <tr>
-                <th >ชื่อสินค้า</th>
-                <th>จำนวน</th>
-                <th>ราคา</th>
+   <div class="swap-container">
+    <div class="swap-left">
+        <div class="section">
+            <h2 class="section-title">ข้อมูลผู้สั่งสินค้า</h2>
+            <form id="customerForm" class="form">
                 
-            </tr>
-            
-        </thead>
-        <tbody id="productsList">
-            </tbody>
-    </table>
-</div>
+                <div class="form-group">
+                    <label for="fullname">ชื่อ - นามสกุล</label>
+                    <input type="text" id="fullname" class="form-input" placeholder="เช่น นางสาว/นาย" required>
+                </div>
 
-<div class="summary-totals">
-    <div class="total-row">
-        <span>รวมราคาสินค้า</span>
-        <span id="subtotal">0.00 บาท</span>
-    </div>
-    <div class="total-row">
-        <span>ค่าจัดส่ง</span>
-        <span id="shipping">0.00 บาท</span>
-    </div>
-    <div class="total-row grand-total">
-        <span>ยอดชำระรวมทั้งหมด</span>
-        <span id="grandTotal">฿0.00</span>
-    </div>
-</div>
-            </div>
+                <div class="form-group">
+                    <label for="phone">เบอร์โทรศัพท์</label>
+                    <input type="tel" id="phone" class="form-input" placeholder="+66" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">รายละเอียดสินค้า</label> 
+                    <input type="text" id="address" class="form-input" placeholder="กรุณากรอกรายละเอียดสินค้าที่ต้องการแลก" required>
+                </div>
+
+                <div class="form-group">
+                    <label>รูปสินค้า</label>
+                    <input type="file" id="image" class="form-input form-textarea" required>
+
+                </div>
+                
+                <div class="form-group">
+                    <label for="expire_date">วันหมดอายุสินค้า</label>
+                    <input type="date" id="expire_date" class="form-input" required>
+                </div>  
+
+                <div class="form-group">
+                    <label>เลือกวิธีการจัดส่ง</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="shipping" value="pickupschool" checked>
+                            <span class="radio-text">ไปรับด้วยตนเอง</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">ยืนยันการสั่งซื้อ</button>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>Gardenshare</h3>
-            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Gardenshare</h3>
+                <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Marketplace</h3>
+                <p>Browse All</p>
+                <p>How It Works</p>
+                <p>Safety & Guidelines</p>
+            </div>
+            <div class="footer-section">
+                <h3>ลิงก์ที่มีประโยชน์</h3>
+                <a href="#">นโยบายความเป็นส่วนตัว</a>
+                <a href="#">เงื่อนไขการใช้บริการ</a>
+                <a href="#">วิธีการชำระเงิน</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>Legal Framework</h3>
+                <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+                <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+            </div>
         </div>
-        
-        <div class="footer-section">
-            <h3>Marketplace</h3>
-            <p>Browse All</p>
-            <p>How It Works</p>
-            <p>Safety & Guidelines</p>
-        </div> <div class="footer-section">
-            <h3>ลิงก์ที่มีประโยชน์</h3>
-            <a href="#">นโยบายความเป็นส่วนตัว</a>
-            <a href="#">เงื่อนไขการใช้บริการ</a>
-            <a href="#">วิธีการชำระเงิน</a>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Gardenshare. All rights reserved.</p>
         </div>
-        
-        <div class="footer-section">
-            <h3>Legal Framework</h3>
-            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
-            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
-        </div>
-    </div>
-    
-    <div class="footer-bottom">
-        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
-    </div>
-</footer>
+    </footer>
 
     <script src="products.js"></script>
     <script src="JS/checkout.js"></script>
 </body>
+
 </html>
