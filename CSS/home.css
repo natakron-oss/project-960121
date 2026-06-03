@@ -46,7 +46,6 @@
 .dropdown-content.show {
     display: block;
 }
-<style>
         * {
             margin: 0;
             padding: 0;
@@ -798,4 +797,3 @@ footer {
 
             
         }
-    </style>
