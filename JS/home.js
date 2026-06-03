@@ -1,21 +1,28 @@
-// Dropdown toggle for category
+
+// ฟังก์ชันเปิด/ปิด Dropdown
 function toggleDropdown() {
-    const dropdown = document.getElementById('categoryDropdown');
-    dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+    document.getElementById("category-dropdown").classList.toggle("show");
 }
 
-function hideDropdown() {
-    const dropdown = document.getElementById('categoryDropdown');
-    dropdown.style.display = 'none';
-}
-
-// Hide dropdown when clicking outside
-document.addEventListener('click', function(e) {
-    const toggle = document.getElementById('dropdownToggle');
-    const dropdown = document.getElementById('categoryDropdown');
-    if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
+// ปิด Dropdown เมื่อคลิกที่อื่นนอกกรอบ
+window.onclick = function(event) {
+    // เช็คว่าจุดที่คลิก ไม่ได้อยู่ใน dropdown-container
+    if (!event.target.closest('.dropdown-container')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
     }
+}
+
+// (แถม) อัปเดตตัวเลขระยะทางแบบ Real-time เมื่อเลื่อน Slider
+document.getElementById('distance-slider').addEventListener('input', function() {
+    // หาร 1000 เพื่อแปลงเมตรเป็นกิโลเมตร (ตามค่า min/max ที่ตั้งไว้)
+    let km = (this.value / 1000).toFixed(1);
+    document.getElementById('distance-val').innerText = km;
 });
 // Cart Management
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -48,39 +55,50 @@ function setupSearch() {
     });
 }
 
-// Render Products
-function renderProducts(productsToRender) {
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
+// ตัวอย่างฟังก์ชัน render สินค้า (นำเฉพาะโครงสร้าง HTML ด้านในไปประยุกต์ใช้)
+const productsGrid = document.getElementById('productsGrid');
+
+// ลูปข้อมูล products จากไฟล์ products.js ของมิน
+productsGrid.innerHTML = products.map(product => {
     
-    grid.innerHTML = '';
-
-    if (productsToRender.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 2rem;">ไม่พบสินค้า</p>';
-        return;
-    }
-
-    productsToRender.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-            <div class="product-image">
+    // จำลองข้อมูลเสริมให้ตรงกับในรูป (เพราะใน products.js ตอนนี้ยังไม่มีข้อมูลเหล่านี้)
+    const bestBefore = product.bestBefore || "4 Days";
+    const ownerName = product.owner || "Elena S.";
+    const distance = product.distance || "500m away";
+    
+    return `
+        <div class="product-card">
+            <div class="card-img-container">
                 <img src="${product.image}" alt="${product.name}">
+                <div class="card-badge-orange">Best Before: ${bestBefore}</div>
             </div>
-            <div class="product-info">
-                <div class="product-name">${product.name}</div>
-                <div class="product-price">${product.price} บาท /กก.</div>
-                <div class="product-stock">📦 เหลือ ${product.stock} กก.</div>
-                <div class="product-actions">
-                    <button class="btn-detail" onclick="showDetail(${product.id})">ใส่ตะกร้า</button>
-                    <button class="btn-add" onclick="addToCart(${product.id})">ซื้อสินค้า</button>
+            
+            <div class="card-content">
+                
+                <div class="card-title-row">
+                    <h3>${product.name}</h3>
+                    <span class="card-type-label">Swap</span>
                 </div>
+                
+                <div class="card-owner-row">
+                    <i class="fa-regular fa-user"></i>
+                    <span>${ownerName}</span>
+                </div>
+                <div class="product-stock">📦 เหลือ ${product.stock} กก.</div>
+                
+                <div class="card-footer-row">
+                    <button class="card-btn-cart" onclick="addToCart(${product.id})">
+                        <i class="fa-solid fa-shopping-cart"></i> ใส่ตะกร้า
+                    </button>
+                    <button class="card-btn-buy" onclick="buyNow(${product.id})">
+                        ซื้อสินค้า
+                    </button>
+                </div>
+                
             </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
+        </div>
+    `;
+}).join('');
 // Filter Products
 function filterProducts(category) {
     currentFilter = category;
