@@ -72,12 +72,9 @@
             required
         >
 
-        <select
-            id="category"
-            class="w-full border p-3 mb-3 rounded"
-        >
-            <option value="ผัก">ผัก</option>
-            <option value="ผลไม้">ผลไม้</option>
+        <select id="category" class="w-full border p-3 mb-3 rounded">
+            <option value="sell">Sell</option>
+            <option value="trade">Trade</option>
         </select>
 
         <input
@@ -95,16 +92,15 @@
             placeholder="รายละเอียดสินค้า"
             class="w-full border p-3 mb-3 rounded"
         ></textarea>
-        <label class="block mb-2 font-semibold">
-    วันหมดอายุสินค้า
-</label>
 
-<input
-    type="date"
-    id="expire_date"
+        <input
+    type="number"
+    id="expire_days"
+    placeholder="กี่วันเน่า"
     class="w-full border p-3 mb-3 rounded"
     required
 >
+
 <label class="block mb-2 font-semibold">
     รูปสินค้า
 </label>
@@ -159,12 +155,12 @@
     </div>
 </footer>
 
-    <script src="products.js"></script>
-    <script src="JS/trade.js"></script>
-    <script src="JS/home.js"></script>
+
+
+
 </body>
 
-<script src="add-product.js"></script>
+<script src="JS/add-product.js"></script>
 
 </body>
 </html>

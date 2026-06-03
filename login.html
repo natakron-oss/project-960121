@@ -29,7 +29,7 @@
 
     <!-- Login Form -->
     <div id="loginContainer" class="p-6">
-      <form method="post" class="space-y-5" id="loginForm">
+      <form class="space-y-5" id="loginForm">
         <div class="mb-4">
           <label for="email" class="block text-gray-700 mb-2">อีเมลของคุณ</label>
           <div class="relative">
@@ -114,83 +114,84 @@
       document.getElementById('loginContainer').classList.remove('hidden');
     });
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const loginForm = document.getElementById("loginForm");
-      const registerForm = document.getElementById("registerForm");
+  document.addEventListener("DOMContentLoaded", () => {
 
-      if (loginForm) {
-        loginForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
+  // ================= LOGIN =================
+  const loginForm = document.getElementById("loginForm");
 
-          const res = await fetch("http://localhost:3000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-          const data = await res.json();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-          if (data.status === "success") {
-            localStorage.setItem("auth_token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
+    console.log("🔥 LOGIN CLICKED", { email, password });
 
-            Swal.fire({
-              icon: "success",
-              title: "เข้าสู่ระบบสำเร็จ",
-              text: data.message,
-              timer: 1500,
-              showConfirmButton: false
-            }).then(() => {
-              window.location.href = "home.html";
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "เกิดข้อผิดพลาด",
-              text: data.message
-            });
-          }
+    try {
+
+      const res = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (data.status === "success") {
+
+  localStorage.setItem("auth_token", data.token || "demo");
+
+  localStorage.setItem("user", JSON.stringify({
+    user_id: data.user.user_id,
+    username: data.user.username
+  }));
+
+  window.location.href = "home.html";
+
+
+      } else {
+
+        Swal.fire({
+          icon: "error",
+          title: "Login ไม่สำเร็จ",
+          text: data.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
         });
+
       }
 
-      if (registerForm) {
-        registerForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const name = document.getElementById("regName").value;
-          const email = document.getElementById("regEmail").value;
-          const password = document.getElementById("regPassword").value;
+    } catch (err) {
+      console.error(err);
+      alert("server error");
+    }
+  });
 
-          const res = await fetch("http://localhost:3000/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password }),
-          });
 
-          const data = await res.json();
+  // ================= REGISTER =================
+  const registerForm = document.getElementById("registerForm");
 
-          if (data.status === "success") {
-            Swal.fire({
-              icon: "success",
-              title: "สมัครสมาชิกสำเร็จ",
-              text: data.message,
-              timer: 1500,
-              showConfirmButton: false
-            }).then(() => {
-              document.getElementById("registerContainer").classList.add("hidden");
-              document.getElementById("loginContainer").classList.remove("hidden");
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "เกิดข้อผิดพลาด",
-              text: data.message
-            });
-          }
-        });
-      }
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("regName").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+
+    const res = await fetch("http://localhost:3000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
     });
+
+    const data = await res.json();
+
+    if (data.status === "success") {
+      Swal.fire("Success", "สมัครสำเร็จ", "success");
+    } else {
+      Swal.fire("Error", data.message, "error");
+    }
+  });
+
+});
 
     feather.replace();
   </script>

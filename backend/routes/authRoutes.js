@@ -1,80 +1,62 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-// Register
+// REGISTER
 router.post("/register", (req, res) => {
+    const { name, email, password } = req.body;
 
-    console.log("REGISTER:", req.body);
-
-    const { username, email, password } = req.body;
-
-    const sql = `
-        INSERT INTO users
-        (username, email, password)
-        VALUES (?, ?, ?)
-    `;
+    const hash = bcrypt.hashSync(password, 10);
 
     db.query(
-        sql,
-        [username, email, password],
-        (err, result) => {
-
-            if (err) {
-                console.log("MYSQL ERROR:", err);
-
-                return res.status(500).json({
-                    message: err.message
-                });
-            }
-
-            console.log("INSERT SUCCESS:", result);
+        "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+        [name, email, hash],
+        (err) => {
+            if (err) return res.json({ status: "error", message: err });
 
             res.json({
-                message: "register success"
+                status: "success",
+                message: "สมัครสมาชิกสำเร็จ"
             });
-
         }
     );
 });
 
-// Login
+// LOGIN
 router.post("/login", (req, res) => {
-
     const { email, password } = req.body;
 
-    const sql = `
-        SELECT *
-        FROM users
-        WHERE email = ?
-        AND password = ?
-    `;
-
     db.query(
-        sql,
-        [email, password],
-        (err, result) => {
+        "SELECT * FROM users WHERE email = ?",
+        [email],
+        (err, results) => {
+            if (err) return res.json({ status: "error" });
 
-            if (err) {
-                return res.status(500).json({
-                    message: err.message
-                });
-            }
+            if (results.length === 0)
+                return res.json({ status: "error", message: "ไม่พบผู้ใช้" });
 
-            if (result.length === 0) {
-                return res.status(401).json({
-                    message: "Email หรือ Password ไม่ถูกต้อง"
+            const user = results[0];
+
+            console.log("DB password:", user.password_hash);
+            console.log("Input password:", password);
+
+            const check = bcrypt.compareSync(password, user.password_hash);
+
+            if (!check) {
+                return res.json({
+                    status: "error",
+                    message: "รหัสผ่านผิด"
                 });
             }
 
             res.json({
-                token: "test-token",
-                user: result[0]
+                status: "success",
+                message: "login ผ่าน",
+                user
             });
-
         }
     );
-
 });
 
 module.exports = router;

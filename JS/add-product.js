@@ -1,66 +1,44 @@
-const form =
-document.getElementById("productForm");
+document.getElementById("productForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-form.addEventListener("submit", async (e)=>{
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) {
+    Swal.fire("error", "กรุณาเข้าสู่ระบบก่อน", "error");
+    window.location.href = "login.html";
+    return;
+  }
 
-    e.preventDefault();
+  // รองรับทั้ง user.user_id และ user.id
+  const userId = user.user_id || user.id;
+  if (!userId) {
+    Swal.fire("error", "ไม่พบข้อมูลผู้ใช้ กรุณา login ใหม่", "error");
+    return;
+  }
 
-    const user =
-    JSON.parse(localStorage.getItem("user"));
+  const data = {
+    user_id:     userId,
+    name:        document.getElementById("name").value,
+    category:    document.getElementById("category").value,
+    quantity:    document.getElementById("quantity").value,
+    description: document.getElementById("description").value,
+    expire_days: document.getElementById("expire_days").value,
+    image:       "default.jpg",
+    status:      "sell"
+  };
 
-    const product = {
+  const res = await fetch("http://localhost:3000/api/products/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-        user_id: user.id,
+  const result = await res.json();
 
-        name:
-        document.getElementById("name").value,
-
-        category:
-        document.getElementById("category").value,
-
-        quantity:
-        document.getElementById("quantity").value,
-
-        image:
-        document.getElementById("image").value,
-
-        description:
-        document.getElementById("description").value
-
-    };
-
-    const response = await fetch(
-        "http://localhost:3000/api/products",
-        {
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(product)
-        }
-    );
-
-    const data = await response.json();
-
-    if(response.ok){
-
-        Swal.fire({
-            icon:"success",
-            title:"ลงประกาศสำเร็จ"
-        }).then(()=>{
-
-            window.location.href =
-            "/home.html";
-
-        });
-
-    }else{
-
-        Swal.fire({
-            icon:"error",
-            title:data.message
-        });
-
-    }
-
+  if (result.status === "success") {
+    await Swal.fire("สำเร็จ", "ลงสินค้าสำเร็จ", "success");
+    document.getElementById("productForm").reset();
+    window.location.href = "home.html";
+  } else {
+    Swal.fire("ผิดพลาด", result.message || "เกิดข้อผิดพลาด", "error");
+  }
 });

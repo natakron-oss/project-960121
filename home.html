@@ -38,10 +38,11 @@
                     <span>History</span>
                 </a>
 
-                 <a href="login.html" class="btn btn-primary">
+                 <button id="authBtn" class="btn btn-primary">
                     <i class="fas fa-user"></i>
-                    <span>เข้าสู่ระบบ</span>
-                </a>
+                    <span>Logout</span>
+                </button>
+                
             </div>
 
           </div>
@@ -143,8 +144,35 @@
     </div>
 </footer>
 
-    <script src="products.js"></script>
+    <script src="JS/add-products.js"></script>
     <script src="JS/trade.js"></script>
     <script src="JS/home.js"></script>
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+      window.location.href = "login.html";
+    }
+
+    const btn = document.getElementById("authBtn");
+
+    if (btn) {
+      btn.textContent = token ? "Logout" : "Login";
+
+      btn.addEventListener("click", () => {
+        if (token) {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+    }
+
+  });
+</script>
 </body>
 </html>
