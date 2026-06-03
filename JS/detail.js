@@ -1,62 +1,84 @@
 // ========================================
-// หน้าแรก - Product Detail Page
+// หน้าแรก - Product Detail Page (dynamic)
 // ========================================
+
+let currentProduct = null;
 
 // เพิ่มจำนวน
 function increaseQty() {
     const qtyInput = document.getElementById('quantity');
+    if (!qtyInput) return;
     qtyInput.value = parseInt(qtyInput.value) + 1;
 }
 
 // ลดจำนวน
 function decreaseQty() {
     const qtyInput = document.getElementById('quantity');
+    if (!qtyInput) return;
     if (parseInt(qtyInput.value) > 1) {
         qtyInput.value = parseInt(qtyInput.value) - 1;
     }
 }
 
-// เพิ่มลงตะกร้า
-function addToCart() {
-    const qty = document.getElementById('quantity').value;
-    const product = {
-        id: 1,
-        name: 'คะน้า',
-        price: 30,
-        quantity: parseInt(qty),
-        image: 'basil-main.jpg'
-    };
-    
-    // เก็บลง localStorage (สำหรับการทดลอง)
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // ตรวจสอบว่าสินค้านี้มีในตะกร้าแล้วหรือไม่
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-        existingItem.quantity += product.quantity;
-    } else {
-        cart.push(product);
+// เพิ่มลงตะกร้าจากหน้ารายละเอียด
+function addToCartDetail() {
+    const qtyInput = document.getElementById('quantity');
+    const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+    if (!currentProduct) {
+        alert('ไม่พบข้อมูลสินค้า');
+        return;
     }
-    
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.id === currentProduct.id);
+    if (existing) {
+        existing.quantity += qty;
+    } else {
+        cart.push({
+            id: currentProduct.id,
+            name: currentProduct.name,
+            price: currentProduct.price,
+            quantity: qty,
+            image: currentProduct.image
+        });
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
+    const badge = document.getElementById('cartBadge');
+    if (badge) badge.textContent = cart.length;
     alert(`เพิ่มสินค้า ${qty} ชิ้นลงตะกร้าแล้ว`);
 }
 
-// เพิ่มในรายการโปรด
-function addToWishlist() {
-    alert('เพิ่มเข้าตะกร้าแล้ว');
+// โหลดข้อมูลสินค้าจาก query string และเติมลงหน้า
+function loadDetailFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get('id'));
+    if (!id) return;
+    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    if (!product) return;
+    currentProduct = product;
+
+    const mainImage = document.querySelector('.main-image');
+    if (mainImage) mainImage.src = product.image;
+
+    const title = document.querySelector('.product-title');
+    if (title) title.textContent = product.name;
+
+    const price = document.querySelector('.product-price');
+    if (price) price.textContent = `${product.price} บาท / กก.`;
+
+    const desc = document.querySelector('.product-description');
+    if (desc) desc.innerHTML = product.description ? product.description.replace(/\n/g, '<br>') : '';
+
+    const stock = document.querySelector('.stock-info');
+    if (stock) stock.textContent = `เพิ่มได้สูงสุด ${product.stock || 18} กก.`;
+
+    const qtyInput = document.getElementById('quantity');
+    if (qtyInput) qtyInput.value = 1;
 }
 
-// เปลี่ยนรูปภาพ
+// เรียกโหลดรายละเอียดเมื่อหน้าโหลดเสร็จ
 document.addEventListener('DOMContentLoaded', function() {
-    const thumbnails = document.querySelectorAll('.thumbnail-images img');
-    const mainImage = document.querySelector('.main-image');
-    
-    thumbnails.forEach(thumb => {
-        thumb.addEventListener('click', function() {
-            mainImage.src = this.src;
-        });
-    });
+    loadDetailFromQuery();
 });
 
 // ========================================
