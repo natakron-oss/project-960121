@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>tradehistory</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<link rel="stylesheet" href="CSS/trade.css">
-</head>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>ประวัติการเทรด</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link rel="stylesheet" href="CSS/trade.css">
+	</head>
 <body>
-	<!-- Header -->
+	<!-- Header (copied from cart.html to match cart UI) -->
 	<header>
 		<div class="header-top">
 
@@ -43,23 +43,30 @@
 		</div>
 	</header>
 
-	<!-- Trade Section (reuses cart layout/IDs so cart.js can render) -->
 	<main class="container cart-section">
-		<h1 class="cart-title">หน้าเทรด (Trade)</h1>
+		<h1 class="cart-title">ประวัติการเทรด</h1>
 
-		<div class="cart-tabs">
-			<button class="active">รายการแลกของคุณ</button>
-		</div>
-        
-        
-		<div class="history-section" style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-			<div id="pending-trade"></div>
-			<div id="trade-history"></div>
-		</div>
+		<section id="open-orders" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">1. คำสั่งที่ฉันวางไว้ (ยังไม่ได้เทรด)</h2>
+			<div class="cart-content" id="open-list"></div>
+		</section>
 
+		<section id="incoming-requests" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">2. คนอื่นขอเทรดกับฉัน</h2>
+			<div class="cart-content" id="incoming-list"></div>
+		</section>
+
+		<section id="completed-trades" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">3. เทรดเสร็จแล้ว</h2>
+			<div class="cart-content" id="completed-list"></div>
+		</section>
 	</main>
 
-	<!-- Footer -->
+	<script src="products.js"></script>
+	<script src="JS/cart.js"></script>
+	<script src="JS/tradehistory.js"></script>
+
+	<!-- Footer (copied from cart.html) -->
 	<footer>
 		<div class="footer-content">
 			<div class="footer-section">
@@ -85,12 +92,10 @@
 				<p><i class="fab fa-line"></i> Line Official</p>
 			</div>
 		</div>
-        
+    
 		<div class="footer-bottom">
 			<p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
 		</div>
 	</footer>
-	<script src="products.js"></script>
-	<script src="JS/tradehistory.js"></script>
 </body>
 </html>
