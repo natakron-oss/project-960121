@@ -26,6 +26,26 @@
         .dropdown-item:hover {
             background: #f0f0f0;
         }
+        /* จัดรูปแบบกล่อง Dropdown */
+.dropdown-content {
+    display: none; /* ซ่อนไว้เป็นค่าเริ่มต้น */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    min-width: 250px; /* ปรับขนาดความกว้างตามต้องการ */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.15);
+    padding: 1rem;
+    border-radius: 8px;
+    z-index: 100;
+    margin-top: 0.5rem;
+    border: 1px solid #eeeeee; /* หรือ var(--border) */
+}
+
+/* คลาสสำหรับแสดงผลตอนกดปุ่ม */
+.dropdown-content.show {
+    display: block;
+}
 <style>
         * {
             margin: 0;
@@ -415,99 +435,159 @@
             gap: 2rem;
             margin-bottom: 3rem;
         }
+/* --- สไตล์ใหม่ของการ์ดสินค้าให้เหมือนรูป Mockup --- */
+.product-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
 
-        .product-card {
-            background: var(--white);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
 
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
+/* ส่วนรูปภาพและป้าย Best Before */
+.card-img-container {
+    position: relative;
+    width: 100%;
+    height: 220px; /* ปรับความสูงรูปให้ใหญ่ขึ้นเหมือนในแบบ */
+    background: var(--light);
+}
 
-        .product-image {
-            width: 100%;
-            height: 180px;
-            background: var(--light);
-            overflow: hidden;
-            position: relative;
-        }
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
+.card-badge-orange {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: #F49D73; /* สีส้มตามรูป */
+    color: #5C2710; /* สีตัวหนังสือสีน้ำตาลเข้ม */
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
 
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
-        }
+/* ส่วนเนื้อหาด้านล่างรูปภาพ */
+.card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        .product-info {
-            padding: 1rem;
-        }
+/* แถวชื่อผลผลิต และ คำว่า Swap */
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
 
-        .product-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
+.card-title-row h3 {
+    color: #8C401A; /* สีน้ำตาลแดง */
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
 
-        .product-price {
-            color: var(--primary);
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+.card-type-label {
+    color: #8C401A;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 2px;
+}
 
-        .product-stock {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 1rem;
-        }
+/* แถวชื่อคนขาย */
+.card-owner-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4A5568; /* สีเทาเข้ม */
+    font-size: 0.9rem;
+}
 
-        .product-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
+/* เส้นคั่น */
+.card-divider {
+    height: 1px;
+    background-color: #E2E8F0;
+    margin: 4px 0;
+}
 
-        .product-actions button {
-            flex: 1;
-            padding: 0.6rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.85rem;
-        }
+/* แถวด้านล่างสุด (ระยะทาง และ ปุ่ม) */
+.card-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .btn-detail {
-            background: var(--light);
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
+/* --- แถวด้านล่างสุด (เปลี่ยนเป็นแบบ 2 ปุ่ม) --- */
+.card-footer-row {
+    display: flex;
+    gap: 8px; /* ระยะห่างระหว่างปุ่ม */
+    align-items: center;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 16px;
+}
 
-        .btn-detail:hover {
-            background: var(--primary);
-            color: var(--white);
-        }
+/* ปุ่มใส่ตะกร้า (ปุ่มรอง - สีขาวขอบเขียว) */
+.card-btn-cart {
+    flex: 1; /* ขยายให้ปุ่มกว้างเท่าๆ กัน */
+    background-color: white;
+    color: #315735;
+    border: 1px solid #315735;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
 
-        .btn-add {
-            background: var(--primary);
-            color: var(--white);
-        }
+.card-btn-cart:hover {
+    background-color: #f0fdf4; /* เปลี่ยนเป็นสีเขียวอ่อนตอนเอาเมาส์ชี้ */
+}
 
-        .btn-add:hover {
-            background: #218838;
-        }
+/* ปุ่มซื้อสินค้า (ปุ่มหลัก - สีเขียวทึบ) */
+.card-btn-buy {
+    flex: 1; /* ขยายให้ปุ่มกว้างเท่าๆ กัน */
+    background-color: #315735;
+    color: white;
+    border: 1px solid #315735;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.card-btn-buy:hover {
+    background-color: #234026;
+}
+
+.card-btn-request:hover {
+    background-color: #234026;
+}
         /* Footer */
         footer {
             background: var(--dark);
@@ -665,5 +745,7 @@
             .container {
                 padding: 0 1rem;
             }
+
+            
         }
     </style>
