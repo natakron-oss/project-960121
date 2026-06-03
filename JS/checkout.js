@@ -1,5 +1,5 @@
 // ใช้ข้อมูลตะกร้าจาก localStorage (`cart`) และ/หรือ catalog จาก products.js
-const SHIPPING_COST = 50;
+const SHIPPING_COST = 0;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,20 +42,16 @@ function displayProducts(products) {
     }
 
     // Clear products list
-    productsList.innerHTML = '';
-
-    // Add each product
-    products.forEach((product, index) => {
-        const productItem = document.createElement('div');
-        productItem.className = 'product-item';
-        productItem.innerHTML = `
-            <span class="product-name">${product.name}</span>
-            <span class="product-qty">${product.quantity} ชิ้น</span>
-            <span class="product-price">${(product.price * product.quantity).toFixed(2)} บาท</span>
-        `;
-        productsList.appendChild(productItem);
-    });
-
+    // ตัวอย่าง JS ที่ถูกต้อง
+productsList.innerHTML = products.map(product => `
+    <tr style="border-bottom: 1px solid #e0e0e0;">
+        <td style="text-align: left; padding: 12px 8px;">${product.name}</td>
+        <td style="text-align: center; padding: 12px 8px;">${product.quantity}</td>
+        <td style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--primary);">
+            ${(product.price * product.quantity).toFixed(2)} บาท
+        </td>
+    </tr>
+`).join('');
     // Update summary table
     summaryRow.innerHTML = products.map(product => `
         <tr style="border-bottom: 1px solid #e0e0e0;">

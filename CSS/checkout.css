@@ -488,6 +488,7 @@
 /* Summary Totals */
 .summary-totals {
     background-color: var(--light);
+    
     padding: 1.5rem;
     border-radius: 5px;
     margin-top: 1.5rem;

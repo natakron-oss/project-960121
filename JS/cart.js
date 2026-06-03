@@ -105,7 +105,7 @@ class CartManager {
     updateCartSummary() {
         const cart = this.getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const SHIPPING_COST = 50;
+        const SHIPPING_COST = 0;
         const shipping = cart.length > 0 ? SHIPPING_COST : 0;
         const total = subtotal + shipping;
 

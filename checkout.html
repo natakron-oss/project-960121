@@ -66,7 +66,7 @@
                         <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="shipping" value="pickupschool" checked>
-                                <span class="radio-text">เลือกรับที่รร.</span>
+                                <span class="radio-text">ไปรับด้วยตนเอง</span>
                             </label>
                             <label class="radio-label">
                                 <input type="radio" name="shipping" value="pickuphome">
@@ -118,43 +118,39 @@
                 <h2 class="summary-title">รวมรายการสินค้า</h2>
 
                 <!-- Products List -->
-                <div class="products-list" id="productsList">
-                    <!-- Products will be generated here -->
-                </div>
+               
 
                 <!-- Summary Table -->
                 <div class="summary-table">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>ชื่อสินค้า</td>
-                                <td>จำนวน</td>
-                                <td>ราคา</td>
-                            </tr>
-                            <tr id="summaryRow">
-                                <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
-                                    ตะกร้าว่างเปล่า
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <table style="width: 100%;">
+        <thead>
+            <tr>
+                <th >ชื่อสินค้า</th>
+                <th>จำนวน</th>
+                <th>ราคา</th>
+                
+            </tr>
+            
+        </thead>
+        <tbody id="productsList">
+            </tbody>
+    </table>
+</div>
 
-                <!-- Totals -->
-                <div class="summary-totals">
-                    <div class="total-row">
-                        <span>รวมการสินค้า</span>
-                        <span id="subtotal">0.00 บาท</span>
-                    </div>
-                    <div class="total-row">
-                        <span>ค่าจัดส่ง</span>
-                        <span id="shipping">0.00 บาท</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span>ยอดชำระรวมทั้งหมด</span>
-                        <span id="grandTotal">฿0.00</span>
-                    </div>
-                </div>
+<div class="summary-totals">
+    <div class="total-row">
+        <span>รวมราคาสินค้า</span>
+        <span id="subtotal">0.00 บาท</span>
+    </div>
+    <div class="total-row">
+        <span>ค่าจัดส่ง</span>
+        <span id="shipping">0.00 บาท</span>
+    </div>
+    <div class="total-row grand-total">
+        <span>ยอดชำระรวมทั้งหมด</span>
+        <span id="grandTotal">฿0.00</span>
+    </div>
+</div>
             </div>
         </div>
     </div>
