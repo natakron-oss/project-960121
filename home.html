@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>home</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="home/style.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <!-- Header -->
     <header>
+        
         <div class="header-top">
 
             <div class="logo">
@@ -29,19 +36,31 @@
                 </a>
 
                 <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    <span>สวนของฉัน</span>
+                </a>
+
+                <button id="notif-btn" class="btn notif-btn" >
+                    <i class="fas fa-bell"></i>
+                    
+                </button>
+
+                 <a href="login.html" class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     <span>เข้าสู่ระบบ</span>
                 </a>
             </div>
+
+          </div>
         </div>
-        <div class="nav-menu">
-        </div>
+       
     </header>
 
     <!-- Hero Banner -->
     <div class="hero">
-        <h1>สดจากฟาร์มสู่มือคุณ</h1>
-        <p>ผักผลไม้ออแกนิคจากโรงเรียนบ้านแม่ฮ้อยเงิน ปลูกด้วยนวัตกรรม Smart Farm</p>
+        <h1>Garden Share</h1>
+        <p>มีผักเหลือ? แลกกับเพื่อนบ้านได้เลย
+แบ่งปันผลผลิตสดใหม่ในชุมชนของคุณ</p>
     </div>
     <!-- Main Container -->
     <div class="container">
@@ -62,6 +81,17 @@
         <option value="low-high">ราคาน้อย → มาก</option>
         <option value="high-low">ราคามาก → น้อย</option>
     </select>
+    <div class="secondary-filters" style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
+        <div style="display: flex; flex-direction: column; font-size: 0.8rem; color: var(--dark);">
+            <label>ระยะทาง: <span id="distance-val">10.0</span> กม.</label>
+            <input type="range" id="distance-slider" min="100" max="10000" step="100" value="10000" />
+        </div>
+        <select id="type-select" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); font-family: inherit;">
+            <option value="all">รูปแบบทั้งหมด</option>
+            <option value="swap">แลกเปลี่ยน / ฟรี</option>
+            <option value="sell">ขาย (Direct Sale)</option>
+        </select>
+    </div>
 
 </div>
         </div>
@@ -83,26 +113,58 @@
             </div>
         </div>
     </div>
- <!-- ปุ่มเพิ่ม-->
-    <button 
-  id="fab-add-item" 
-  class="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg shadow-green-900/20 cursor-pointer transition-transform transform hover:scale-105 active:scale-95 z-40 flex items-center justify-center group"
-  aria-label="List a New Crop"
->
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300">
-    <path d="M5 12h14"/>
-    <path d="M12 5v14"/>
-  </svg>
-</button>
 
-<div class="flex justify-between items-center bg-gray-50 py-2 px-3 rounded-lg border border-gray-200">
-  <button 
-    id="btn-add-harvest"
-    class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full font-bold cursor-pointer transition-colors shadow-sm active:scale-95"
-  >
-   
-  </button>
-</div>
+    <div class="modal" id="add-item-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>แบ่งปันผลผลิตของคุณ</h2>
+                <button class="close-btn" id="add-item-close">×</button>
+            </div>
+            
+            <form id="add-item-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem;">ชื่อผลผลิต</label>
+                    <input type="text" id="item-name" required placeholder="เช่น มะเขือเทศออร์แกนิก" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-weight: 600; font-size: 0.9rem;">หมวดหมู่</label>
+                        <select id="item-category" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                            <option value="Vegetables">ผัก</option>
+                            <option value="Fruits">ผลไม้</option>
+                            <option value="Herbs">สมุนไพร</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-weight: 600; font-size: 0.9rem;">ความสด (หมดอายุใน)</label>
+                        <select id="item-freshness" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                            <option value="1">1 วัน</option>
+                            <option value="3" selected>3 วัน</option>
+                            <option value="7">7 วัน</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem;">รูปแบบ (ขาย หรือ แลก)</label>
+                    <select id="item-type" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="swap">แลกเปลี่ยน (Swap)</option>
+                        <option value="sell">ขาย (เงินสด)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem;">URL รูปภาพ</label>
+                    <input type="url" id="item-image" placeholder="วางลิงก์รูปภาพ..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                    <i class="fas fa-plus"></i> ลงประกาศสินค้า
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -123,6 +185,8 @@
                 <a href="#">เงื่อนไขการใช้บริการ</a>
                 <a href="#">วิธีการชำระเงิน</a>
             </div>
+
+            
             <div class="footer-section">
                 <h3>ติดตามเรา</h3>
                 <p><i class="fab fa-facebook"></i> Facebook</p>

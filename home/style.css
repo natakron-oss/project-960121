@@ -237,17 +237,80 @@
         }
 
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 4rem;
             margin-bottom: 1rem;
             color: #065625ff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 2rem;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             color: #4a3e3eff;
         }
+
+        /* --- สไตล์สำหรับป๊อปอัปแจ้งเตือน --- */
+.notif-dropdown {
+    position: absolute;
+    top: 70px;
+    right: 2rem;
+    width: 320px;
+    background: var(--white);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    z-index: 1000;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.notif-dropdown.hidden {
+    display: none;
+}
+
+.notif-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    background: #f8f9fa;
+}
+
+.notif-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.notif-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notif-item {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.notif-item:hover {
+    background: #f5f5f5;
+}
+
+.notif-item.unread {
+    background: rgba(40, 167, 69, 0.05); /* สีเขียวอ่อนๆ สำหรับข้อความที่ยังไม่ได้อ่าน */
+    border-left: 3px solid var(--primary);
+}
+
+.notif-text {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    color: #444;
+}
+
+.notif-time {
+    font-size: 0.75rem;
+    color: #888;
+}
 
         /* Category Filter */
         .category-filter {
