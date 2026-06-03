@@ -467,16 +467,16 @@
     object-fit: cover;
 }
 
-.card-badge-orange {
+.card-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: #F49D73; /* สีส้มตามรูป */
-    color: #5C2710; /* สีตัวหนังสือสีน้ำตาลเข้ม */
     padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 700;
+    z-index: 10;
+    /* ห้ามใส่ background-color หรือ color ตายตัวในนี้นะครับ เพราะเราย้ายให้ JavaScript จัดการแทนแล้ว */
 }
 
 /* ส่วนเนื้อหาด้านล่างรูปภาพ */

@@ -62,19 +62,32 @@ const productsGrid = document.getElementById('productsGrid');
 productsGrid.innerHTML = products.map(product => {
     
     // จำลองข้อมูลเสริมให้ตรงกับในรูป (เพราะใน products.js ตอนนี้ยังไม่มีข้อมูลเหล่านี้)
-    const bestBefore = product.bestBefore || "4 Days";
+   const days = product.bestBeforeDays || (product.id % 3 + 1); 
     const ownerName = product.owner || "Elena S.";
-    const distance = product.distance || "500m away";
+    
+    // 2. คำนวณสีตามจำนวนวันจริง (ลอจิกทำงานถูกต้องตามเงื่อนไขวัน)
+    let badgeBgColor = '#22c55e'; // ค่าเริ่มต้น: สีเขียว (สดใหม่ แข็งแรง)
+    let badgeTextColor = '#ffffff'; // ตัวหนังสือสีขาว
+    
+    if (days === 1) {
+        badgeBgColor = '#ef4444';  // เหลือ 1 วัน: เปลี่ยนเป็นสีแดง (ใกล้หมดอายุ)
+        badgeTextColor = '#ffffff';
+    } else if (days <= 3) {
+        badgeBgColor = '#F49D73';  // เหลือ 2-3 วัน: เปลี่ยนเป็นสีส้มอิฐ (เริ่มเร่งด่วน)
+        badgeTextColor = '#5C2710'; // ตัวหนังสือสีน้ำตาลเข้ม
+    }
     
     return `
         <div class="product-card">
             <div class="card-img-container">
                 <img src="${product.image}" alt="${product.name}">
-                <div class="card-badge-orange">Best Before: ${bestBefore}</div>
+                
+                <div class="card-badge" style="background-color: ${badgeBgColor}; color: ${badgeTextColor};">
+                    Best Before: ${days} วัน
+                </div>
             </div>
             
             <div class="card-content">
-                
                 <div class="card-title-row">
                     <h3>${product.name}</h3>
                 </div>
@@ -89,7 +102,6 @@ productsGrid.innerHTML = products.map(product => {
                     <button class="card-btn-cart" onclick="addToCart(${product.id})">
                         <i class="fa-solid fa-shopping-cart"></i> ใส่ตะกร้า
                     </button>
-                    <!-- Swap button removed -->
                     <button class="card-btn-buy" onclick="buyNow(${product.id})">
                         ซื้อสินค้า
                     </button>
@@ -99,6 +111,8 @@ productsGrid.innerHTML = products.map(product => {
         </div>
     `;
 }).join('');
+
+
 // Filter Products
 function filterProducts(category) {
     currentFilter = category;
