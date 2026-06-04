@@ -57,8 +57,9 @@
     </div>
 
     <!-- Register Form -->
+    <!-- ✅ ลบ method="post" action="backend/register.php" ออกแล้ว -->
     <div id="registerContainer" class="p-6 hidden">
-      <form method="post" action="backend/register.php" class="space-y-5" id="registerForm">
+      <form class="space-y-5" id="registerForm">
         <div class="mb-4">
           <label for="regName" class="block text-gray-700 mb-2">ชื่อ - นามสกุล</label>
           <div class="relative">
@@ -100,6 +101,7 @@
       <a href="#" class="hover:text-green-600">ลืมรหัสผ่าน</a>
     </div>
   </div>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -131,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      console.log("🔥 LOGIN CLICKED", { email, password });
+      console.log("🔥 LOGIN CLICKED", { email });
 
       try {
         const res = await fetch("http://localhost:3000/api/auth/login", {
@@ -144,25 +146,25 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("LOGIN RESPONSE:", data);
 
         if (!data || data.status !== "success") {
-          return Swal.fire("Login ไม่สำเร็จ", data?.message || "error", "error");
+          return Swal.fire("Login ไม่สำเร็จ", data?.message || "เกิดข้อผิดพลาด", "error");
         }
 
         if (!data.user) {
-          return Swal.fire("Error", "user missing", "error");
+          return Swal.fire("Error", "ไม่พบข้อมูล user", "error");
         }
 
         localStorage.setItem("auth_token", "demo");
-
         localStorage.setItem("user", JSON.stringify({
           user_id: data.user.user_id,
           username: data.user.username
         }));
 
+        await Swal.fire("เข้าสู่ระบบสำเร็จ", `ยินดีต้อนรับ ${data.user.username}`, "success");
         window.location.href = "home.html";
 
       } catch (err) {
-        console.error(err);
-        Swal.fire("Error", "server error", "error");
+        console.error("LOGIN ERROR:", err);
+        Swal.fire("Error", "ไม่สามารถเชื่อมต่อ server ได้", "error");
       }
     });
   }
@@ -191,14 +193,17 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("REGISTER RESPONSE:", data);
 
         if (data.status === "success") {
-          Swal.fire("Success", "สมัครสำเร็จ", "success");
+          await Swal.fire("สมัครสมาชิกสำเร็จ", "กรุณาเข้าสู่ระบบ", "success");
+          // กลับไปหน้า login อัตโนมัติ
+          registerContainer.classList.add("hidden");
+          loginContainer.classList.remove("hidden");
         } else {
-          Swal.fire("Error", data.message || "error", "error");
+          Swal.fire("Error", data.message || "เกิดข้อผิดพลาด", "error");
         }
 
       } catch (err) {
-        console.error(err);
-        Swal.fire("Error", "server error", "error");
+        console.error("REGISTER ERROR:", err);
+        Swal.fire("Error", "ไม่สามารถเชื่อมต่อ server ได้", "error");
       }
     });
   }
