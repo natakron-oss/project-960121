@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2026 at 11:44 AM
+-- Generation Time: Jun 04, 2026 at 09:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -32,6 +32,22 @@ CREATE TABLE `cart_items` (
   `user_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `trade_request_id` int(11) DEFAULT NULL,
+  `is_read` tinyint(4) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -86,8 +102,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `description`, `image`, `status`, `created_at`, `expire_date`) VALUES
-(18, 2, 'BB', 'sell', 90, 'aunmakmak', '1780565186936.PNG', 'sell', '2026-06-04 09:26:26', '2026-06-06'),
-(19, 2, 'Bom', 'trade', 2, 'humlek', '1780565430089.PNG', 'trade', '2026-06-04 09:30:30', '2026-06-05');
+(23, 1, 'นะคะ', 'trade', 20, 'asda', '1780600353389.PNG', 'trade', '2026-06-04 19:12:33', '2026-06-06'),
+(24, 1, 'คะนะ', 'sell', 10, 'sfsf', '1780600381695.PNG', 'sell', '2026-06-04 19:13:01', '2026-06-06');
 
 -- --------------------------------------------------------
 
@@ -107,6 +123,19 @@ CREATE TABLE `trade_requests` (
   `status` enum('pending','accepted','rejected') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `trade_requests`
+--
+
+INSERT INTO `trade_requests` (`trade_id`, `product_id`, `from_user_id`, `to_user_id`, `offered_item`, `offered_quantity`, `address`, `phone`, `status`, `created_at`) VALUES
+(5, 19, 2, 2, '19', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 16:10:25'),
+(6, 20, 2, 1, '20', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:01:25'),
+(7, 20, 1, 1, '20', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:11:25'),
+(8, 21, 2, 1, '21', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:15:23'),
+(9, 22, 2, 1, '22', 3, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:15:40'),
+(10, 21, 2, 1, '21', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'rejected', '2026-06-04 18:31:44'),
+(11, 21, 2, 1, '21', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:48:05');
 
 -- --------------------------------------------------------
 
@@ -143,6 +172,12 @@ ALTER TABLE `cart_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `product_id` (`product_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `orders`
@@ -193,6 +228,12 @@ ALTER TABLE `cart_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
@@ -208,13 +249,13 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `trade_requests`
 --
 ALTER TABLE `trade_requests`
-  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`

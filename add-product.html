@@ -1,166 +1,115 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta charset="UTF-8">
-<title>ลงประกาศสินค้า</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/cart.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>ลงประกาศสินค้า</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/cart.css">
 </head>
 <body class="bg-green-50">
-    <header>
-        
-        <div class="header-top">
 
-                <div class="logo">
-                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
-            </div>
+  <header>
+    <div class="header-top">
+      <div class="logo">
+        <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
+      </div>
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+      </div>
+      <div class="header-actions">
+        <a href="cart.html" class="btn cart-btn">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-label">ตะกร้า</span>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="tradehistory.html" class="btn btn-primary">
+          <i class="fas fa-history"></i><span>History</span>
+        </a>
+        <a href="login.html" class="btn btn-primary">
+          <i class="fas fa-user"></i><span>เข้าสู่ระบบ</span>
+        </a>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-start;padding:8px 16px;">
+      <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+        <i class="fa-solid fa-arrow-left"></i><span>กลับหน้าหลัก</span>
+      </a>
+    </div>
+    <div class="nav-menu"></div>
+  </header>
 
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
-            </div>
-
-            <div class="header-actions">
-                <a href="cart.html" class="btn cart-btn">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-label">ตะกร้า</span>
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </a>
-
-                <a href="tradehistory.html" class="btn btn-primary">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-
-                 <a href="login.html" class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    <span>เข้าสู่ระบบ</span>
-                </a>
-            </div>
-          </div>
-          <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
-            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
-                <i class="fa-solid fa-arrow-left"></i>
-                <span>กลับหน้าหลัก</span>
-            </a>
-        </div>
-        <div class="nav-menu">
-        </div>
-       
-    </header>
-
-<div class="max-w-xl mx-auto bg-white p-6 mt-10 rounded-xl shadow">
-
-    <h1 class="text-2xl font-bold mb-5">
-        ลงประกาศสินค้า
-    </h1>
+  <div class="max-w-xl mx-auto bg-white p-6 mt-10 rounded-xl shadow">
+    <h1 class="text-2xl font-bold mb-5">ลงประกาศสินค้า</h1>
 
     <form id="productForm">
 
-        <input
-            type="text"
-            id="name"
-            placeholder="ชื่อสินค้า"
-            class="w-full border p-3 mb-3 rounded"
-            required
-        >
+      <input type="text" id="name" placeholder="ชื่อสินค้า"
+             class="w-full border p-3 mb-3 rounded" required>
 
-        <select id="category" class="w-full border p-3 mb-3 rounded">
-            <option value="sell">Sell</option>
-            <option value="trade">Trade</option>
-        </select>
+      <select id="category" class="w-full border p-3 mb-3 rounded">
+        <option value="sell">Sell (ขาย)</option>
+        <option value="trade">Trade (แลกเปลี่ยน)</option>
+      </select>
 
-        <input
-            type="number"
-            id="quantity"
-            placeholder="จำนวน (กก.)"
-            class="w-full border p-3 mb-3 rounded"
-            required
-        >
+      <!-- ราคา — แสดงเฉพาะ Sell -->
+      <div id="priceWrapper">
+        <input type="number" id="price" placeholder="ราคา (บาท / กก.)"
+               class="w-full border p-3 mb-3 rounded" min="0" step="0.01">
+      </div>
 
-        
+      <input type="number" id="quantity" placeholder="จำนวน (กก.)"
+             class="w-full border p-3 mb-3 rounded" required>
 
-        <textarea
-            id="description"
-            placeholder="รายละเอียดสินค้า"
-            class="w-full border p-3 mb-3 rounded"
-        ></textarea>
+      <textarea id="description" placeholder="รายละเอียดสินค้า"
+                class="w-full border p-3 mb-3 rounded"></textarea>
 
-        <input
-    type="number"
-    id="expire_date"
-    placeholder="กี่วันเน่า"
-    class="w-full border p-3 mb-3 rounded"
-    required
->
+      <input type="number" id="expire_date" placeholder="หมดอายุใน (วัน)"
+             class="w-full border p-3 mb-3 rounded" required>
 
-<label class="block mb-2 font-semibold">
-    รูปสินค้า
-</label>
+      <label class="block mb-2 font-semibold">รูปสินค้า</label>
+      <input type="file" id="image" accept="image/*"
+             class="w-full border p-3 mb-3 rounded" required>
 
-<input
-    type="file"
-    id="image"
-    accept="image/*"
-    class="w-full border p-3 mb-3 rounded"
-    required
->
-
-        <button
-            type="submit"
-            class="bg-green-600 text-white px-6 py-3 rounded"
-        >
-            ลงประกาศ
-        </button>
-
+      <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded">
+        ลงประกาศ
+      </button>
     </form>
+  </div>
 
-</div>
-
- <footer>
+  <footer>
     <div class="footer-content">
-        <div class="footer-section">
-            <h3>Gardenshare</h3>
-            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Marketplace</h3>
-            <p>Browse All</p>
-            <p>How It Works</p>
-            <p>Safety & Guidelines</p>
-        </div> <div class="footer-section">
-            <h3>ลิงก์ที่มีประโยชน์</h3>
-            <a href="#">นโยบายความเป็นส่วนตัว</a>
-            <a href="#">เงื่อนไขการใช้บริการ</a>
-            <a href="#">วิธีการชำระเงิน</a>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Legal Framework</h3>
-            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
-            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
-        </div>
+      <div class="footer-section">
+        <h3>Gardenshare</h3>
+        <p>Empowering urban communities to grow together and waste less.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Marketplace</h3>
+        <p>Browse All</p><p>How It Works</p><p>Safety & Guidelines</p>
+      </div>
+      <div class="footer-section">
+        <h3>ลิงก์ที่มีประโยชน์</h3>
+        <a href="#">นโยบายความเป็นส่วนตัว</a>
+        <a href="#">เงื่อนไขการใช้บริการ</a>
+        <a href="#">วิธีการชำระเงิน</a>
+      </div>
+      <div class="footer-section">
+        <h3>Legal Framework</h3>
+        <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+        <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+      </div>
     </div>
-    
     <div class="footer-bottom">
-        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+      <p>&copy; 2026 Gardenshare. All rights reserved.</p>
     </div>
-</footer>
+  </footer>
 
-
-
-
-</body>
-
-<script src="JS/add-product.js"></script>
-
+  <script src="JS/add-product.js"></script>
 </body>
 </html>

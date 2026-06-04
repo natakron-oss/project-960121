@@ -11,6 +11,7 @@ app.use(express.json());
 // ================= API =================
 app.use("/api/auth", require("./backend/routes/authRoutes"));
 app.use("/api/products", require("./backend/routes/productRoutes"));
+app.use("/api/cart", require("./backend/routes/cartRoutes")); // ✅ เพิ่มตรงนี้
 app.use("/api/trades", require("./backend/routes/tradeRoutes"));
 app.use("/api/history", require("./backend/routes/historyRoutes"));
 
