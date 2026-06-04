@@ -303,6 +303,10 @@ function addToCart(id) {
     JSON.stringify(cart)
   );
 
+
+
+
+  
   updateCartBadge();
 
   alert("เพิ่มสินค้าลงตะกร้าแล้ว");
