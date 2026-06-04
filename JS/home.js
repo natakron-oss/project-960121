@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("type-select")?.addEventListener("change", applyFilters);
   document.getElementById("searchInput")?.addEventListener("input", applyFilters);
 
-  updateCartBadge();   // ฟังก์ชันนี้อยู่ใน cart.js
+  updateCartBadge();
   loadProducts();
   loadNotifyBadge();
 });
@@ -48,7 +48,7 @@ async function loadNotifyBadge() {
 async function loadProducts() {
   const grid = document.getElementById("productsGrid");
   if (!grid) return;
-  grid.innerHTML = "<p>กำลังโหลด...</p>";
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;">กำลังโหลด...</div>`;
   try {
     const res    = await fetch("http://localhost:3000/api/products");
     const result = await res.json();
@@ -56,7 +56,7 @@ async function loadProducts() {
     renderProducts(allProducts);
   } catch (err) {
     console.error(err);
-    grid.innerHTML = "<p style='color:red'>โหลดสินค้าไม่สำเร็จ</p>";
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#e74c3c;">โหลดสินค้าไม่สำเร็จ</div>`;
   }
 }
 
@@ -68,7 +68,9 @@ function renderProducts(products) {
   grid.innerHTML = "";
 
   if (!products.length) {
-    grid.innerHTML = "<p style='color:#888;text-align:center;padding:40px'>ไม่พบสินค้า</p>";
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#aaa;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🌱</div>
+      <div>ไม่พบสินค้าที่ตรงกัน</div></div>`;
     return;
   }
 
@@ -77,31 +79,35 @@ function renderProducts(products) {
     const days      = Number.isFinite(parseInt(p.days_left)) ? parseInt(p.days_left) : 0;
     const isExpired = days <= 0;
 
-    let badgeBg = "#22c55e", badgeColor = "#fff";
+    // Badge style
+    let badgeBg = "#16a34a", badgeColor = "#fff";
     if (isExpired)       { badgeBg = "#6b7280"; }
     else if (days === 1) { badgeBg = "#ef4444"; }
-    else if (days <= 3)  { badgeBg = "#F49D73"; badgeColor = "#5C2710"; }
+    else if (days <= 3)  { badgeBg = "#f59e0b"; badgeColor = "#7c2d12"; }
 
-    const badgeText = isExpired ? "หมดอายุแล้ว" : `เหลือ ${days} วัน`;
+    const badgeText = isExpired ? "หมดอายุ" : `⏰ ${days} วัน`;
 
+    // Action button
     let actionBtn = "";
     if (isExpired) {
-      actionBtn = `<button class="buy-btn" disabled style="opacity:.4;cursor:not-allowed;">ไม่สามารถซื้อได้</button>`;
+      actionBtn = `<button class="buy-btn" disabled>ไม่สามารถซื้อได้</button>`;
     } else if (p.status === "trade") {
-      actionBtn = `<button class="trade-btn" data-pid="${pid}">Request Trade</button>`;
+      actionBtn = `<button class="trade-btn" data-pid="${pid}">🔄 ขอแลก</button>`;
     } else {
-      // ✅ ใช้ addToCart จาก cart.js (รับ product_id แล้ว call API → บันทึก DB)
-      actionBtn = `<button class="buy-btn" data-pid="${pid}">Add To Cart</button>`;
+      actionBtn = `<button class="buy-btn" data-pid="${pid}">🛒 ใส่ตะกร้า</button>`;
     }
 
-    const priceHTML = p.status === "sell" && p.price > 0
-      ? `<p class="product-price">💰 ${parseFloat(p.price).toFixed(2)} บาท/กก.</p>`
+    const priceHTML = p.status === "sell" && parseFloat(p.price) > 0
+      ? `<p class="product-price">฿${parseFloat(p.price).toFixed(2)} / กก.</p>`
       : "";
 
+    const statusLabel = p.status === "trade"
+      ? `<div class="product-status" style="background:#fff7ed;color:#b45309;">🔄 แลกเปลี่ยน</div>`
+      : `<div class="product-status">💰 ขาย</div>`;
+
     const card = document.createElement("div");
-    card.className    = "product-card";
-    card.style.cursor = "pointer";
-    card.dataset.pid  = pid;
+    card.className   = "product-card";
+    card.dataset.pid = pid;
     card.innerHTML = `
       <div class="card-img-container">
         <img src="http://localhost:3000/uploads/${p.image}" alt="${p.name}"
@@ -113,14 +119,13 @@ function renderProducts(products) {
         <p>👤 ${p.username}</p>
         <p>📦 ${p.quantity} กก.</p>
         ${priceHTML}
-        <div class="product-status">${p.status === "trade" ? "🔄 Trade" : "💰 Sell"}</div>
+        ${statusLabel}
         <div class="card-footer-row">${actionBtn}</div>
-      </div>
-    `;
+      </div>`;
     grid.appendChild(card);
   });
 
-  // card click → open detail modal
+  // card body click → modal
   grid.querySelectorAll(".product-card").forEach(card => {
     card.addEventListener("click", (e) => {
       if (e.target.closest("button")) return;
@@ -128,47 +133,90 @@ function renderProducts(products) {
     });
   });
 
-  // ✅ buy-btn เรียก addToCart จาก cart.js โดยตรง (ไม่มีฟังก์ชันซ้ำ)
   grid.querySelectorAll(".buy-btn[data-pid]").forEach(btn =>
-    btn.addEventListener("click", () => addToCart(btn.dataset.pid))
+    btn.addEventListener("click", (e) => { e.stopPropagation(); addToCart(btn.dataset.pid); })
   );
   grid.querySelectorAll(".trade-btn[data-pid]").forEach(btn =>
-    btn.addEventListener("click", () => goTrade(btn.dataset.pid))
+    btn.addEventListener("click", (e) => { e.stopPropagation(); goTrade(btn.dataset.pid); })
   );
 }
 
 // ======================
-// DETAIL MODAL
+// DETAIL MODAL — redesigned
 // ======================
 function openDetailModal(pid) {
   const p = allProducts.find(x => String(x.id) === String(pid));
   if (!p) return;
 
-  const priceHTML = p.status === "sell" && p.price > 0
-    ? `<p style="font-size:1.2rem;font-weight:700;color:#16a34a;">💰 ${parseFloat(p.price).toFixed(2)} บาท/กก.</p>`
-    : `<p style="color:#6b7280;">🔄 Trade (แลกเปลี่ยน)</p>`;
-
   const days      = Number.isFinite(parseInt(p.days_left)) ? parseInt(p.days_left) : 0;
-  const actionBtn = p.status === "trade"
-    ? `<button onclick="goTrade(${p.id})" style="background:#f59e0b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:1rem;cursor:pointer;">Request Trade</button>`
-    : `<button onclick="addToCart(${p.id})" style="background:#16a34a;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:1rem;cursor:pointer;">Add To Cart</button>`;
+  const isExpired = days <= 0;
+  const price     = parseFloat(p.price) || 0;
+
+  const priceBlock = p.status === "sell" && price > 0
+    ? `<div style="font-family:'Prompt',sans-serif;font-size:1.5rem;font-weight:800;color:#2d7a4f;line-height:1;">
+         ฿${price.toFixed(2)} <span style="font-size:0.9rem;font-weight:500;color:#7a9486;">/ กก.</span>
+       </div>`
+    : `<div style="display:inline-flex;align-items:center;gap:6px;background:#fff7ed;color:#b45309;border:1px solid #fcd34d;padding:5px 14px;border-radius:20px;font-weight:700;font-size:0.9rem;">
+         🔄 แลกเปลี่ยน
+       </div>`;
+
+  const expBadge = isExpired
+    ? `<span style="background:#6b7280;color:#fff;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">หมดอายุ</span>`
+    : days <= 3
+    ? `<span style="background:#ef4444;color:#fff;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">เหลือ ${days} วัน!</span>`
+    : `<span style="background:#dcfce7;color:#166534;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">เหลือ ${days} วัน</span>`;
+
+  const actionBtn = isExpired
+    ? `<button disabled style="flex:1;padding:12px;background:#e5e7eb;color:#9ca3af;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:not-allowed;">ไม่สามารถดำเนินการได้</button>`
+    : p.status === "trade"
+    ? `<button onclick="goTrade(${p.id})" style="flex:1;padding:12px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;">🔄 ขอแลกเปลี่ยน</button>`
+    : `<button onclick="addToCart(${p.id})" style="flex:1;padding:12px;background:#2d7a4f;color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;">🛒 ใส่ตะกร้า</button>`;
 
   document.getElementById("detailContent").innerHTML = `
-    <div style="display:flex;gap:16px;flex-wrap:wrap;">
-      <img src="http://localhost:3000/uploads/${p.image}" alt="${p.name}"
-           onerror="this.src='image/no-image.png'"
-           style="width:180px;height:180px;object-fit:cover;border-radius:10px;">
-      <div style="flex:1;min-width:180px;">
-        <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">${p.name}</h3>
-        ${priceHTML}
-        <p>👤 ${p.username}</p>
-        <p>📦 ${p.quantity} กก. คงเหลือ</p>
-        <p>⏰ เหลือ ${days} วัน</p>
-        <p style="color:#555;margin-top:8px;">${p.description || ""}</p>
-        <div style="margin-top:16px;">${actionBtn}</div>
+    <div style="padding:0 1.5rem 1.5rem;">
+      <!-- รูปภาพ -->
+      <div style="width:100%;height:220px;border-radius:12px;overflow:hidden;margin-bottom:16px;">
+        <img src="http://localhost:3000/uploads/${p.image}" alt="${p.name}"
+             onerror="this.src='image/no-image.png'"
+             style="width:100%;height:100%;object-fit:cover;">
       </div>
-    </div>
-  `;
+
+      <!-- ชื่อ + badge -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <h3 style="font-family:'Prompt',sans-serif;font-size:1.3rem;font-weight:700;color:#1a2e1f;line-height:1.3;">
+          ${p.name}
+        </h3>
+        ${expBadge}
+      </div>
+
+      <!-- ราคา -->
+      <div style="margin-bottom:14px;">${priceBlock}</div>
+
+      <!-- info grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:#f4f7f5;border-radius:8px;padding:10px 12px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;">เจ้าของ</div>
+          <div style="font-size:0.9rem;font-weight:600;color:#1a2e1f;margin-top:2px;">👤 ${p.username}</div>
+        </div>
+        <div style="background:#f4f7f5;border-radius:8px;padding:10px 12px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;">ปริมาณ</div>
+          <div style="font-size:0.9rem;font-weight:600;color:#1a2e1f;margin-top:2px;">📦 ${p.quantity} กก.</div>
+        </div>
+      </div>
+
+      <!-- คำอธิบาย -->
+      ${p.description ? `
+        <div style="background:#f4f7f5;border-radius:8px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">รายละเอียด</div>
+          <div style="font-size:0.88rem;color:#444;line-height:1.6;">${p.description}</div>
+        </div>` : ""}
+
+      <!-- action button -->
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        ${actionBtn}
+      </div>
+    </div>`;
+
   document.getElementById("detailModal").style.display = "flex";
 }
 

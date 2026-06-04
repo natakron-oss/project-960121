@@ -423,6 +423,8 @@
             <div class="trade-name">${item.product_name} <span style="font-weight:400;font-size:12px;color:#aaa;">#${item.trade_id}</span></div>
             <div class="trade-meta"><i class="fa-solid fa-arrow-right-arrow-left"></i> ${item.from_username} → ${item.to_username}</div>
             <div class="trade-meta"><i class="fa-solid fa-box"></i> เสนอ: ${item.offered_item} × ${item.offered_quantity} กก.</div>
+            ${item.phone ? '<div class="trade-meta"><i class="fa-solid fa-phone"></i> <a href="tel:'+item.phone+'" style="color:#2d7a4f;text-decoration:none;">'+item.phone+'</a></div>' : ''}
+            ${item.address ? '<div class="trade-meta"><i class="fa-solid fa-location-dot"></i> '+item.address+'</div>' : ''}
           </div>
           <div class="trade-right">
             <div class="status-badge ${statusClass}">${statusLabel}</div>
