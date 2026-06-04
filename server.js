@@ -16,6 +16,7 @@ app.use("/api/trade", require("./backend/routes/tradeRoutes"));
 
 // static frontend
 app.use(express.static(__dirname));
+app.use("/uploads", express.static("uploads"));
 
 // home root
 app.get("/", (req, res) => {

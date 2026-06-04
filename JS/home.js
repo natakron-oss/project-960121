@@ -57,10 +57,10 @@ async function loadProducts() {
 
             let color = "#22c55e";
 
-            if (p.expire_days <= 1) {
+            if (p.expire_date <= 1) {
                 color = "#ef4444";
             }
-            else if (p.expire_days <= 3) {
+            else if (p.expire_date <= 3) {
                 color = "#f97316";
             }
 
@@ -70,8 +70,8 @@ async function loadProducts() {
                     <div class="card-img-container">
 
                         <img
-                            src="image/default.jpg"
-                            alt="${p.name}"
+                            src="http://localhost:3000/uploads/${p.image}"
+                             alt="${p.name}"
                         >
 
                         <div
@@ -91,6 +91,34 @@ async function loadProducts() {
 
                         <p>👤 ${p.username}</p>
 
+                        <div class="product-status">
+                        ${p.status === "trade"
+                            ? "🔄 Trade"
+                            : "💰 Sell"}
+                        </div>
+
+                        ${
+                        p.status === "trade"
+                        ?
+                        `
+                        <button
+                            class="trade-btn"
+                            onclick="goTrade(${p.id})"
+                        >
+                            Request Trade
+                        </button>
+                        `
+                        :
+                        `
+                        <button
+                            class="buy-btn"
+                            onclick="addToCart(${p.id})"
+                        >
+                            Add To Cart
+                        </button>
+                        `
+                        }
+
                     </div>
 
                 </div>
@@ -102,4 +130,10 @@ async function loadProducts() {
         console.error("LOAD PRODUCT ERROR:", err);
 
     }
+}
+function goTrade(productId) {
+
+    window.location.href =
+      `trade-request.html?id=${productId}`;
+
 }
