@@ -28,3 +28,5 @@ router.get("/:userId/items", async (req, res) => {
         });
     }
 });
+
+module.exports = router;
