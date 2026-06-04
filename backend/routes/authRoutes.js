@@ -1,62 +1,82 @@
 const router = require("express").Router();
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 // REGISTER
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
 
-    const hash = bcrypt.hashSync(password, 10);
+    if (!name || !email || !password) {
+        return res.json({ status: "error", message: "กรุณากรอกข้อมูลให้ครบถ้วน" });
+    }
 
-    db.query(
-        "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
-        [name, email, hash],
-        (err) => {
-            if (err) return res.json({ status: "error", message: err });
+    try {
+        // เช็ค email ซ้ำ
+        const [existing] = await db.query(
+            "SELECT user_id FROM users WHERE email = ?",
+            [email]
+        );
 
-            res.json({
-                status: "success",
-                message: "สมัครสมาชิกสำเร็จ"
-            });
+        if (existing.length > 0) {
+            return res.json({ status: "error", message: "อีเมลนี้ถูกใช้งานแล้ว" });
         }
-    );
+
+        const hash = await bcrypt.hash(password, 10);
+
+        await db.query(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+            [name, email, hash]
+        );
+
+        res.json({
+            status: "success",
+            message: "สมัครสมาชิกสำเร็จ"
+        });
+
+    } catch (err) {
+        console.error("REGISTER ERROR:", err);
+        res.json({ status: "error", message: err.message });
+    }
 });
 
 // LOGIN
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    db.query(
-        "SELECT user_id, username, email, password_hash FROM users WHERE email = ?",
-        [email],
-        (err, results) => {
-            if (err) {
-                console.log(err);
-                return res.json({ status: "error", message: "db error" });
-            }
+    if (!email || !password) {
+        return res.json({ status: "error", message: "กรุณากรอกข้อมูลให้ครบถ้วน" });
+    }
 
-            if (results.length === 0) {
-                return res.json({ status: "error", message: "ไม่พบผู้ใช้" });
-            }
+    try {
+        const [results] = await db.query(
+            "SELECT user_id, username, email, password_hash FROM users WHERE email = ?",
+            [email]
+        );
 
-            const user = results[0];
-
-            const check = bcrypt.compareSync(password, user.password_hash);
-
-            if (!check) {
-                return res.json({ status: "error", message: "รหัสผ่านผิด" });
-            }
-
-            return res.json({
-                status: "success",
-                user: {
-                    user_id: user.user_id,
-                    username: user.username
-                }
-            });
+        if (results.length === 0) {
+            return res.json({ status: "error", message: "ไม่พบผู้ใช้" });
         }
-    );
+
+        const user = results[0];
+
+        const check = await bcrypt.compare(password, user.password_hash);
+
+        if (!check) {
+            return res.json({ status: "error", message: "รหัสผ่านผิด" });
+        }
+
+        return res.json({
+            status: "success",
+            user: {
+                user_id: user.user_id,
+                username: user.username
+            }
+        });
+
+    } catch (err) {
+        console.error("LOGIN ERROR:", err);
+        res.json({ status: "error", message: err.message });
+    }
 });
 
 module.exports = router;
