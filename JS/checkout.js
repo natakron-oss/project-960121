@@ -45,7 +45,7 @@ function displayProducts(products) {
 // TOTALS
 // ======================
 function calculateTotals(products) {
-  const subtotal   = products.reduce((sum, p) => sum + (p.price * (p.quantity || 1)), 0);
+  const subtotal   = products.reduce((sum, p) => sum + (parseFloat(p.price) || 0) * (parseInt(p.quantity) || 1), 0);
   const shipping   = products.length > 0 ? SHIPPING_COST : 0;
   const grandTotal = subtotal + shipping;
 

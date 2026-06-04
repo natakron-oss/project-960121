@@ -198,9 +198,11 @@
           card.innerHTML = `
             <div class="noti-info">
               <div class="noti-field"><b>จาก</b> ${item.from_username}</div>
-              <div class="noti-field"><b>สินค้า</b> ${item.product_name}</div>
-              <div class="noti-field"><b>สิ่งที่เสนอ</b> ${item.offered_item}</div>
-              <div class="noti-field"><b>จำนวน</b> ${item.offered_quantity} กก.</div>
+              <div class="noti-field"><b>สินค้าที่ขอ</b> ${item.product_name}</div>
+              <div class="noti-field"><b>เสนอแลกด้วย</b> ${item.offered_item}</div>
+              <div class="noti-field"><b>ปริมาณ</b> ${item.offered_quantity} กก.</div>
+              ${item.phone ? '<div class="noti-field"><b>เบอร์โทร</b> <a href="tel:'+item.phone+'" style="color:#2d7a4f;text-decoration:none;">'+item.phone+'</a></div>' : ''}
+              ${item.address ? '<div class="noti-field"><b>ที่อยู่</b> '+item.address+'</div>' : ''}
               <div class="noti-field"><b>สถานะ</b> <span class="noti-badge">รอดำเนินการ</span></div>
             </div>
             <div class="noti-actions">
