@@ -110,8 +110,8 @@ async function loadProducts() {
             </div>
             <div class="card-footer-row">
               ${p.status === "trade"
-                ? `<button class="trade-btn" onclick="goTrade(${p.product_id})">Request Trade</button>`
-                : `<button class="buy-btn" onclick="addToCart(${p.product_id})">Add To Cart</button>`
+                ? `<button class="trade-btn" onclick="goTrade(${p.id})">Request Trade</button>`
+                : `<button class="buy-btn" onclick="addToCart(${p.id})">Add To Cart</button>`
               }
             </div>
           </div>
