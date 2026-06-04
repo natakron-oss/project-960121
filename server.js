@@ -14,6 +14,7 @@ app.use("/api/products", require("./backend/routes/productRoutes"));
 app.use("/api/cart", require("./backend/routes/cartRoutes")); // ✅ เพิ่มตรงนี้
 app.use("/api/trades", require("./backend/routes/tradeRoutes"));
 app.use("/api/history", require("./backend/routes/historyRoutes"));
+app.use("/api/orders", require("./backend/routes/orderRoutes"));
 
 // ================= STATIC ROOT =================
 // 👉 HTML อยู่ root ใช้ตัวนี้พอ
