@@ -75,7 +75,7 @@ CREATE TABLE `products` (
   `category` varchar(100) DEFAULT NULL,
   `quantity` int(11) NOT NULL,
   `description` text DEFAULT NULL,
-  `expire_days` int(11) NOT NULL,
+  `expire_date` int(11) NOT NULL,
   `image` varchar(255) DEFAULT NULL,
   `status` enum('sell','trade') DEFAULT 'sell',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -85,7 +85,7 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `description`, `expire_days`, `image`, `status`, `created_at`) VALUES
+INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `description`, `expire_date`, `image`, `status`, `created_at`) VALUES
 (1, 1, 'Jeff', 'sell', 1, 'asda', 1, 'default.jpg', 'sell', '2026-06-03 20:11:08'),
 (2, 1, 'Thanawat Udcha', 'sell', 1, 'dfsdfs', 1, 'default.jpg', 'sell', '2026-06-03 20:13:59'),
 (3, 1, 'billyysdfb', 'sell', 1, 'asdad', 12, 'default.jpg', 'sell', '2026-06-03 20:28:42');
