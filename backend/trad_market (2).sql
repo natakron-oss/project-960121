@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2026 at 09:28 PM
+-- Generation Time: Jun 04, 2026 at 10:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -34,6 +34,16 @@ CREATE TABLE `cart_items` (
   `quantity` int(11) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_items`
+--
+
+INSERT INTO `cart_items` (`id`, `user_id`, `product_id`, `quantity`, `created_at`) VALUES
+(3, 2, 31, 1, '2026-06-04 20:05:45'),
+(4, 2, 30, 1, '2026-06-04 20:07:16'),
+(5, 1, 30, 1, '2026-06-04 20:11:15'),
+(6, 1, 31, 1, '2026-06-04 20:11:18');
 
 -- --------------------------------------------------------
 
@@ -90,6 +100,7 @@ CREATE TABLE `products` (
   `name` varchar(255) NOT NULL,
   `category` varchar(100) DEFAULT NULL,
   `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT 0.00,
   `description` text DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `status` enum('sell','trade') DEFAULT 'sell',
@@ -101,9 +112,12 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `description`, `image`, `status`, `created_at`, `expire_date`) VALUES
-(23, 1, 'นะคะ', 'trade', 20, 'asda', '1780600353389.PNG', 'trade', '2026-06-04 19:12:33', '2026-06-06'),
-(24, 1, 'คะนะ', 'sell', 10, 'sfsf', '1780600381695.PNG', 'sell', '2026-06-04 19:13:01', '2026-06-06');
+INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `price`, `description`, `image`, `status`, `created_at`, `expire_date`) VALUES
+(27, 2, 'มะระ', 'trade', 19, 0.00, 'sdasdacvcertdvc', '1780602890034.PNG', 'trade', '2026-06-04 19:54:50', '2026-06-08'),
+(28, 2, 'ระมะ', 'trade', 8, 0.00, 'sddgdfgdgfd', '1780602929511.PNG', 'trade', '2026-06-04 19:55:29', '2026-06-09'),
+(29, 2, 'นะคะ', 'sell', 15, 0.00, 'sfrgjfyhhnmgffyhj', '1780602980081.PNG', 'sell', '2026-06-04 19:56:20', '2026-06-11'),
+(30, 2, 'คะนะ', 'sell', 30, 0.00, 'fgujkghdfgh', '1780603005687.PNG', 'sell', '2026-06-04 19:56:45', '2026-06-11'),
+(31, 2, 'Bom', 'sell', 1, 7000.00, 'sfsdfs', '1780603152502.PNG', 'sell', '2026-06-04 19:59:12', '2026-06-06');
 
 -- --------------------------------------------------------
 
@@ -129,13 +143,8 @@ CREATE TABLE `trade_requests` (
 --
 
 INSERT INTO `trade_requests` (`trade_id`, `product_id`, `from_user_id`, `to_user_id`, `offered_item`, `offered_quantity`, `address`, `phone`, `status`, `created_at`) VALUES
-(5, 19, 2, 2, '19', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 16:10:25'),
-(6, 20, 2, 1, '20', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:01:25'),
-(7, 20, 1, 1, '20', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:11:25'),
-(8, 21, 2, 1, '21', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:15:23'),
-(9, 22, 2, 1, '22', 3, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:15:40'),
-(10, 21, 2, 1, '21', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'rejected', '2026-06-04 18:31:44'),
-(11, 21, 2, 1, '21', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 18:48:05');
+(12, 27, 1, 2, 'มะระ', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 20:11:45'),
+(13, 28, 1, 2, 'ระมะ', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 20:12:13');
 
 -- --------------------------------------------------------
 
@@ -225,7 +234,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -249,13 +258,13 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `trade_requests`
 --
 ALTER TABLE `trade_requests`
-  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `users`
