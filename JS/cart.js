@@ -55,28 +55,7 @@ class CartManager {
         `;
         cartContent.innerHTML = '';
         cartContent.appendChild(header);
-
-        // สร้างรายการสินค้า
-        cart.forEach((item, index) => {
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.innerHTML = `
-                <input type="checkbox" class="item-checkbox" data-index="${index}" checked>
-                <div class="cart-item-info">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-meta">คลัง ${item.stock} ${item.unit}</div>
-                </div>
-                <div class="cart-item-price">${item.price}.00 บาท</div>
-                <div class="cart-item-qty">
-                    <button class="qty-btn minus-btn" data-index="${index}">−</button>
-                    <span class="qty-display">${item.quantity}</span>
-                    <button class="qty-btn plus-btn" data-index="${index}">+</button>
-                </div>
-                <div class="cart-item-total">${(item.price * item.quantity).toFixed(2)} บาท</div>
-                <button class="delete-btn" data-index="${index}">ลบสินค้า</button>
-            `;
-            cartContent.appendChild(cartItem);
-        });
+        
 
         this.updateCartSummary();
     }
@@ -215,13 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkoutBtn = document.querySelector('.checkout-btn');
     if (checkoutBtn && !checkoutBtn.disabled) {
         checkoutBtn.addEventListener('click', () => {
-            cartManager.proceedToCheckout();
-        });
-    }
-
-    const swapBtn = document.querySelector('.swap-btn');
-    if (swapBtn) {
-        swapBtn.addEventListener('click', () => {
             cartManager.proceedToCheckout();
         });
     }
