@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const db = require("../../db");  // แก้ path ให้ถูก
-
+const db = require("../config/db");
 // ADD PRODUCT
 router.post("/add", (req, res) => {
   const {
