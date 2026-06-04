@@ -12,16 +12,15 @@ app.use(express.json());
 // API
 app.use("/api/auth", require("./backend/routes/authRoutes"));
 app.use("/api/products", require("./backend/routes/productRoutes"));
-app.use("/api/trade", require("./backend/routes/tradeRoutes"));
+app.use("/api/trades", require("./backend/routes/tradeRoutes"));
 
 // static frontend
 app.use(express.static(__dirname));
 app.use("/uploads", express.static("uploads"));
 
 // home root
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "home.html"));
-});
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 3000;
 

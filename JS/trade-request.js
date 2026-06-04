@@ -10,127 +10,81 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadTraderItems() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
 
-    try {
+    if (!productId) return;
 
-        const params =
-            new URLSearchParams(window.location.search);
+    const res = await fetch("http://localhost:3000/api/products");
+    const data = await res.json();
 
-        const userId =
-            params.get("userId");
+    const product = data.data.find(p => p.id == productId);
 
-        if (!userId) return;
+    if (!product) return;
 
-        const response =
-    await fetch(
-        `http://localhost:3000/api/trade/${userId}/items`
-    );
+    // trader name (คนขาย)
+    document.getElementById("traderName").value = product.username;
 
-        const items =
-            await response.json();
+    // ใส่ item ที่จะ trade
+    const select = document.getElementById("tradeItem");
+    select.innerHTML = `
+      <option value="${product.id}">
+        ${product.name} (${product.quantity} กก.)
+      </option>
+    `;
 
-        const select =
-            document.getElementById("tradeItem");
-
-        select.innerHTML =
-            '<option value="">เลือกสิ่งที่ต้องการแลก</option>';
-
-        items.forEach(item => {
-
-            select.innerHTML += `
-                <option value="${item.id}">
-                    ${item.product_name}
-                </option>
-            `;
-
-        });
-
-    } catch (err) {
-
-        console.error(err);
-
-    }
-
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function submitTradeRequest(e) {
+  e.preventDefault();
 
-    e.preventDefault();
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id");
 
-    const fullname =
-        document.getElementById("fullname").value;
+  const fullname = document.getElementById("fullname").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+  const tradeItem = document.getElementById("tradeItem").value;
 
-    const phone =
-        document.getElementById("phone").value;
+  const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
 
-    const address =
-        document.getElementById("address").value;
+  if (!fullname || !phone || !address || !tradeItem) {
+    alert("กรุณากรอกข้อมูลให้ครบ");
+    return;
+  }
 
-    const tradeItem =
-        document.getElementById("tradeItem").value;
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/trades/request",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId,        // ⭐ สำคัญมาก
+          fullname,
+          phone,
+          address,
+          shippingMethod,
+          tradeItem
+        })
+      }
+    );
 
-    const shippingMethod =
-        document.querySelector(
-            'input[name="shipping"]:checked'
-        ).value;
+    const result = await response.json();
 
-    if (
-        !fullname ||
-        !phone ||
-        !address ||
-        !tradeItem
-    ) {
-
-        alert("กรุณากรอกข้อมูลให้ครบ");
-
-        return;
+    if (response.ok) {
+      alert("ส่งคำขอแลกสำเร็จ");
+      window.location.href = "home.html";
+    } else {
+      alert(result.message);
     }
 
-    try {
-
-        const response =
-            await fetch(
-                "http://localhost:3000/api/trades/request",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                        "application/json"
-                    },
-                    body: JSON.stringify({
-
-                        fullname,
-                        phone,
-                        address,
-                        shippingMethod,
-                        tradeItem
-
-                    })
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if (response.ok) {
-
-            alert("ส่งคำขอแลกสำเร็จ");
-
-            window.location.href =
-                "home.html";
-
-        } else {
-
-            alert(result.message);
-
-        }
-
-    } catch (err) {
-
-        console.error(err);
-
-        alert("เกิดข้อผิดพลาด");
-
-    }
-
+  } catch (err) {
+    console.error(err);
+    alert("เกิดข้อผิดพลาด");
+  }
 }
