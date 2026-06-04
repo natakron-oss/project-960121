@@ -261,9 +261,51 @@ document
 
 function addToCart(id) {
 
-  alert(
-    "เพิ่มสินค้า ID : " + id
+  // หาสินค้าจาก allProducts
+  const product = allProducts.find(
+    p => p.id == id
   );
+
+  if (!product) {
+    alert("ไม่พบสินค้า");
+    return;
+  }
+
+  let cart =
+    JSON.parse(
+      localStorage.getItem("cart")
+    ) || [];
+
+  // ตรวจสอบว่ามีสินค้าในตะกร้าแล้วหรือยัง
+  const existingItem =
+    cart.find(
+      item => item.id == id
+    );
+
+  if (existingItem) {
+
+    existingItem.quantity++;
+
+  } else {
+
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price || 0,
+      image: product.image,
+      quantity: 1
+    });
+
+  }
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  );
+
+  updateCartBadge();
+
+  alert("เพิ่มสินค้าลงตะกร้าแล้ว");
 
 }
 
