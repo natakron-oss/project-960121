@@ -2,16 +2,262 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Notifications</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>การแจ้งเตือน – Gardenshare</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: #f5f6f8;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: #fff;
+      border-bottom: 1px solid #e4e4e4;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-header a {
+      text-decoration: none;
+      color: #555;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .page-header a:hover { color: #2d7a4f; }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 680px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    /* ── CARD ── */
+    .noti-card {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .noti-card:hover {
+      border-color: #bcd5c7;
+    }
+
+    .noti-field {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 6px;
+    }
+    .noti-field b {
+      color: #1a1a1a;
+      min-width: 90px;
+      font-weight: 600;
+    }
+
+    .noti-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffd75e;
+    }
+
+    /* ── ACTION BUTTONS ── */
+    .noti-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 90px;
+    }
+
+    .btn-accept, .btn-deny {
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity .15s;
+    }
+    .btn-accept:hover, .btn-deny:hover { opacity: .8; }
+    .btn-accept:disabled, .btn-deny:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-accept {
+      background: #2d7a4f;
+      color: #fff;
+    }
+    .btn-deny {
+      background: #fff;
+      color: #c0392b;
+      border: 1px solid #c0392b;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: #888;
+    }
+    .empty-state i {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block;
+      color: #ccc;
+    }
+    .empty-state p { font-size: 15px; }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+  </style>
+</head>
 <body>
 
-  <h2>🔔 การแจ้งเตือน Trade Request</h2>
+  <div class="page-header">
+    <a href="home.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก</a>
+    &nbsp;/&nbsp;
+    <h1><i class="fa-solid fa-bell"></i> การแจ้งเตือน Trade Request</h1>
+  </div>
 
-  <div id="notiList"></div>
+  <div class="container">
+    <div id="notiList">
+      <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</div>
+    </div>
+  </div>
 
-  <script src="JS/noti.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      loadNotifications();
+    });
+
+    async function loadNotifications() {
+      const container = document.getElementById("notiList");
+
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.user_id;
+
+        if (!userId) {
+          container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-lock"></i><p>กรุณา login ก่อนใช้งาน</p></div>`;
+          return;
+        }
+
+        const res = await fetch(`http://localhost:3000/api/trades/notify/${userId}`);
+        const data = await res.json();
+        const pending = (data.data || []).filter(i => i.status === "pending");
+
+        container.innerHTML = "";
+
+        if (!pending.length) {
+          container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-bell-slash"></i><p>ไม่มีการแจ้งเตือนใหม่</p></div>`;
+          return;
+        }
+
+        pending.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "noti-card";
+          card.id = `card-${item.trade_id}`;
+          card.innerHTML = `
+            <div class="noti-info">
+              <div class="noti-field"><b>จาก</b> ${item.from_username}</div>
+              <div class="noti-field"><b>สินค้า</b> ${item.product_name}</div>
+              <div class="noti-field"><b>สิ่งที่เสนอ</b> ${item.offered_item}</div>
+              <div class="noti-field"><b>จำนวน</b> ${item.offered_quantity} กก.</div>
+              <div class="noti-field"><b>สถานะ</b> <span class="noti-badge">รอดำเนินการ</span></div>
+            </div>
+            <div class="noti-actions">
+              <button class="btn-accept" onclick="updateStatus(${item.trade_id}, 'accepted', this)">
+                <i class="fa-solid fa-check"></i> ยอมรับ
+              </button>
+              <button class="btn-deny" onclick="updateStatus(${item.trade_id}, 'rejected', this)">
+                <i class="fa-solid fa-xmark"></i> ปฏิเสธ
+              </button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><p>โหลดข้อมูลไม่สำเร็จ</p></div>`;
+      }
+    }
+
+    async function updateStatus(tradeId, status, btn) {
+      const card = document.getElementById(`card-${tradeId}`);
+      const btns = card.querySelectorAll("button");
+      btns.forEach(b => b.disabled = true);
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/trades/status/${tradeId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          card.style.opacity = "0";
+          card.style.transition = "opacity .3s";
+          setTimeout(() => card.remove(), 300);
+
+          // ถ้าไม่มีการ์ดเหลือ
+          setTimeout(() => {
+            const remaining = document.querySelectorAll(".noti-card");
+            if (!remaining.length) {
+              document.getElementById("notiList").innerHTML =
+                `<div class="empty-state"><i class="fa-solid fa-bell-slash"></i><p>ไม่มีการแจ้งเตือนใหม่</p></div>`;
+            }
+          }, 350);
+        } else {
+          alert(data.message || "เกิดข้อผิดพลาด");
+          btns.forEach(b => b.disabled = false);
+        }
+
+      } catch (err) {
+        console.error(err);
+        btns.forEach(b => b.disabled = false);
+      }
+    }
+  </script>
 </body>
 </html>

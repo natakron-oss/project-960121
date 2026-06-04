@@ -18,8 +18,15 @@ async function loadNotifications() {
     const container = document.getElementById("notiList");
     container.innerHTML = "";
 
-    data.data.forEach(item => {
+    // ✅ FIX: กรองเฉพาะ pending ที่ฝั่ง client อีกชั้น + handle กรณีไม่มีข้อมูล
+    const pending = (data.data || []).filter(item => item.status === "pending");
 
+    if (!pending.length) {
+      container.innerHTML = "<p>ไม่มีการแจ้งเตือนใหม่</p>";
+      return;
+    }
+
+    pending.forEach(item => {
       const div = document.createElement("div");
 
       div.innerHTML = `
@@ -60,8 +67,10 @@ async function updateStatus(tradeId, status) {
     const data = await res.json();
 
     if (data.success) {
-      alert("อัปเดตแล้ว");
-      loadNotifications();
+      alert(status === "accepted" ? "ยอมรับแล้ว ✅" : "ปฏิเสธแล้ว ❌");
+      loadNotifications(); // ✅ reload — pending จะหายไปเพราะ filter แล้ว
+    } else {
+      alert(data.message || "เกิดข้อผิดพลาด");
     }
 
   } catch (err) {

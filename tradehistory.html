@@ -1,110 +1,434 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
-	<head>
-		<meta charset="utf-8">
-		 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>ประวัติการเทรด</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-		<link rel="stylesheet" href="CSS/trade.css">
-	</head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประวัติการเทรด – Gardenshare</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: #f5f6f8;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e4e4e4;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 24px;
+    }
+
+    .logo img { display: block; }
+
+    .search-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f5f6f8;
+      border: 1px solid #e4e4e4;
+      border-radius: 8px;
+      padding: 8px 14px;
+      max-width: 400px;
+    }
+    .search-bar i { color: #888; font-size: 14px; }
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-outline {
+      border: 1px solid #e4e4e4;
+      color: #333;
+      background: #fff;
+    }
+    .btn-outline:hover { background: #f5f6f8; }
+    .btn-primary {
+      background: #2d7a4f;
+      color: #fff;
+      border: 1px solid #2d7a4f;
+    }
+    .btn-primary:hover { background: #25673f; }
+
+    .cart-btn { position: relative; }
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #e74c3c;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 10px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 24px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .header-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-nav a:hover { color: #2d7a4f; }
+    .header-nav .sep { color: #ccc; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1a1a1a;
+    }
+    .page-title i { color: #2d7a4f; }
+
+    /* ── SECTION ── */
+    .trade-section {
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-pending  { background: #f59e0b; }
+    .dot-incoming { background: #3b82f6; }
+    .dot-done     { background: #6b7280; }
+
+    /* ── TRADE CARD ── */
+    .trade-card {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .trade-card:hover { border-color: #bcd5c7; }
+
+    .trade-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .trade-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .trade-meta i { width: 12px; color: #999; }
+
+    .trade-right {
+      text-align: right;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .status-pending  { background: #fff3cd; color: #856404; border: 1px solid #ffd75e; }
+    .status-accepted { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .status-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+    .trade-date {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    /* ── EMPTY ── */
+    .empty {
+      background: #fff;
+      border: 1px dashed #ddd;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      color: #bbb;
+      font-size: 13px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1a1a1a;
+      color: #ccc;
+      padding: 32px 24px 16px;
+      margin-top: auto;
+    }
+    .footer-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .footer-section h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .footer-section p,
+    .footer-section a {
+      font-size: 13px;
+      color: #999;
+      display: block;
+      margin-bottom: 4px;
+      text-decoration: none;
+    }
+    .footer-section a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #333;
+      padding-top: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
 <body>
-	<!-- Header (copied from cart.html to match cart UI) -->
-	 <header>
-        
-        <div class="header-top">
 
-                <div class="logo">
-                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
-            </div>
+  <header>
+    <div class="header-top">
+      <div class="logo">
+        <img src="image/logo_gardenshare.png" alt="Garden Share" width="44" height="44">
+      </div>
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+      </div>
+      <div class="header-actions">
+        <a href="cart.html" class="btn btn-outline cart-btn">
+          <i class="fas fa-shopping-cart"></i> ตะกร้า
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="tradehistory.html" class="btn btn-outline">
+          <i class="fas fa-history"></i> History
+        </a>
+        <a href="login.html" class="btn btn-primary">
+          <i class="fas fa-user"></i> เข้าสู่ระบบ
+        </a>
+      </div>
+    </div>
+    <div class="header-nav">
+      <a href="home.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก</a>
+      <span class="sep">/</span>
+      <span style="color:#2d7a4f; font-weight:600;">ประวัติการเทรด</span>
+    </div>
+  </header>
 
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
-            </div>
+  <main>
+    <h1 class="page-title">
+      <i class="fas fa-history"></i> ประวัติการเทรด
+    </h1>
 
-            <div class="header-actions">
-                <a href="cart.html" class="btn cart-btn">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-label">ตะกร้า</span>
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </a>
+    <!-- Section 1 -->
+    <div class="trade-section">
+      <div class="section-label">
+        <span class="dot dot-pending"></span>
+        คำขอที่ฉันส่ง (รอดำเนินการ)
+      </div>
+      <div id="open-list"></div>
+    </div>
 
-                <a href="tradehistory.html" class="btn btn-primary">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
+    <!-- Section 2 -->
+    <div class="trade-section">
+      <div class="section-label">
+        <span class="dot dot-incoming"></span>
+        คนอื่นขอเทรดกับฉัน
+      </div>
+      <div id="incoming-list"></div>
+    </div>
 
-                 <a href="login.html" class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    <span>เข้าสู่ระบบ</span>
-                </a>
-            </div>
-          </div>
-          <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
-            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
-                <i class="fa-solid fa-arrow-left"></i>
-                <span>กลับหน้าหลัก</span>
-            </a>
-        </div>
-        <div class="nav-menu">
-        </div>
-       
-    </header>
+    <!-- Section 3 -->
+    <div class="trade-section">
+      <div class="section-label">
+        <span class="dot dot-done"></span>
+        ประวัติทั้งหมด (สำเร็จ / ปฏิเสธ)
+      </div>
+      <div id="completed-list"></div>
+    </div>
+  </main>
 
-	<main class="container cart-section">
-		<h1 class="cart-title">ประวัติการเทรด</h1>
-
-		<section id="open-orders" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">1. คำสั่งที่ฉันวางไว้ (ยังไม่ได้เทรด)</h2>
-			<div class="cart-content" id="open-list"></div>
-		</section>
-
-		<section id="incoming-requests" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">2. คนอื่นขอเทรดกับฉัน</h2>
-			<div class="cart-content" id="incoming-list"></div>
-		</section>
-
-		<section id="completed-trades" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">3. เทรดเสร็จแล้ว</h2>
-			<div class="cart-content" id="completed-list"></div>
-		</section>
-	</main>
-
-	<script src="products.js"></script>
-	<script src="JS/cart.js"></script>
-	<script src="JS/tradehistory.js"></script>
-
-	<!-- Footer (copied from cart.html) -->
-	<footer>
+  <footer>
     <div class="footer-content">
-        <div class="footer-section">
-            <h3>Gardenshare</h3>
-            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Marketplace</h3>
-            <p>Browse All</p>
-            <p>How It Works</p>
-            <p>Safety & Guidelines</p>
-        </div> <div class="footer-section">
-            <h3>ลิงก์ที่มีประโยชน์</h3>
-            <a href="#">นโยบายความเป็นส่วนตัว</a>
-            <a href="#">เงื่อนไขการใช้บริการ</a>
-            <a href="#">วิธีการชำระเงิน</a>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Legal Framework</h3>
-            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
-            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
-        </div>
+      <div class="footer-section">
+        <h3>Gardenshare</h3>
+        <p>Empowering urban communities to grow together and waste less.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Marketplace</h3>
+        <p>Browse All</p>
+        <p>How It Works</p>
+        <p>Safety & Guidelines</p>
+      </div>
+      <div class="footer-section">
+        <h3>ลิงก์ที่มีประโยชน์</h3>
+        <a href="#">นโยบายความเป็นส่วนตัว</a>
+        <a href="#">เงื่อนไขการใช้บริการ</a>
+        <a href="#">วิธีการชำระเงิน</a>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+        <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+      </div>
     </div>
-    
     <div class="footer-bottom">
-        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+      <p>&copy; 2026 Gardenshare. All rights reserved.</p>
     </div>
-</footer>
+  </footer>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.user_id;
+
+      if (!userId) {
+        alert("กรุณา login");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/history/${userId}`);
+        const result = await res.json();
+
+        if (!result.success) return;
+
+        const data = result.data;
+        const open = [], incoming = [], completed = [];
+
+        data.forEach(item => {
+          if (item.status === "pending") {
+            if (item.from_user_id == userId) open.push(item);
+            if (item.to_user_id == userId) incoming.push(item);
+          } else {
+            completed.push(item);
+          }
+        });
+
+        renderList("open-list", open);
+        renderList("incoming-list", incoming);
+        renderList("completed-list", completed);
+
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    function renderList(containerId, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      if (!items.length) {
+        container.innerHTML = `<div class="empty">ยังไม่มีรายการ</div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const statusClass =
+          item.status === "accepted" ? "status-accepted" :
+          item.status === "rejected" ? "status-rejected" : "status-pending";
+
+        const statusLabel =
+          item.status === "accepted" ? "✓ ยอมรับแล้ว" :
+          item.status === "rejected" ? "✗ ปฏิเสธแล้ว" : "⏳ รอดำเนินการ";
+
+        const card = document.createElement("div");
+        card.className = "trade-card";
+        card.innerHTML = `
+          <div class="trade-info">
+            <div class="trade-name">${item.product_name} <span style="font-weight:400;font-size:12px;color:#aaa;">#${item.trade_id}</span></div>
+            <div class="trade-meta"><i class="fa-solid fa-arrow-right-arrow-left"></i> ${item.from_username} → ${item.to_username}</div>
+            <div class="trade-meta"><i class="fa-solid fa-box"></i> เสนอ: ${item.offered_item} × ${item.offered_quantity} กก.</div>
+          </div>
+          <div class="trade-right">
+            <div class="status-badge ${statusClass}">${statusLabel}</div>
+            <div class="trade-date">${new Date(item.created_at).toLocaleString("th-TH")}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>

@@ -10,6 +10,11 @@ let fromUserId = null;
 
 // ================= LOAD PRODUCT =================
 async function loadTraderItems() {
+  // ✅ FIX: disable submit จนกว่า load เสร็จ
+  const submitBtn = document.querySelector(".btn-submit");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "กำลังโหลด...";
+
   try {
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("id");
@@ -26,12 +31,10 @@ async function loadTraderItems() {
     // ⭐ owner (คนขาย)
     toUserId = product.user_id;
 
-    // ⭐ แก้ตรงนี้: product ไม่มี username ต้อง JOIN backend เท่านั้น
     document.getElementById("traderName").value =
       product.username || "ไม่พบชื่อ";
 
     const select = document.getElementById("tradeItem");
-
     select.innerHTML = `
       <option value="${product.id}">
         ${product.name} (${product.quantity} กก.)
@@ -40,6 +43,11 @@ async function loadTraderItems() {
 
   } catch (err) {
     console.error(err);
+    alert("โหลดข้อมูลสินค้าไม่สำเร็จ");
+  } finally {
+    // ✅ FIX: เปิด submit เสมอหลัง load เสร็จ (ไม่ว่าจะสำเร็จหรือไม่)
+    submitBtn.disabled = false;
+    submitBtn.textContent = "ส่งคำขอแลกเปลี่ยน";
   }
 }
 
@@ -57,7 +65,6 @@ async function submitTradeRequest(e) {
   const tradeItem = document.getElementById("tradeItem").value;
   const tradeWeight = document.getElementById("tradeWeight").value;
 
-  // ⭐ FIX สำคัญ: ดึง user จาก JSON
   const user = JSON.parse(localStorage.getItem("user"));
   fromUserId = user?.user_id;
 
@@ -67,9 +74,14 @@ async function submitTradeRequest(e) {
   }
 
   if (!toUserId) {
-    alert("ไม่พบเจ้าของสินค้า");
+    alert("ไม่พบเจ้าของสินค้า กรุณารีเฟรชหน้า");
     return;
   }
+
+  // ✅ FIX: กัน submit ซ้ำ
+  const submitBtn = document.querySelector(".btn-submit");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "กำลังส่ง...";
 
   try {
     const response = await fetch(
@@ -92,14 +104,18 @@ async function submitTradeRequest(e) {
     const result = await response.json();
 
     if (response.ok) {
-      alert("ส่งคำขอแลกสำเร็จ");
+      alert("ส่งคำขอแลกสำเร็จ ✅");
       window.location.href = "home.html";
     } else {
-      alert(result.message);
+      alert(result.message || "เกิดข้อผิดพลาด");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "ส่งคำขอแลกเปลี่ยน";
     }
 
   } catch (err) {
     console.error(err);
-    alert("เกิดข้อผิดพลาด");
+    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "ส่งคำขอแลกเปลี่ยน";
   }
 }

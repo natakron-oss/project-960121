@@ -12,6 +12,7 @@ app.use(express.json());
 app.use("/api/auth", require("./backend/routes/authRoutes"));
 app.use("/api/products", require("./backend/routes/productRoutes"));
 app.use("/api/trades", require("./backend/routes/tradeRoutes"));
+app.use("/api/history", require("./backend/routes/historyRoutes"));
 
 // ================= STATIC ROOT =================
 // 👉 HTML อยู่ root ใช้ตัวนี้พอ
