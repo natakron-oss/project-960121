@@ -266,58 +266,61 @@
   </style>
 </head>
 <body>
+	<!-- Header (copied from cart.html to match cart UI) -->
+	 <header>
+        
+        <div class="header-top">
 
-  <header>
-    <div class="header-top">
-      <div class="logo">
-        <img src="image/logo_gardenshare.png" alt="Garden Share" width="44" height="44">
-      </div>
-      <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
-      </div>
-      <div class="header-actions">
-        <a href="cart.html" class="btn btn-outline cart-btn">
-          <i class="fas fa-shopping-cart"></i> ตะกร้า
-          <span class="cart-badge" id="cartBadge">0</span>
-        </a>
-        <a href="tradehistory.html" class="btn btn-outline">
-          <i class="fas fa-history"></i> History
-        </a>
-        <a href="login.html" class="btn btn-primary">
-          <i class="fas fa-user"></i> เข้าสู่ระบบ
-        </a>
-      </div>
-    </div>
-    <div class="header-nav">
-      <a href="home.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก</a>
-      <span class="sep">/</span>
-      <span style="color:#2d7a4f; font-weight:600;">ประวัติการเทรด</span>
-    </div>
-  </header>
+                <div class="logo">
+                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
+            </div>
 
-  <main>
-    <h1 class="page-title">
-      <i class="fas fa-history"></i> ประวัติการเทรด
-    </h1>
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+            </div>
 
-    <!-- Section 1 -->
-    <div class="trade-section">
-      <div class="section-label">
-        <span class="dot dot-pending"></span>
-        คำขอที่ฉันส่ง (รอดำเนินการ)
-      </div>
-      <div id="open-list"></div>
-    </div>
+            <div class="header-actions">
+                <a href="cart.html" class="btn cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-label">ตะกร้า</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
 
-    <!-- Section 2 -->
-    <div class="trade-section">
-      <div class="section-label">
-        <span class="dot dot-incoming"></span>
-        คนอื่นขอเทรดกับฉัน
-      </div>
-      <div id="incoming-list"></div>
-    </div>
+                <a href="tradehistory.html" class="btn btn-primary">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+
+                 <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-user"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </a>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
+            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>กลับหน้าหลัก</span>
+            </a>
+        </div>
+        <div class="nav-menu">
+        </div>
+       
+    </header>
+
+	<main class="container cart-section">
+		<h1 class="cart-title">ประวัติการเทรด</h1>
+
+		<section id="open-orders" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">1. คำสั่งที่ฉันวางไว้ (ยังไม่ได้เทรด)</h2>
+			<div class="cart-content" id="open-list"></div>
+		</section>
+
+		<section id="incoming-requests" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">2. คนอื่นขอเทรดกับฉัน</h2>
+			<div class="cart-content" id="incoming-list"></div>
+		</section>
 
     <!-- Section 3 -->
     <div class="trade-section">
