@@ -152,36 +152,6 @@
         <p>&copy; 2026 Gardenshare. All rights reserved.</p>
     </div>
 </footer>
-
-    <script src="JS/add-products.js"></script>
-    <script src="JS/trade.js"></script>
     <script src="JS/home.js"></script>
-    <script>
-  document.addEventListener("DOMContentLoaded", () => {
-
-    const token = localStorage.getItem("auth_token");
-
-    if (!token) {
-      window.location.href = "login.html";
-    }
-
-    const btn = document.getElementById("authBtn");
-
-    if (btn) {
-      btn.textContent = token ? "Logout" : "Login";
-
-      btn.addEventListener("click", () => {
-        if (token) {
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("user");
-          window.location.href = "login.html";
-        } else {
-          window.location.href = "login.html";
-        }
-      });
-    }
-
-  });
-</script>
 </body>
 </html>
