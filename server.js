@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-
 require("dotenv").config();
 
 const app = express();
@@ -9,18 +8,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API
+// ================= API =================
 app.use("/api/auth", require("./backend/routes/authRoutes"));
 app.use("/api/products", require("./backend/routes/productRoutes"));
 app.use("/api/trades", require("./backend/routes/tradeRoutes"));
 
-// static frontend
+// ================= STATIC ROOT =================
+// 👉 HTML อยู่ root ใช้ตัวนี้พอ
 app.use(express.static(__dirname));
-app.use("/uploads", express.static("uploads"));
 
-// home root
-app.use(express.static(path.join(__dirname, "public")));
+// uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ================= ROUTE =================
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "home.html"));
+});
 
 const PORT = process.env.PORT || 3000;
 

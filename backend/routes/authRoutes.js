@@ -28,32 +28,32 @@ router.post("/login", (req, res) => {
     const { email, password } = req.body;
 
     db.query(
-        "SELECT * FROM users WHERE email = ?",
+        "SELECT user_id, username, email, password_hash FROM users WHERE email = ?",
         [email],
         (err, results) => {
-            if (err) return res.json({ status: "error" });
+            if (err) {
+                console.log(err);
+                return res.json({ status: "error", message: "db error" });
+            }
 
-            if (results.length === 0)
+            if (results.length === 0) {
                 return res.json({ status: "error", message: "ไม่พบผู้ใช้" });
+            }
 
             const user = results[0];
-
-            console.log("DB password:", user.password_hash);
-            console.log("Input password:", password);
 
             const check = bcrypt.compareSync(password, user.password_hash);
 
             if (!check) {
-                return res.json({
-                    status: "error",
-                    message: "รหัสผ่านผิด"
-                });
+                return res.json({ status: "error", message: "รหัสผ่านผิด" });
             }
 
-            res.json({
+            return res.json({
                 status: "success",
-                message: "login ผ่าน",
-                user
+                user: {
+                    user_id: user.user_id,
+                    username: user.username
+                }
             });
         }
     );

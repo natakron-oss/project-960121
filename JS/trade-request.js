@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
+  loadTraderItems();
 
-    loadTraderItems();
-
-    const form =
-        document.getElementById("customerForm");
-
-    form.addEventListener("submit", submitTradeRequest);
-
+  const form = document.getElementById("customerForm");
+  form.addEventListener("submit", submitTradeRequest);
 });
 
+let toUserId = null;
+let fromUserId = null;
+
+// ================= LOAD PRODUCT =================
 async function loadTraderItems() {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -23,11 +23,15 @@ async function loadTraderItems() {
 
     if (!product) return;
 
-    // trader name (คนขาย)
-    document.getElementById("traderName").value = product.username;
+    // ⭐ owner (คนขาย)
+    toUserId = product.user_id;
 
-    // ใส่ item ที่จะ trade
+    // ⭐ แก้ตรงนี้: product ไม่มี username ต้อง JOIN backend เท่านั้น
+    document.getElementById("traderName").value =
+      product.username || "ไม่พบชื่อ";
+
     const select = document.getElementById("tradeItem");
+
     select.innerHTML = `
       <option value="${product.id}">
         ${product.name} (${product.quantity} กก.)
@@ -39,6 +43,7 @@ async function loadTraderItems() {
   }
 }
 
+// ================= SUBMIT TRADE =================
 async function submitTradeRequest(e) {
   e.preventDefault();
 
@@ -48,12 +53,21 @@ async function submitTradeRequest(e) {
   const fullname = document.getElementById("fullname").value;
   const phone = document.getElementById("phone").value;
   const address = document.getElementById("address").value;
+
   const tradeItem = document.getElementById("tradeItem").value;
+  const tradeWeight = document.getElementById("tradeWeight").value;
 
-  const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
+  // ⭐ FIX สำคัญ: ดึง user จาก JSON
+  const user = JSON.parse(localStorage.getItem("user"));
+  fromUserId = user?.user_id;
 
-  if (!fullname || !phone || !address || !tradeItem) {
-    alert("กรุณากรอกข้อมูลให้ครบ");
+  if (!fromUserId) {
+    alert("ยังไม่ได้ login");
+    return;
+  }
+
+  if (!toUserId) {
+    alert("ไม่พบเจ้าของสินค้า");
     return;
   }
 
@@ -64,12 +78,13 @@ async function submitTradeRequest(e) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId,        // ⭐ สำคัญมาก
-          fullname,
-          phone,
+          productId,
+          fromUserId,
+          toUserId,
+          offeredItem: tradeItem,
+          offeredQuantity: tradeWeight,
           address,
-          shippingMethod,
-          tradeItem
+          phone
         })
       }
     );
