@@ -44,30 +44,91 @@ router.post("/add", upload.single("image"), (req, res) => {
     }
   );
 });
-
-// ====================
-// GET PRODUCTS
-// ====================
+// ลบสินค้าที่หมดอายุ
 router.get("/", (req, res) => {
 
-  // ✅ คำนวณวันที่เหลือใน SQL เลย ให้ได้ตัวเลขกลับมาตรงๆ
-  const sql = `
-    SELECT
-      p.*,
-      u.username,
-      DATEDIFF(p.expire_date, CURDATE()) AS days_left
-    FROM products p
-    JOIN users u ON p.user_id = u.user_id
-    ORDER BY p.expire_date ASC, p.created_at DESC
-  `;
+  // หาไฟล์ที่หมดอายุ
+  db.query(
+    `
+    SELECT image
+    FROM products
+    WHERE expire_date < CURDATE()
+    `,
+    (err, expiredProducts) => {
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("DB error:", err);
-      return res.json({ status: "error", message: err.message });
+      if (err) {
+        console.log(err);
+      }
+
+      // ลบรูป
+      expiredProducts.forEach((p) => {
+
+        if (p.image) {
+
+          const filePath = path.join(
+            __dirname,
+            "../../uploads",
+            p.image
+          );
+
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+
+        }
+
+      });
+
+      // ลบข้อมูลใน DB
+      db.query(
+        `
+        DELETE FROM products
+        WHERE expire_date < CURDATE()
+        `,
+        (deleteErr) => {
+
+          if (deleteErr) {
+            console.log(deleteErr);
+          }
+
+          // โหลดสินค้าปัจจุบัน
+          const sql = `
+            SELECT
+              p.*,
+              u.username,
+              DATEDIFF(
+                p.expire_date,
+                CURDATE()
+              ) AS days_left
+            FROM products p
+            JOIN users u
+            ON p.user_id = u.user_id
+            ORDER BY p.expire_date ASC,
+                     p.created_at DESC
+          `;
+
+          db.query(sql, (err, results) => {
+
+            if (err) {
+              return res.json({
+                status: "error",
+                message: err.message
+              });
+            }
+
+            res.json({
+              status: "success",
+              data: results
+            });
+
+          });
+
+        }
+      );
+
     }
-    res.json({ status: "success", data: results });
-  });
+  );
+
 });
 
 module.exports = router;
