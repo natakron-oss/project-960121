@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ชำระเงิน – Gardenshare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --green:      #2d7a4f;
+      --green-soft: #e8f5ee;
+      --green-mid:  #4aab72;
+      --gold:       #c9952a;
+      --gold-soft:  #fdf6e3;
+      --text:       #1a1f1c;
+      --muted:      #7a8c82;
+      --border:     #e0e8e3;
+      --bg:         #f4f7f5;
+      --white:      #ffffff;
+      --red:        #dc2626;
+      --radius:     14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .top-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-bar .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Noto Serif Thai', serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--green);
+    }
+    .top-bar .logo-wrap img { width: 36px; height: 36px; border-radius: 8px; }
+    .top-bar .sep { color: var(--border); font-size: 20px; }
+    .top-bar h1 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .back-link {
+      margin-left: auto;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--green); }
+
+    /* ── STEP BAR ── */
+    .steps {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .step.active { color: var(--green); }
+    .step.done   { color: var(--green-mid); }
+    .step .dot {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+    }
+    .step.active .dot { background: var(--green); color: #fff; }
+    .step.done   .dot { background: var(--green-mid); color: #fff; }
+    .step-line {
+      width: 40px; height: 2px;
+      background: var(--border);
+      margin: 0 8px;
+    }
+    .step-line.done { background: var(--green-mid); }
+
+    /* ── LAYOUT ── */
+    .page-body {
+      max-width: 780px;
+      margin: 32px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 18px 24px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header .icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--green-soft);
+      color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .card-header h2 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .card-body { padding: 20px 24px; }
+
+    /* ── METHOD TABS ── */
+    .method-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .method-tab {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      background: var(--white);
+    }
+    .method-tab:hover { border-color: var(--green-mid); }
+    .method-tab.active {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+    .method-tab .tab-icon { font-size: 22px; margin-bottom: 6px; }
+    .method-tab .tab-label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .method-tab .tab-sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── QR SECTION ── */
+    .qr-wrap {
+      text-align: center;
+      padding: 8px 0 16px;
+    }
+    .qr-frame {
+      display: inline-block;
+      background: var(--white);
+      border: 3px solid var(--green);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .qr-frame img { display: block; width: 200px; height: 200px; }
+    .qr-frame .qr-brand {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px; height: 36px;
+      background: var(--white);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .qr-amount {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .qr-amount span { font-size: 1rem; font-weight: 500; color: var(--muted); }
+    .qr-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .qr-account {
+      background: var(--green-soft);
+      border: 1px solid #c3dece;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+    .qr-account .acc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .qr-account .acc-row:last-child { margin-bottom: 0; }
+    .qr-account .acc-label { color: var(--muted); font-size: 12px; }
+    .qr-account .acc-value { font-weight: 700; color: var(--text); font-size: 14px; }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--green);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background .15s;
+    }
+    .copy-btn:hover { background: var(--green-soft); }
+
+    /* ── TRANSFER SECTION ── */
+    .transfer-banks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .bank-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .bank-card:hover   { border-color: var(--green-mid); }
+    .bank-card.active  { border-color: var(--green); background: var(--green-soft); }
+    .bank-card .bank-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      margin: 0 auto 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .bank-card .bank-name { font-size: 11px; font-weight: 700; color: var(--text); }
+
+    .transfer-detail {
+      background: var(--gold-soft);
+      border: 1px solid #e8d5a0;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .transfer-detail .trow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .transfer-detail .trow:last-child { margin-bottom: 0; }
+    .transfer-detail .tlabel { color: #8a6a1a; font-weight: 500; }
+    .transfer-detail .tvalue { font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .transfer-detail .tvalue.amount {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+
+    /* ── UPLOAD SLIP ── */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-area:hover { border-color: var(--green); background: var(--green-soft); }
+    .upload-area.has-file { border-color: var(--green); background: var(--green-soft); }
+    .upload-area input[type=file] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+    }
+    .upload-icon { font-size: 28px; color: var(--muted); margin-bottom: 8px; }
+    .upload-area.has-file .upload-icon { color: var(--green); }
+    .upload-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .upload-sub   { font-size: 11px; color: var(--muted); }
+    .upload-preview {
+      display: none;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin: 0 auto 8px;
+    }
+    .upload-area.has-file .upload-preview { display: block; }
+
+    /* ── TIMER ── */
+    .timer-bar {
+      background: #fff8e6;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .timer-bar .t-icon { color: #d97706; font-size: 16px; }
+    .timer-bar .t-text { font-size: 13px; font-weight: 500; color: #78350f; flex: 1; }
+    .timer-bar .t-count {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #d97706;
+      letter-spacing: 1px;
+    }
+    .timer-bar .t-count.urgent { color: var(--red); animation: pulse .6s infinite; }
+
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+
+    /* ── CONFIRM BTN ── */
+    .btn-confirm {
+      width: 100%;
+      padding: 15px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Sarabun', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .2s, transform .1s;
+    }
+    .btn-confirm:hover   { background: #245f3d; }
+    .btn-confirm:active  { transform: scale(.98); }
+    .btn-confirm:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    /* ── ORDER SUMMARY (right) ── */
+    .summary-card { position: sticky; top: 80px; }
+    .summary-items { max-height: 260px; overflow-y: auto; }
+    .s-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--bg);
+      font-size: 13px;
+      gap: 8px;
+    }
+    .s-item:last-child { border-bottom: none; }
+    .s-item .s-name  { font-weight: 600; flex: 1; }
+    .s-item .s-qty   { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .s-item .s-price { font-weight: 700; color: var(--green); white-space: nowrap; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .grand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 800;
+      padding-top: 10px;
+      border-top: 2px solid var(--border);
+    }
+    .grand-row .g-price {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 1.4rem;
+      color: var(--green);
+    }
+
+    /* ── ORDER STATUS BADGE ── */
+    .order-id-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-soft);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+    .order-id-badge i { color: var(--green); }
+    .order-id-badge b { color: var(--green); }
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-box {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 360px;
+      animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(.7); opacity: 0; }
+      to   { transform: scale(1);  opacity: 1; }
+    }
+    .success-icon {
+      width: 80px; height: 80px;
+      background: var(--green-soft);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      color: var(--green);
+      margin: 0 auto 20px;
+    }
+    .success-box h2 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .success-box p  { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Sarabun', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .page-body { grid-template-columns: 1fr; }
+      .summary-card { position: static; }
+      .transfer-banks { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo-wrap">
+    <img src="image/logo_gardenshare.png" alt="Logo" onerror="this.style.display='none'">
+    Gardenshare
+  </div>
+  <span class="sep">|</span>
+  <h1><i class="fa-solid fa-lock" style="font-size:13px;color:var(--green);margin-right:4px;"></i>ชำระเงิน</h1>
+  <a href="checkout.html" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> กลับแก้ไข
+  </a>
+</div>
+
+<!-- STEP BAR -->
+<div class="steps">
+  <div class="step done">
+    <div class="dot"><i class="fa-solid fa-check" style="font-size:11px;"></i></div>
+    <span>ใส่ตะกร้า</span>
+  </div>
+  <div class="step-line done"></div>
+  <div class="step done">
+    <div class="dot"><i class="fa-solid fa-check" style="font-size:11px;"></i></div>
+    <span>ข้อมูลสั่งซื้อ</span>
+  </div>
+  <div class="step-line done"></div>
+  <div class="step active">
+    <div class="dot">3</div>
+    <span>ชำระเงิน</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step">
+    <div class="dot">4</div>
+    <span>ยืนยัน</span>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- LEFT: Payment Panel -->
+  <div>
+
+    <!-- Timer -->
+    <div class="timer-bar">
+      <i class="fa-solid fa-clock t-icon"></i>
+      <span class="t-text">กรุณาชำระภายใน</span>
+      <span class="t-count" id="timerDisplay">15:00</span>
+    </div>
+
+    <!-- Method Tabs (visible if not forced from checkout) -->
+    <div class="card" style="margin-bottom:20px;" id="methodCard">
+      <div class="card-header">
+        <div class="icon"><i class="fa-solid fa-credit-card"></i></div>
+        <h2>เลือกวิธีชำระเงิน</h2>
+      </div>
+      <div class="card-body">
+        <div class="method-tabs">
+          <div class="method-tab" id="tab-qrcode" onclick="setMethod('qrcode')">
+            <div class="tab-icon">📱</div>
+            <div class="tab-label">QR Code</div>
+            <div class="tab-sub">พร้อมเพย์ / ธนาคาร</div>
+          </div>
+          <div class="method-tab" id="tab-transfer" onclick="setMethod('transfer')">
+            <div class="tab-icon">🏦</div>
+            <div class="tab-label">โอนธนาคาร</div>
+            <div class="tab-sub">Online Banking</div>
+          </div>
+        </div>
+
+        <!-- QR CODE SECTION -->
+        <div id="section-qrcode">
+          <div class="qr-wrap">
+            <div class="qr-frame">
+              <!-- QR placeholder — ในโปรเจกต์จริงใช้ library generate QR -->
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=promptpay:0918543141&bgcolor=ffffff&color=2d7a4f&qzone=2" alt="QR Code" id="qrImg">
+              <div class="qr-brand">🌿</div>
+            </div>
+            <div class="qr-amount" id="qrAmount">฿0.00 <span>บาท</span></div>
+            <div class="qr-note">สแกน QR ด้วยแอปธนาคาร หรือ แอปพร้อมเพย์</div>
+          </div>
+
+          <div class="qr-account">
+            <div class="acc-row">
+              <span class="acc-label">ชื่อบัญชี</span>
+              <span class="acc-value">Gardenshare Co., Ltd.</span>
+            </div>
+            <div class="acc-row">
+              <span class="acc-label">พร้อมเพย์ / PromptPay</span>
+              <span class="acc-value">
+                0918543141
+                <button class="copy-btn" onclick="copyText('0918543141')">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </span>
+            </div>
+            <div class="acc-row">
+              <span class="acc-label">ยอดที่ต้องชำระ</span>
+              <span class="acc-value" id="qrAccAmount" style="color:var(--green);">฿0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRANSFER SECTION -->
+        <div id="section-transfer" style="display:none;">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">เลือกธนาคาร</p>
+          <div class="transfer-banks">
+            <div class="bank-card active" id="bank-kbank" onclick="selectBank('kbank')">
+              <div class="bank-logo" style="background:#138f2d;">K</div>
+              <div class="bank-name">กสิกรไทย</div>
+            </div>
+            <div class="bank-card" id="bank-scb" onclick="selectBank('scb')">
+              <div class="bank-logo" style="background:#4e2d87;">S</div>
+              <div class="bank-name">ไทยพาณิชย์</div>
+            </div>
+            <div class="bank-card" id="bank-bbl" onclick="selectBank('bbl')">
+              <div class="bank-logo" style="background:#1e3a8a;">B</div>
+              <div class="bank-name">กรุงเทพ</div>
+            </div>
+            <div class="bank-card" id="bank-ktb" onclick="selectBank('ktb')">
+              <div class="bank-logo" style="background:#009fd9;">K</div>
+              <div class="bank-name">กรุงไทย</div>
+            </div>
+            <div class="bank-card" id="bank-bay" onclick="selectBank('bay')">
+              <div class="bank-logo" style="background:#ffc72c;color:#1a1a1a;">A</div>
+              <div class="bank-name">กรุงศรี</div>
+            </div>
+            <div class="bank-card" id="bank-ttb" onclick="selectBank('ttb')">
+              <div class="bank-logo" style="background:#ff6600;">T</div>
+              <div class="bank-name">ทหารไทย</div>
+            </div>
+          </div>
+
+          <div class="transfer-detail" id="bankDetail">
+            <div class="trow">
+              <span class="tlabel">ธนาคาร</span>
+              <span class="tvalue" id="bankNameDisplay">ธนาคารกสิกรไทย</span>
+            </div>
+            <div class="trow">
+              <span class="tlabel">เลขบัญชี</span>
+              <span class="tvalue">
+                <span id="bankAccNum">123-4-56789-0</span>
+                <button class="copy-btn" onclick="copyText(document.getElementById('bankAccNum').textContent)">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </span>
+            </div>
+            <div class="trow">
+              <span class="tlabel">ชื่อบัญชี</span>
+              <span class="tvalue">Gardenshare Co., Ltd.</span>
+            </div>
+            <div class="trow">
+              <span class="tlabel">ยอดโอน</span>
+              <span class="tvalue amount" id="bankAmount">฿0.00</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- UPLOAD SLIP -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="fa-solid fa-file-image"></i></div>
+        <h2>แนบหลักฐานการชำระเงิน</h2>
+      </div>
+      <div class="card-body">
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('slipInput').click()">
+          <input type="file" id="slipInput" accept="image/*" onchange="handleSlipUpload(event)">
+          <img class="upload-preview" id="slipPreview" src="" alt="slip">
+          <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div class="upload-label">อัพโหลดสลิป / Screenshot</div>
+          <div class="upload-sub" id="uploadSub">PNG, JPG ขนาดไม่เกิน 10 MB</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="btn-confirm" id="confirmBtn" onclick="confirmPayment()" disabled>
+            <i class="fa-solid fa-circle-check"></i>
+            ยืนยันการชำระเงิน
+          </button>
+          <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--green);"></i>
+            ระบบจะตรวจสอบการชำระเงินภายใน 5–15 นาที
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /LEFT -->
+
+  <!-- RIGHT: Order Summary -->
+  <div class="summary-card">
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="fa-solid fa-receipt"></i></div>
+        <h2>สรุปคำสั่งซื้อ</h2>
+      </div>
+      <div class="card-body">
+        <div class="summary-items" id="summaryItems">
+          <!-- items injected by JS -->
+        </div>
+        <hr class="divider">
+        <div class="total-row">
+          <span>รวมสินค้า</span>
+          <span id="summarySubtotal">฿0.00</span>
+        </div>
+        <div class="total-row">
+          <span>ค่าจัดส่ง</span>
+          <span>฿0.00</span>
+        </div>
+        <div class="grand-row">
+          <span>ยอดรวม</span>
+          <span class="g-price" id="summaryGrand">฿0.00</span>
+        </div>
+        <div class="order-id-badge" id="orderBadge">
+          <i class="fa-solid fa-barcode"></i>
+          <span>หมายเลขคำสั่งซื้อ: <b id="orderIdDisplay">–</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+    <h2>ส่งหลักฐานสำเร็จ!</h2>
+    <p>ทีมงานจะตรวจสอบและยืนยันคำสั่งซื้อของคุณภายใน 5–15 นาที</p>
+    <a href="home.html" class="btn-home">
+      <i class="fa-solid fa-house"></i> กลับหน้าหลัก
+    </a>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  payment.js (inline)
+// ════════════════════════════════════════
+
+const params    = new URLSearchParams(window.location.search);
+const ORDER_ID  = params.get("order_id");
+const METHOD    = params.get("method") || "qrcode";
+
+const BANK_DATA = {
+  kbank: { name: "ธนาคารกสิกรไทย",     acc: "123-4-56789-0" },
+  scb:   { name: "ธนาคารไทยพาณิชย์",   acc: "234-5-67890-1" },
+  bbl:   { name: "ธนาคารกรุงเทพ",      acc: "345-6-78901-2" },
+  ktb:   { name: "ธนาคารกรุงไทย",      acc: "456-7-89012-3" },
+  bay:   { name: "ธนาคารกรุงศรีอยุธยา", acc: "567-8-90123-4" },
+  ttb:   { name: "ธนาคารทีทีบี",        acc: "678-9-01234-5" },
+};
+
+let grandTotal  = 0;
+let slipFile    = null;
+let timerSec    = 15 * 60;
+let timerInt    = null;
+let currentBank = "kbank";
+
+// ── init ──
+document.addEventListener("DOMContentLoaded", () => {
+  loadSummary();
+  setMethod(METHOD);
+  startTimer();
+});
+
+// ── load cart summary ──
+function loadSummary() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const container = document.getElementById("summaryItems");
+
+  grandTotal = cart.reduce((s, p) => s + (parseFloat(p.price) || 0) * (parseInt(p.quantity) || 1), 0);
+
+  container.innerHTML = cart.map(p => `
+    <div class="s-item">
+      <div>
+        <div class="s-name">${p.name}</div>
+        <div class="s-qty">×${p.quantity} กก.</div>
+      </div>
+      <div class="s-price">฿${((p.price || 0) * (p.quantity || 1)).toFixed(2)}</div>
+    </div>
+  `).join("") || '<div style="color:var(--muted);font-size:13px;padding:8px 0;">ไม่มีสินค้า</div>';
+
+  document.getElementById("summarySubtotal").textContent = "฿" + grandTotal.toFixed(2);
+  document.getElementById("summaryGrand").textContent    = "฿" + grandTotal.toFixed(2);
+  document.getElementById("qrAmount").innerHTML          = `฿${grandTotal.toFixed(2)} <span>บาท</span>`;
+  document.getElementById("qrAccAmount").textContent     = "฿" + grandTotal.toFixed(2);
+  document.getElementById("bankAmount").textContent      = "฿" + grandTotal.toFixed(2);
+
+  if (ORDER_ID) {
+    document.getElementById("orderIdDisplay").textContent = "#" + ORDER_ID;
+  }
+
+  // update QR with amount
+  const qrImg = document.getElementById("qrImg");
+  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=promptpay:0918543141:${grandTotal.toFixed(2)}&bgcolor=ffffff&color=2d7a4f&qzone=2`;
+}
+
+// ── method switch ──
+function setMethod(m) {
+  document.getElementById("section-qrcode").style.display  = m === "qrcode"   ? "block" : "none";
+  document.getElementById("section-transfer").style.display = m === "transfer" ? "block" : "none";
+  document.getElementById("tab-qrcode").classList.toggle("active",  m === "qrcode");
+  document.getElementById("tab-transfer").classList.toggle("active", m === "transfer");
+}
+
+// ── bank select ──
+function selectBank(bank) {
+  document.querySelectorAll(".bank-card").forEach(c => c.classList.remove("active"));
+  document.getElementById("bank-" + bank).classList.add("active");
+  currentBank = bank;
+  const d = BANK_DATA[bank];
+  document.getElementById("bankNameDisplay").textContent = d.name;
+  document.getElementById("bankAccNum").textContent      = d.acc;
+}
+
+// ── slip upload ──
+function handleSlipUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  slipFile = file;
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const preview = document.getElementById("slipPreview");
+    preview.src = ev.target.result;
+    document.getElementById("uploadArea").classList.add("has-file");
+    document.getElementById("uploadSub").textContent = file.name;
+    document.getElementById("confirmBtn").disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── confirm payment ──
+async function confirmPayment() {
+  if (!slipFile) return;
+  const btn = document.getElementById("confirmBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังส่ง...';
+
+  try {
+    // ในโปรเจกต์จริง: upload slip + update order status
+    // const formData = new FormData();
+    // formData.append("slip", slipFile);
+    // formData.append("order_id", ORDER_ID);
+    // await fetch("http://localhost:3000/api/orders/slip", { method:"POST", body: formData });
+
+    // Simulate
+    await new Promise(r => setTimeout(r, 1500));
+
+    clearInterval(timerInt);
+    document.getElementById("successOverlay").classList.add("show");
+    localStorage.removeItem("cart");
+
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ยืนยันการชำระเงิน';
+  }
+}
+
+// ── timer ──
+function startTimer() {
+  updateTimerDisplay();
+  timerInt = setInterval(() => {
+    timerSec--;
+    if (timerSec <= 0) {
+      clearInterval(timerInt);
+      handleTimerExpired();
+      return;
+    }
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSec / 60).toString().padStart(2, "0");
+  const s = (timerSec % 60).toString().padStart(2, "0");
+  const el = document.getElementById("timerDisplay");
+  el.textContent = `${m}:${s}`;
+  el.classList.toggle("urgent", timerSec <= 60);
+}
+
+function handleTimerExpired() {
+  document.getElementById("timerDisplay").textContent = "หมดเวลา";
+  document.getElementById("confirmBtn").disabled = true;
+  alert("หมดเวลาชำระเงิน กรุณาสั่งซื้อใหม่");
+  window.location.href = "home.html";
+}
+
+// ── copy util ──
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    // brief flash feedback
+    const toast = document.createElement("div");
+    toast.textContent = "คัดลอกแล้ว ✓";
+    toast.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:#1a1f1c;color:#fff;padding:8px 18px;border-radius:20px;
+      font-size:13px;font-weight:600;z-index:9999;
+      animation:fadeUp .3s ease;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  });
+}
+</script>
+
+<style>
+@keyframes fadeUp {
+  from { opacity:0; transform:translateX(-50%) translateY(10px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+</style>
+
+</body>
+</html>
