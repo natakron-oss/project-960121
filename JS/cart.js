@@ -55,6 +55,69 @@ class CartManager {
         `;
         cartContent.innerHTML = '';
         cartContent.appendChild(header);
+        cart.forEach((item, index) => {
+
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+
+    row.innerHTML = `
+        <div>
+            <input
+                type="checkbox"
+                class="item-checkbox"
+                checked
+            >
+        </div>
+
+        <div class="product-info">
+            <img
+                src="http://localhost:3000/uploads/${item.image}"
+                width="80"
+            >
+
+            <span>${item.name}</span>
+        </div>
+
+        <div>
+            ${item.price} บาท
+        </div>
+
+        <div class="qty-controls">
+            <button
+                class="minus-btn"
+                data-index="${index}"
+            >
+                -
+            </button>
+
+            <span>${item.quantity}</span>
+
+            <button
+                class="plus-btn"
+                data-index="${index}"
+            >
+                +
+            </button>
+        </div>
+
+        <div>
+            ${(item.price * item.quantity).toFixed(2)}
+            บาท
+        </div>
+
+        <div>
+            <button
+                class="delete-btn"
+                data-index="${index}"
+            >
+                ลบ
+            </button>
+        </div>
+    `;
+
+    cartContent.appendChild(row);
+
+});
         
 
         this.updateCartSummary();
