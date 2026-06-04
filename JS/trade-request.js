@@ -22,9 +22,9 @@ async function loadTraderItems() {
         if (!userId) return;
 
         const response =
-            await fetch(
-                `http://localhost:3000/api/trades/${userId}/items`
-            );
+    await fetch(
+        `http://localhost:3000/api/trade/${userId}/items`
+    );
 
         const items =
             await response.json();
