@@ -10,7 +10,7 @@ router.get("/:userId/items", async (req, res) => {
         const [rows] = await db.query(`
             SELECT
                 id,
-                product_name
+                name
             FROM products
             WHERE user_id = ?
         `, [userId]);
@@ -28,3 +28,5 @@ router.get("/:userId/items", async (req, res) => {
         });
     }
 });
+
+module.exports = router; // ⭐ สำคัญมาก
