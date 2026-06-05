@@ -44,10 +44,27 @@
                     <span>History</span>
                 </a>
 
-                <button id="authBtn" class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    <span>Logout</span>
-                </button>
+                <!-- User Avatar Dropdown -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-avatar-btn" id="userAvatarBtn">
+                        <div class="avatar-circle" id="avatarCircle">U</div>
+                        <span class="username-label" id="usernameLabel">User</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size:10px;opacity:.6;"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar" id="dropdownAvatar">U</div>
+                            <div>
+                                <div class="dropdown-name" id="dropdownName">–</div>
+                                <div class="dropdown-email" id="dropdownEmail">–</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item dropdown-logout" id="logoutBtn">
+                            <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+                        </button>
+                    </div>
+                </div>
             </div>
 
           </div>
