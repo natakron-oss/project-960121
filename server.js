@@ -29,11 +29,4 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log("🚀 Server running on http://localhost:" + PORT);
-
-  // ── Cron: ลบสินค้าหมดอายุทุกคืนเที่ยงคืน ──
-  const { deleteExpiredProducts } = require("./backend/jobs/cleanupExpired");
-
-  // รันทันทีตอน server start เพื่อเคลียร์ของที่ค้างไว้
-  deleteExpiredProducts();
-  console.log("🗑️  Cleanup cron job registered (runs daily at 00:00 ICT)");
 });
