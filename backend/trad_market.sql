@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2026 at 10:17 PM
+-- Generation Time: Jun 05, 2026 at 06:04 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,10 +40,9 @@ CREATE TABLE `cart_items` (
 --
 
 INSERT INTO `cart_items` (`id`, `user_id`, `product_id`, `quantity`, `created_at`) VALUES
-(3, 2, 31, 1, '2026-06-04 20:05:45'),
-(4, 2, 30, 1, '2026-06-04 20:07:16'),
-(5, 1, 30, 1, '2026-06-04 20:11:15'),
-(6, 1, 31, 1, '2026-06-04 20:11:18');
+(7, 2, 42, 2, '2026-06-04 20:53:05'),
+(8, 2, 47, 1, '2026-06-04 20:53:08'),
+(13, 1, 42, 2, '2026-06-05 03:56:41');
 
 -- --------------------------------------------------------
 
@@ -57,9 +56,20 @@ CREATE TABLE `notifications` (
   `type` varchar(50) DEFAULT NULL,
   `message` text DEFAULT NULL,
   `trade_request_id` int(11) DEFAULT NULL,
+  `order_id` int(11) DEFAULT NULL,
   `is_read` tinyint(4) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `message`, `trade_request_id`, `order_id`, `is_read`, `created_at`) VALUES
+(1, 2, 'new_order', 'มีคำสั่งซื้อใหม่สำหรับสินค้า \"kuy\" จำนวน 1 กก. โดย Makirumi _', NULL, 1, 0, '2026-06-04 21:44:23'),
+(2, 2, 'new_order', 'มีคำสั่งซื้อใหม่สำหรับสินค้า \"kuy\" จำนวน 2 กก. โดย Makirumi _', NULL, 2, 0, '2026-06-04 21:46:41'),
+(3, 2, 'new_order', 'มีคำสั่งซื้อใหม่สำหรับสินค้า \"kuy\" จำนวน 1 กก. โดย 8885', NULL, 3, 0, '2026-06-05 03:57:11'),
+(4, 2, 'new_order', 'มีคำสั่งซื้อใหม่สำหรับสินค้า \"kuy\" จำนวน 2 กก. โดย 589984', NULL, 4, 0, '2026-06-05 03:57:55');
 
 -- --------------------------------------------------------
 
@@ -70,10 +80,25 @@ CREATE TABLE `notifications` (
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `fullname` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `shipping_method` varchar(50) DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT 'cod',
   `total_price` decimal(10,2) DEFAULT 0.00,
   `status` enum('pending','paid','cancelled') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `fullname`, `phone`, `address`, `shipping_method`, `payment_method`, `total_price`, `status`, `created_at`) VALUES
+(1, 1, 'Makirumi _', '000000', '6669/69', 'cod', 'cod', 50.00, 'paid', '2026-06-04 21:44:23'),
+(2, 1, 'Makirumi _', '0000000000', '559/64', 'cod', 'cod', 100.00, 'paid', '2026-06-04 21:46:41'),
+(3, 1, '8885', '52941254', '888/88', 'pickuphome', 'qrcode', 50.00, 'pending', '2026-06-05 03:57:11'),
+(4, 1, '589984', '488485', '84884/48', 'pickupschool', 'cod', 100.00, 'pending', '2026-06-05 03:57:55');
 
 -- --------------------------------------------------------
 
@@ -85,8 +110,19 @@ CREATE TABLE `order_items` (
   `order_item_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL
+  `quantity` int(11) NOT NULL,
+  `price_at_order` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `quantity`, `price_at_order`) VALUES
+(1, 1, 42, 1, 50.00),
+(2, 2, 42, 2, 50.00),
+(3, 3, 42, 1, 50.00),
+(4, 4, 42, 2, 50.00);
 
 -- --------------------------------------------------------
 
@@ -113,11 +149,15 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `user_id`, `name`, `category`, `quantity`, `price`, `description`, `image`, `status`, `created_at`, `expire_date`) VALUES
-(27, 2, 'มะระ', 'trade', 19, 0.00, 'sdasdacvcertdvc', '1780602890034.PNG', 'trade', '2026-06-04 19:54:50', '2026-06-08'),
-(28, 2, 'ระมะ', 'trade', 8, 0.00, 'sddgdfgdgfd', '1780602929511.PNG', 'trade', '2026-06-04 19:55:29', '2026-06-09'),
-(29, 2, 'นะคะ', 'sell', 15, 0.00, 'sfrgjfyhhnmgffyhj', '1780602980081.PNG', 'sell', '2026-06-04 19:56:20', '2026-06-11'),
-(30, 2, 'คะนะ', 'sell', 30, 0.00, 'fgujkghdfgh', '1780603005687.PNG', 'sell', '2026-06-04 19:56:45', '2026-06-11'),
-(31, 2, 'Bom', 'sell', 1, 7000.00, 'sfsdfs', '1780603152502.PNG', 'sell', '2026-06-04 19:59:12', '2026-06-06');
+(42, 2, 'kuy', 'sell', 2, 50.00, 'yai', '1780606131234.jpg', 'sell', '2026-06-04 20:48:51', '2026-06-06'),
+(43, 2, 'ley', 'sell', 1, 20.00, 'k', '1780606160862.png', 'sell', '2026-06-04 20:49:20', '2026-06-05'),
+(45, 2, 'y', 'trade', 5, 0.00, '5', '1780606255100.jpg', 'trade', '2026-06-04 20:50:55', '2026-06-09'),
+(46, 2, 'o', 'trade', 1, 0.00, '1', '1780606310814.jpg', 'trade', '2026-06-04 20:51:50', '2026-06-09'),
+(47, 2, 't', 'sell', 1, 50.00, '1', '1780606341694.webp', 'sell', '2026-06-04 20:52:21', '2026-09-12'),
+(48, 1, 'นน', 'trade', 49, 0.00, '50', '1780606682678.jpg', 'trade', '2026-06-04 20:58:02', '2026-06-24'),
+(49, 1, 'Kub Bom', 'sell', 10, 100.00, '', '1780609395034.png', 'sell', '2026-06-04 21:43:15', '2026-06-09'),
+(50, 2, 'คึรัะ', 'sell', 20, 200.00, '', '1780610011398.png', 'sell', '2026-06-04 21:53:31', '2027-01-12'),
+(51, 2, 'Kub Bom', 'sell', 5, 55.00, '', '1780610034324.png', 'sell', '2026-06-04 21:53:54', '2026-06-09');
 
 -- --------------------------------------------------------
 
@@ -143,8 +183,8 @@ CREATE TABLE `trade_requests` (
 --
 
 INSERT INTO `trade_requests` (`trade_id`, `product_id`, `from_user_id`, `to_user_id`, `offered_item`, `offered_quantity`, `address`, `phone`, `status`, `created_at`) VALUES
-(12, 27, 1, 2, 'มะระ', 1, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 20:11:45'),
-(13, 28, 1, 2, 'ระมะ', 2, '50หมู่3 ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100', '+66 0918543141', 'accepted', '2026-06-04 20:12:13');
+(14, 46, 1, 2, 'นน', 2, '99/66', '0918526474', 'rejected', '2026-06-04 20:58:36'),
+(15, 48, 2, 1, 'ley', 1, '000/22', '0000000000', 'accepted', '2026-06-04 21:01:06');
 
 -- --------------------------------------------------------
 
@@ -168,7 +208,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `phone`, `address`, `created_at`) VALUES
 (1, 'Thanawat Udcha', 'thnwathnxudcha@gmail.com', '$2b$10$vT5Lntl6x8k8ZQnQrEPKyuks4bUc8lx5tSO5JXV2yNM8Cyuclybgu', NULL, NULL, '2026-06-03 18:51:09'),
-(2, 'Jeff', 'thnwatdcha@gmail.com', '$2b$10$JIbV4zXL8N/8Th3s.yYy3u1ZNmqLDpt/em0Sc6b6W1uVW8OITM/bK', NULL, NULL, '2026-06-04 06:31:40');
+(2, 'Jeff', 'thnwatdcha@gmail.com', '$2b$10$JIbV4zXL8N/8Th3s.yYy3u1ZNmqLDpt/em0Sc6b6W1uVW8OITM/bK', NULL, NULL, '2026-06-04 06:31:40'),
+(3, 'bom', 'bom@gmail.com', '$2b$10$dlFEH6vyKBoBxeMudIZDDuXmnq.X4E6DzGcVTygoLhDBgE/rD/Sxe', NULL, NULL, '2026-06-05 04:03:32');
 
 --
 -- Indexes for dumped tables
@@ -186,7 +227,8 @@ ALTER TABLE `cart_items`
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `orders`
@@ -234,43 +276,43 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `trade_requests`
 --
 ALTER TABLE `trade_requests`
-  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -282,6 +324,25 @@ ALTER TABLE `users`
 ALTER TABLE `cart_items`
   ADD CONSTRAINT `fk_cart_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_cart_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notif_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `fk_oi_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_oi_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`
