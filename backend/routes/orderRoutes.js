@@ -116,20 +116,64 @@ router.get("/notify/:userId", async (req, res) => {
 // PUT /api/orders/status/:orderId — อัปเดตสถานะ (seller กด confirm/cancel)
 // ─────────────────────────────────────────
 router.put("/status/:orderId", async (req, res) => {
-  const { orderId }  = req.params;
-  const { status }   = req.body; // 'paid' | 'cancelled'
+  const { orderId } = req.params;
+  const { status }  = req.body; // 'paid' | 'cancelled'
 
   const allowed = ["paid", "cancelled"];
   if (!allowed.includes(status)) {
     return res.status(400).json({ success: false, message: "สถานะไม่ถูกต้อง" });
   }
 
+  const conn = await db.getConnection();
   try {
-    await db.query(`UPDATE orders SET status = ? WHERE order_id = ?`, [status, orderId]);
+    await conn.beginTransaction();
+
+    // 1. อัปเดตสถานะ order
+    await conn.query(`UPDATE orders SET status = ? WHERE order_id = ?`, [status, orderId]);
+
+    // 2. ถ้า confirm (paid) → ลด quantity สินค้า + ลบถ้าหมด
+    if (status === "paid") {
+
+      // ดึง order_items ของ order นี้
+      const [items] = await conn.query(
+        `SELECT oi.product_id, oi.quantity AS ordered_qty,
+                p.quantity AS stock, p.image
+         FROM order_items oi
+         JOIN products p ON p.id = oi.product_id
+         WHERE oi.order_id = ?`,
+        [orderId]
+      );
+
+      for (const item of items) {
+        const newQty = (item.stock || 0) - (item.ordered_qty || 0);
+
+        if (newQty <= 0) {
+          // ลบรูปออกจาก disk
+          if (item.image) {
+            const fp = require("path").join(__dirname, "../../uploads", item.image);
+            if (require("fs").existsSync(fp)) require("fs").unlinkSync(fp);
+          }
+          // ลบสินค้าออกจาก DB (cascade ลบ order_items, cart_items ที่ FK ชี้มาด้วย)
+          await conn.query(`DELETE FROM products WHERE id = ?`, [item.product_id]);
+        } else {
+          // ลด quantity
+          await conn.query(
+            `UPDATE products SET quantity = ? WHERE id = ?`,
+            [newQty, item.product_id]
+          );
+        }
+      }
+    }
+
+    await conn.commit();
     res.json({ success: true, message: "อัปเดตสถานะสำเร็จ" });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    await conn.rollback();
+    console.error("Update order status error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  } finally {
+    conn.release();
   }
 });
 

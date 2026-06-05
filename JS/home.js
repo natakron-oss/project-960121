@@ -5,7 +5,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("auth_token");
   if (!token) { window.location.href = "login.html"; return; }
 
-  document.getElementById("authBtn")?.addEventListener("click", () => {
+  // ── User Avatar ──
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    const name    = user.username || user.name || "User";
+    const email   = user.email || "";
+    const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+
+    document.getElementById("avatarCircle").textContent  = initials;
+    document.getElementById("usernameLabel").textContent = name.split(" ")[0]; // ชื่อแรก
+    document.getElementById("dropdownAvatar").textContent = initials;
+    document.getElementById("dropdownName").textContent  = name;
+    document.getElementById("dropdownEmail").textContent = email;
+  }
+
+  // ── Toggle dropdown ──
+  document.getElementById("userAvatarBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("userDropdown").classList.toggle("open");
+  });
+  document.addEventListener("click", () => {
+    document.getElementById("userDropdown")?.classList.remove("open");
+  });
+
+  // ── Logout ──
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user");
     window.location.href = "login.html";

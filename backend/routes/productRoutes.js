@@ -55,17 +55,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
 // =========================================
 router.get("/", async (req, res) => {
   try {
-    // clean expired products + their images
-    const [expired] = await db.query(
-      "SELECT image FROM products WHERE expire_date < CURDATE()"
-    );
-    for (const p of expired) {
-      if (p.image) {
-        const fp = path.join(__dirname, "../../uploads", p.image);
-        if (fs.existsSync(fp)) fs.unlinkSync(fp);
-      }
-    }
-    await db.query("DELETE FROM products WHERE expire_date < CURDATE()");
+    // หมายเหตุ: การลบสินค้าหมดอายุย้ายไปทำใน cron job (cleanupExpired) แล้ว
 
     const [results] = await db.query(`
       SELECT
@@ -84,6 +74,7 @@ router.get("/", async (req, res) => {
         DATEDIFF(p.expire_date, CURDATE())          AS days_left
       FROM products p
       JOIN users u ON p.user_id = u.user_id
+      WHERE p.expire_date >= CURDATE()
       ORDER BY p.expire_date ASC, p.created_at DESC
     `);
 
