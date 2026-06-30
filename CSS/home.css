@@ -26,7 +26,26 @@
         .dropdown-item:hover {
             background: #f0f0f0;
         }
-<style>
+        /* จัดรูปแบบกล่อง Dropdown */
+.dropdown-content {
+    display: none; /* ซ่อนไว้เป็นค่าเริ่มต้น */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    min-width: 250px; /* ปรับขนาดความกว้างตามต้องการ */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.15);
+    padding: 1rem;
+    border-radius: 8px;
+    z-index: 100;
+    margin-top: 0.5rem;
+    border: 1px solid #eeeeee; /* หรือ var(--border) */
+}
+
+/* คลาสสำหรับแสดงผลตอนกดปุ่ม */
+.dropdown-content.show {
+    display: block;
+}
         * {
             margin: 0;
             padding: 0;
@@ -72,7 +91,7 @@
         }
 
         .logo img{
-            width: 70px;
+            width: 120px;
             height: auto;
             object-fit: contain;
         }
@@ -227,14 +246,41 @@
         /* Hero Banner */
         .hero {
             background: linear-gradient(135deg, rgba(181, 188, 129, 0.8), rgba(123, 174, 117, 0.8)), 
-                        url("image/farm.png");
+                        url("image/farm.png") no-repeat;
             background-size: cover;
             background-position: center;
             color: var(--white);
             padding: 6rem 2rem;
             text-align: center;
             margin-bottom: 3rem;
+
+           position: relative; 
+            overflow: hidden; /* ซ่อนส่วนของรูปภาพที่อาจจะล้นออกนอกแบนเนอร์ */
+    
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .hero-bg-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* จัดให้อยู่กึ่งกลางกรอบแบบพอดีเป๊ะ */
+    
+            width: px; /* ปรับความใหญ่ของรูปลายน้ำได้ตามต้องการ */
+            height: auto;
+    
+            opacity: 0.15; /* ปรับความจาง (0.1 คือจางมาก 1.0 คือชัดสุด) */
+            z-index: 0; /* ดันไปอยู่เลเยอร์หลังสุด */
+            pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1; /* ดันขึ้นมาอยู่เลเยอร์หน้าสุด (ทับรูปโลโก้) */
+    color: var(--white);
+    max-width: 600px; /* จำกัดความกว้างข้อความให้อ่านง่าย */
+}
 
         .hero h1 {
             font-size: 4rem;
@@ -415,150 +461,233 @@
             gap: 2rem;
             margin-bottom: 3rem;
         }
+/* --- สไตล์ใหม่ของการ์ดสินค้าให้เหมือนรูป Mockup --- */
+.product-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
 
-        .product-card {
-            background: var(--white);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
 
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
+/* ส่วนรูปภาพและป้าย Best Before */
+.card-img-container {
+    position: relative;
+    width: 100%;
+    height: 220px; /* ปรับความสูงรูปให้ใหญ่ขึ้นเหมือนในแบบ */
+    background: var(--light);
+}
 
-        .product-image {
-            width: 100%;
-            height: 180px;
-            background: var(--light);
-            overflow: hidden;
-            position: relative;
-        }
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
+.card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    z-index: 10;
+    /* ห้ามใส่ background-color หรือ color ตายตัวในนี้นะครับ เพราะเราย้ายให้ JavaScript จัดการแทนแล้ว */
+}
 
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
-        }
+/* ส่วนเนื้อหาด้านล่างรูปภาพ */
+.card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        .product-info {
-            padding: 1rem;
-        }
+/* แถวชื่อผลผลิต และ คำว่า Swap */
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
 
-        .product-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
+.card-title-row h3 {
+    color: #8C401A; /* สีน้ำตาลแดง */
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
 
-        .product-price {
-            color: var(--primary);
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+.card-type-label {
+    color: #8C401A;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 2px;
+}
 
-        .product-stock {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 1rem;
-        }
+/* แถวชื่อคนขาย */
+.card-owner-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4A5568; /* สีเทาเข้ม */
+    font-size: 0.9rem;
+}
 
-        .product-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
+/* เส้นคั่น */
+.card-divider {
+    height: 1px;
+    background-color: #E2E8F0;
+    margin: 4px 0;
+}
 
-        .product-actions button {
-            flex: 1;
-            padding: 0.6rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.85rem;
-        }
+/* แถวด้านล่างสุด (ระยะทาง และ ปุ่ม) */
+.card-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .btn-detail {
-            background: var(--light);
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
+/* --- แถวด้านล่างสุด (เปลี่ยนเป็นแบบ 2 ปุ่ม) --- */
+.card-footer-row {
+    display: flex;
+    gap: 8px; /* ระยะห่างระหว่างปุ่ม */
+    align-items: center;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 16px;
+}
 
-        .btn-detail:hover {
-            background: var(--primary);
-            color: var(--white);
-        }
+/* ปุ่มใส่ตะกร้า (ปุ่มรอง - สีขาวขอบเขียว) */
+.card-btn-cart {
+    flex: 1; /* ขยายให้ปุ่มกว้างเท่าๆ กัน */
+    background-color: white;
+    color: #315735;
+    border: 1px solid #315735;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
 
-        .btn-add {
-            background: var(--primary);
-            color: var(--white);
-        }
+.card-btn-cart:hover {
+    background-color: #f0fdf4; /* เปลี่ยนเป็นสีเขียวอ่อนตอนเอาเมาส์ชี้ */
+}
 
-        .btn-add:hover {
-            background: #218838;
-        }
+/* ปุ่มซื้อสินค้า (ปุ่มหลัก - สีเขียวทึบ) */
+.card-btn-buy {
+    flex: 1; /* ขยายให้ปุ่มกว้างเท่าๆ กัน */
+    background-color: #315735;
+    color: white;
+    border: 1px solid #315735;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.card-btn-buy:hover {
+    background-color: #234026;
+}
+
+.card-btn-request:hover {
+    background-color: #234026;
+}
+
+/* Swap button (secondary accent) */
+/* Swap styles removed (button deleted) */
         /* Footer */
-        footer {
-            background: var(--dark);
-            color: var(--white);
-            padding: 3rem 2rem;
-            margin-top: 3rem;
-        }
+        /* เพิ่ม Selector footer ที่หายไปตอนแรก */
+footer {
+    background: var(--dark);
+    color: var(--white);
+    padding: 4rem 2rem 2rem; /* เพิ่มพื้นที่ว่างด้านบนให้ดูโปร่งขึ้น */
+    margin-top: 3rem;
+}
 
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    /* แบ่ง 4 คอลัมน์เท่าๆ กัน และจะพับลงอัตโนมัติเมื่อจอเล็ก */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
 
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            display: block;
-            transition: color 0.3s;
-        }
+.footer-section h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    position: relative;
+}
 
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            gap: 2rem;
-        }
+/* จัดระเบียบเนื้อหาด้านในให้อ่านง่ายขึ้น */
+.footer-section p, 
+.footer-section a {
+    display: block; /* บังคับให้ข้อความและลิงก์เรียงลงมาทีละบรรทัด */
+    color: #cccccc; /* ดรอปสีลงนิดนึง เพื่อให้หัวข้อ h3 ดูโดดเด่น */
+    text-decoration: none;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
 
-        .search-bar {
-            flex: 1;
-            max-width: 700px;
-            margin: 0 0 0 3rem;
-            display: flex;
-            justify-content: center;
-        }
+/* เพิ่มลูกเล่นเมื่อนำเมาส์ไปชี้ลิงก์หรือข้อความ */
+.footer-section a:hover,
+.footer-section p:hover {
+    color: var(--primary);
+    transform: translateX(5px); /* เลื่อนขวานิดๆ ให้มีมิติ */
+    cursor: pointer;
+}
 
-        .footer-section a:hover {
-            color: var(--primary);
-        }
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* ทำให้เส้นคั่นดูนุ่มนวลขึ้น */
+    padding-top: 2rem;
+    color: #999;
+    font-size: 0.9rem;
+}
 
-        .footer-bottom {
-            text-align: center;
-            border-top: 1px solid #444;
-            padding-top: 2rem;
-            color: #999;
-        }
+/* ส่วนของ Header (ยกของเดิมของคุณมาให้ครบ) */
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.search-bar {
+    flex: 1;
+    max-width: 700px;
+    margin: 0 0 0 3rem;
+    display: flex;
+    justify-content: center;
+}
 
         /* Modal */
         .modal {
@@ -665,5 +794,6 @@
             .container {
                 padding: 0 1rem;
             }
+
+            
         }
-    </style>

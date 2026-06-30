@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="home/style.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
     <!-- Header -->
@@ -18,7 +18,7 @@
         <div class="header-top">
 
                 <div class="logo">
-                <img src="image/schoolLogo.png" alt="school logo" width="50" height="50">
+                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
             </div>
 
             <div class="search-bar">
@@ -33,20 +33,16 @@
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
 
-                <a href="login.html" class="btn btn-primary">
-                    <i class="fas fa-home"></i>
-                    <span>สวนของฉัน</span>
+                <a href="tradehistory.html" class="btn btn-primary">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
                 </a>
 
-                <button id="notif-btn" class="btn notif-btn" >
-                    <i class="fas fa-bell"></i>
-                    
-                </button>
-
-                 <a href="login.html" class="btn btn-primary">
+                 <button id="authBtn" class="btn btn-primary">
                     <i class="fas fa-user"></i>
-                    <span>เข้าสู่ระบบ</span>
-                </a>
+                    <span>Logout</span>
+                </button>
+                
             </div>
 
           </div>
@@ -56,10 +52,18 @@
 
     <!-- Hero Banner -->
     <div class="hero">
+        <img src="image/farm.png" alt="Farm background" class="hero-bg-logo">
+
+        <div class="hero-content">
         <h1>Garden Share</h1>
         <p>มีผักเหลือ? แลกกับเพื่อนบ้านได้เลย
 แบ่งปันผลผลิตสดใหม่ในชุมชนของคุณ</p>
+<a href="add-product.html" class="hero-btn">
+        + ลงประกาศสินค้า
+    </a>
+        </div>
     </div>
+    
     <!-- Main Container -->
     <div class="container">
         <div class="section-title-row">
@@ -67,18 +71,34 @@
                 <span>รายการสินค้า</span>
             </div>
             <div class="category-filter">
+                
 
-    <button class="category-btn active"
-            onclick="toggleDropdown()">
+    <div class="dropdown-container" style="position: relative; display: inline-block;">
+    
+    <button class="category-btn active" onclick="toggleDropdown()">
         หมวดหมู่
         <i class="fas fa-caret-down"></i>
     </button>
 
-    <select id="sortSelect">
-        <option value="">เรียงลำดับ</option>
-        <option value="low-high">ราคาน้อย → มาก</option>
-        <option value="high-low">ราคามาก → น้อย</option>
-    </select>
+    <div id="category-dropdown" class="dropdown-content">
+        <div class="secondary-filters" style="display: flex; flex-direction: column; gap: 1rem;">
+            
+            <div style="display: flex; flex-direction: column; font-size: 0.8rem; color: var(--dark);">
+                <label style="margin-bottom: 0.5rem;">ระยะทาง: <span id="distance-val">10.0</span> กม.</label>
+                <input type="range" id="distance-slider" min="100" max="10000" step="100" value="10000" />
+            </div>
+            
+            <select id="type-select" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; width: 100%;">
+                <option value="all">รูปแบบทั้งหมด</option>
+                <option value="swap">แลกเปลี่ยน / ฟรี</option>
+                <option value="sell">ขาย (Direct Sale)</option>
+            </select>
+            
+        </div>
+    </div>
+</div>
+
+    
 
 </div>
         </div>
@@ -92,7 +112,7 @@
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>เพิ่มเข้าตะกร้า</h2>
+                <h2>ใส่ตะกร้า</h2>
                 <button class="close-btn" onclick="closeModal()">×</button>
             </div>
             <div id="detailContent">
@@ -101,92 +121,67 @@
         </div>
     </div>
 
-    <div class="modal" id="add-item-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>แบ่งปันผลผลิตของคุณ</h2>
-                <button class="close-btn" id="add-item-close">×</button>
-            </div>
-            
-            <form id="add-item-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                <div>
-                    <label style="font-weight: 600; font-size: 0.9rem;">ชื่อผลผลิต</label>
-                    <input type="text" id="item-name" required placeholder="เช่น มะเขือเทศออร์แกนิก" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
-                </div>
-                
-                <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 1;">
-                        <label style="font-weight: 600; font-size: 0.9rem;">หมวดหมู่</label>
-                        <select id="item-category" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
-                            <option value="Vegetables">ผัก</option>
-                            <option value="Fruits">ผลไม้</option>
-                            <option value="Herbs">สมุนไพร</option>
-                        </select>
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="font-weight: 600; font-size: 0.9rem;">ความสด (หมดอายุใน)</label>
-                        <select id="item-freshness" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
-                            <option value="1">1 วัน</option>
-                            <option value="3" selected>3 วัน</option>
-                            <option value="7">7 วัน</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label style="font-weight: 600; font-size: 0.9rem;">รูปแบบ (ขาย หรือ แลก)</label>
-                    <select id="item-type" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
-                        <option value="swap">แลกเปลี่ยน (Swap)</option>
-                        <option value="sell">ขาย (เงินสด)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label style="font-weight: 600; font-size: 0.9rem;">URL รูปภาพ</label>
-                    <input type="url" id="item-image" placeholder="วางลิงก์รูปภาพ..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
-                    <i class="fas fa-plus"></i> ลงประกาศสินค้า
-                </button>
-            </form>
+    <!-- Footer -->
+   <footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Gardenshare</h3>
+            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Marketplace</h3>
+            <p>Browse All</p>
+            <p>How It Works</p>
+            <p>Safety & Guidelines</p>
+        </div> <div class="footer-section">
+            <h3>ลิงก์ที่มีประโยชน์</h3>
+            <a href="#">นโยบายความเป็นส่วนตัว</a>
+            <a href="#">เงื่อนไขการใช้บริการ</a>
+            <a href="#">วิธีการชำระเงิน</a>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Legal Framework</h3>
+            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
         </div>
     </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+    </div>
+</footer>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>เกี่ยวกับเรา</h3>
-                <p>โรงเรียนบ้านฮ้อยเงิน โครงการ Smart Farm นำเสนอผักและผลไม้ที่ปลูกด้วยเทคโนโลยีสมัยใหม่</p>
-            </div>
-            <div class="footer-section">
-                <h3>ติดต่อเรา</h3>
-                <p>📍 โรงเรียนบ้านฮ้อยเงิน เชียงใหม่</p>
-                <p>📞 053-XXX-XXX</p>
-                <p>📧 smartfarm@baanhoingern.ac.th</p>
-            </div>
-            <div class="footer-section">
-                <h3>ลิงก์ที่มีประโยชน์</h3>
-                <a href="#">นโยบายความเป็นส่วนตัว</a>
-                <a href="#">เงื่อนไขการใช้บริการ</a>
-                <a href="#">วิธีการชำระเงิน</a>
-            </div>
-
-            
-            <div class="footer-section">
-                <h3>ติดตามเรา</h3>
-                <p><i class="fab fa-facebook"></i> Facebook</p>
-                <p><i class="fab fa-instagram"></i> Instagram</p>
-                <p><i class="fab fa-line"></i> Line Official</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="products.js"></script>
+    <script src="JS/add-products.js"></script>
+    <script src="JS/trade.js"></script>
     <script src="JS/home.js"></script>
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+      window.location.href = "login.html";
+    }
+
+    const btn = document.getElementById("authBtn");
+
+    if (btn) {
+      btn.textContent = token ? "Logout" : "Login";
+
+      btn.addEventListener("click", () => {
+        if (token) {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+    }
+
+  });
+</script>
 </body>
 </html>

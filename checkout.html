@@ -9,11 +9,12 @@
 </head>
 <body>
     <!-- Header -->
-    <header>
+  <header>
+        
         <div class="header-top">
 
-            <div class="logo">
-                <img src="image/schoolLogo.png" alt="school logo">
+                <div class="logo">
+                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
             </div>
 
             <div class="search-bar">
@@ -28,11 +29,17 @@
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
 
-                <a href="login.html" class="btn btn-primary">
+                <a href="tradehistory.html" class="btn btn-primary">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+
+                 <a href="login.html" class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     <span>เข้าสู่ระบบ</span>
                 </a>
             </div>
+        </div>
         </div>
         <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
             <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
@@ -40,7 +47,8 @@
                 <span>กลับหน้าหลัก</span>
             </a>
         </div>
-        
+        <div class="nav-menu">
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -66,7 +74,7 @@
                         <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="shipping" value="pickupschool" checked>
-                                <span class="radio-text">เลือกรับที่รร.</span>
+                                <span class="radio-text">ไปรับด้วยตนเอง</span>
                             </label>
                             <label class="radio-label">
                                 <input type="radio" name="shipping" value="pickuphome">
@@ -118,78 +126,74 @@
                 <h2 class="summary-title">รวมรายการสินค้า</h2>
 
                 <!-- Products List -->
-                <div class="products-list" id="productsList">
-                    <!-- Products will be generated here -->
-                </div>
+               
 
                 <!-- Summary Table -->
                 <div class="summary-table">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>ชื่อสินค้า</td>
-                                <td>จำนวน</td>
-                                <td>ราคา</td>
-                            </tr>
-                            <tr id="summaryRow">
-                                <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
-                                    ตะกร้าว่างเปล่า
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <table style="width: 100%;">
+        <thead>
+            <tr>
+                <th >ชื่อสินค้า</th>
+                <th>จำนวน</th>
+                <th>ราคา</th>
+                
+            </tr>
+            
+        </thead>
+        <tbody id="productsList">
+            </tbody>
+    </table>
+</div>
 
-                <!-- Totals -->
-                <div class="summary-totals">
-                    <div class="total-row">
-                        <span>รวมการสินค้า</span>
-                        <span id="subtotal">0.00 บาท</span>
-                    </div>
-                    <div class="total-row">
-                        <span>ค่าจัดส่ง</span>
-                        <span id="shipping">0.00 บาท</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span>ยอดชำระรวมทั้งหมด</span>
-                        <span id="grandTotal">฿0.00</span>
-                    </div>
-                </div>
+<div class="summary-totals">
+    <div class="total-row">
+        <span>รวมราคาสินค้า</span>
+        <span id="subtotal">0.00 บาท</span>
+    </div>
+    <div class="total-row">
+        <span>ค่าจัดส่ง</span>
+        <span id="shipping">0.00 บาท</span>
+    </div>
+    <div class="total-row grand-total">
+        <span>ยอดชำระรวมทั้งหมด</span>
+        <span id="grandTotal">฿0.00</span>
+    </div>
+</div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-   <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>เกี่ยวกับเรา</h3>
-                <p>โรงเรียนบ้านฮ้อยเงิน โครงการ Smart Farm นำเสนอผักและผลไม้ที่ปลูกด้วยเทคโนโลยีสมัยใหม่</p>
-            </div>
-            <div class="footer-section">
-                <h3>ติดต่อเรา</h3>
-                <p>📍 โรงเรียนบ้านฮ้อยเงิน เชียงใหม่</p>
-                <p>📞 053-XXX-XXX</p>
-                <p>📧 smartfarm@baanhoingern.ac.th</p>
-            </div>
-            <div class="footer-section">
-                <h3>ลิงก์ที่มีประโยชน์</h3>
-                <a href="#">นโยบายความเป็นส่วนตัว</a>
-                <a href="#">เงื่อนไขการใช้บริการ</a>
-                <a href="#">วิธีการชำระเงิน</a>
-            </div>
-            <div class="footer-section">
-                <h3>ติดตามเรา</h3>
-                <p><i class="fab fa-facebook"></i> Facebook</p>
-                <p><i class="fab fa-instagram"></i> Instagram</p>
-                <p><i class="fab fa-line"></i> Line Official</p>
-            </div>
+  <footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Gardenshare</h3>
+            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
         </div>
         
-        <div class="footer-bottom">
-            <p>&copy; 2024 Smart Farm Ban Hoi Ngern. All rights reserved.</p>
+        <div class="footer-section">
+            <h3>Marketplace</h3>
+            <p>Browse All</p>
+            <p>How It Works</p>
+            <p>Safety & Guidelines</p>
+        </div> <div class="footer-section">
+            <h3>ลิงก์ที่มีประโยชน์</h3>
+            <a href="#">นโยบายความเป็นส่วนตัว</a>
+            <a href="#">เงื่อนไขการใช้บริการ</a>
+            <a href="#">วิธีการชำระเงิน</a>
         </div>
-    </footer>
+        
+        <div class="footer-section">
+            <h3>Legal Framework</h3>
+            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+    </div>
+</footer>
 
     <script src="products.js"></script>
     <script src="JS/checkout.js"></script>

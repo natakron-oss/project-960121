@@ -105,7 +105,7 @@ class CartManager {
     updateCartSummary() {
         const cart = this.getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const SHIPPING_COST = 50;
+        const SHIPPING_COST = 0;
         const shipping = cart.length > 0 ? SHIPPING_COST : 0;
         const total = subtotal + shipping;
 
@@ -215,6 +215,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkoutBtn = document.querySelector('.checkout-btn');
     if (checkoutBtn && !checkoutBtn.disabled) {
         checkoutBtn.addEventListener('click', () => {
+            cartManager.proceedToCheckout();
+        });
+    }
+
+    const swapBtn = document.querySelector('.swap-btn');
+    if (swapBtn) {
+        swapBtn.addEventListener('click', () => {
             cartManager.proceedToCheckout();
         });
     }

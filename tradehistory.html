@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="th">
+	<head>
+		<meta charset="utf-8">
+		 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>ประวัติการเทรด</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link rel="stylesheet" href="CSS/trade.css">
+	</head>
+<body>
+	<!-- Header (copied from cart.html to match cart UI) -->
+	 <header>
+        
+        <div class="header-top">
+
+                <div class="logo">
+                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
+            </div>
+
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
+            </div>
+
+            <div class="header-actions">
+                <a href="cart.html" class="btn cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-label">ตะกร้า</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+
+                <a href="tradehistory.html" class="btn btn-primary">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+
+                 <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-user"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </a>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
+            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>กลับหน้าหลัก</span>
+            </a>
+        </div>
+        <div class="nav-menu">
+        </div>
+       
+    </header>
+
+	<main class="container cart-section">
+		<h1 class="cart-title">ประวัติการเทรด</h1>
+
+		<section id="open-orders" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">1. คำสั่งที่ฉันวางไว้ (ยังไม่ได้เทรด)</h2>
+			<div class="cart-content" id="open-list"></div>
+		</section>
+
+		<section id="incoming-requests" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">2. คนอื่นขอเทรดกับฉัน</h2>
+			<div class="cart-content" id="incoming-list"></div>
+		</section>
+
+		<section id="completed-trades" class="trade-section">
+			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">3. เทรดเสร็จแล้ว</h2>
+			<div class="cart-content" id="completed-list"></div>
+		</section>
+	</main>
+
+	<script src="products.js"></script>
+	<script src="JS/cart.js"></script>
+	<script src="JS/tradehistory.js"></script>
+
+	<!-- Footer (copied from cart.html) -->
+	<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Gardenshare</h3>
+            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Marketplace</h3>
+            <p>Browse All</p>
+            <p>How It Works</p>
+            <p>Safety & Guidelines</p>
+        </div> <div class="footer-section">
+            <h3>ลิงก์ที่มีประโยชน์</h3>
+            <a href="#">นโยบายความเป็นส่วนตัว</a>
+            <a href="#">เงื่อนไขการใช้บริการ</a>
+            <a href="#">วิธีการชำระเงิน</a>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Legal Framework</h3>
+            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
