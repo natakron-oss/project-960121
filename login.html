@@ -57,8 +57,9 @@
     </div>
 
     <!-- Register Form -->
+    <!-- ✅ ลบ method="post" action="backend/register.php" ออกแล้ว -->
     <div id="registerContainer" class="p-6 hidden">
-      <form method="post" action="backend/register.php" class="space-y-5" id="registerForm">
+      <form class="space-y-5" id="registerForm">
         <div class="mb-4">
           <label for="regName" class="block text-gray-700 mb-2">ชื่อ - นามสกุล</label>
           <div class="relative">
@@ -100,101 +101,115 @@
       <a href="#" class="hover:text-green-600">ลืมรหัสผ่าน</a>
     </div>
   </div>
-  <script src="products.js"></script>
-  <script>
-    document.getElementById('showRegister').addEventListener('click', e => {
-      e.preventDefault();
-      document.getElementById('loginContainer').classList.add('hidden');
-      document.getElementById('registerContainer').classList.remove('hidden');
-    });
 
-    document.getElementById('showLogin').addEventListener('click', e => {
-      e.preventDefault();
-      document.getElementById('registerContainer').classList.add('hidden');
-      document.getElementById('loginContainer').classList.remove('hidden');
-    });
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
-  document.addEventListener("DOMContentLoaded", () => {
+  feather.replace();
+
+  // ================= TOGGLE FORM =================
+  const loginContainer = document.getElementById("loginContainer");
+  const registerContainer = document.getElementById("registerContainer");
+
+  document.getElementById("showRegister")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    loginContainer.classList.add("hidden");
+    registerContainer.classList.remove("hidden");
+  });
+
+  document.getElementById("showLogin")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    registerContainer.classList.add("hidden");
+    loginContainer.classList.remove("hidden");
+  });
 
   // ================= LOGIN =================
   const loginForm = document.getElementById("loginForm");
 
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    console.log("🔥 LOGIN CLICKED", { email, password });
+      console.log("🔥 LOGIN CLICKED", { email });
 
-    try {
-
-      const res = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json();
-
-      if (data.status === "success") {
-
-  localStorage.setItem("auth_token", data.token || "demo");
-
-  localStorage.setItem("user", JSON.stringify({
-    user_id: data.user.user_id,
-    username: data.user.username
-  }));
-
-  window.location.href = "home.html";
-
-
-      } else {
-
-        Swal.fire({
-          icon: "error",
-          title: "Login ไม่สำเร็จ",
-          text: data.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
         });
 
+        const data = await res.json();
+        console.log("LOGIN RESPONSE:", data);
+
+        if (!data || data.status !== "success") {
+          return Swal.fire("Login ไม่สำเร็จ", data?.message || "เกิดข้อผิดพลาด", "error");
+        }
+
+        if (!data.user) {
+          return Swal.fire("Error", "ไม่พบข้อมูล user", "error");
+        }
+
+        localStorage.setItem("auth_token", "demo");
+        localStorage.setItem("user", JSON.stringify({
+          user_id: data.user.user_id,
+          username: data.user.username
+        }));
+
+        await Swal.fire("เข้าสู่ระบบสำเร็จ", `ยินดีต้อนรับ ${data.user.username}`, "success");
+        window.location.href = "home.html";
+
+      } catch (err) {
+        console.error("LOGIN ERROR:", err);
+        Swal.fire("Error", "ไม่สามารถเชื่อมต่อ server ได้", "error");
       }
-
-    } catch (err) {
-      console.error(err);
-      alert("server error");
-    }
-  });
-
+    });
+  }
 
   // ================= REGISTER =================
   const registerForm = document.getElementById("registerForm");
 
-  registerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const name = document.getElementById("regName").value;
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPassword").value;
+      const name = document.getElementById("regName").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
 
-    const res = await fetch("http://localhost:3000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
+      console.log("🟢 REGISTER CLICKED", { name, email });
+
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+        console.log("REGISTER RESPONSE:", data);
+
+        if (data.status === "success") {
+          await Swal.fire("สมัครสมาชิกสำเร็จ", "กรุณาเข้าสู่ระบบ", "success");
+          // กลับไปหน้า login อัตโนมัติ
+          registerContainer.classList.add("hidden");
+          loginContainer.classList.remove("hidden");
+        } else {
+          Swal.fire("Error", data.message || "เกิดข้อผิดพลาด", "error");
+        }
+
+      } catch (err) {
+        console.error("REGISTER ERROR:", err);
+        Swal.fire("Error", "ไม่สามารถเชื่อมต่อ server ได้", "error");
+      }
     });
-
-    const data = await res.json();
-
-    if (data.status === "success") {
-      Swal.fire("Success", "สมัครสำเร็จ", "success");
-    } else {
-      Swal.fire("Error", data.message, "error");
-    }
-  });
+  }
 
 });
-
-    feather.replace();
-  </script>
+</script>
 
 </body>
 </html>

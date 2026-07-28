@@ -1,59 +1,88 @@
 const router = require("express").Router();
-const db = require("../../db");  // แก้ path ให้ถูก
+const db     = require("../config/db");
+const multer = require("multer");
+const path   = require("path");
+const fs     = require("fs");
 
-// ADD PRODUCT
-router.post("/add", (req, res) => {
-  const {
-    user_id,
-    name,
-    category,
-    quantity,
-    description,
-    expire_days,
-    image,
-    status
-  } = req.body;
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
 
-  // ตรวจสอบ field บังคับ
-  if (!user_id || !name || !quantity || !expire_days) {
-    return res.json({ status: "error", message: "กรุณากรอกข้อมูลให้ครบ" });
-  }
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename:    (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
 
-  const sql = `
-    INSERT INTO products
-    (user_id, name, category, quantity, description, expire_days, image, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+// =========================================
+// POST /api/products/add
+// =========================================
+router.post("/add", upload.single("image"), async (req, res) => {
+  try {
+    const { user_id, name, category, quantity, description, expire_date, status } = req.body;
+    const image = req.file ? req.file.filename : null;
 
-  db.query(
-    sql,
-    [user_id, name, category, quantity, description || "", expire_days, image || "default.jpg", status || "sell"],
-    (err, result) => {
-      if (err) {
-        console.error("DB error:", err);
-        return res.json({ status: "error", message: err.message });
-      }
-      res.json({ status: "success", product_id: result.insertId });
+    if (!user_id || !name || !quantity || !expire_date) {
+      return res.json({ status: "error", message: "กรุณากรอกข้อมูลให้ครบ" });
     }
-  );
+
+    // price column only exists when status = sell; store 0 for trade
+    const price = status === "sell" ? (parseFloat(req.body.price) || 0) : 0;
+
+    const [result] = await db.query(`
+      INSERT INTO products (user_id, name, category, quantity, description, expire_date, image, status, price)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [user_id, name, category, quantity, description || "", expire_date, image, status || "sell", price]);
+
+    res.json({ status: "success", product_id: result.insertId });
+  } catch (err) {
+    // fallback: if price column doesn't exist yet, insert without it
+    try {
+      const { user_id, name, category, quantity, description, expire_date, status } = req.body;
+      const image = req.file ? req.file.filename : null;
+      const [result] = await db.query(`
+        INSERT INTO products (user_id, name, category, quantity, description, expire_date, image, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `, [user_id, name, category, quantity, description || "", expire_date, image, status || "sell"]);
+      res.json({ status: "success", product_id: result.insertId });
+    } catch (err2) {
+      console.error("ADD PRODUCT ERROR:", err2);
+      res.status(500).json({ status: "error", message: err2.message });
+    }
+  }
 });
 
-// GET ALL PRODUCTS
-router.get("/", (req, res) => {
-  const sql = `
-    SELECT p.*, u.username
-    FROM products p
-    JOIN users u ON p.user_id = u.user_id
-    ORDER BY p.created_at DESC
-  `;
+// =========================================
+// GET /api/products
+// =========================================
+router.get("/", async (req, res) => {
+  try {
+    // หมายเหตุ: การลบสินค้าหมดอายุย้ายไปทำใน cron job (cleanupExpired) แล้ว
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("DB error:", err);
-      return res.json({ status: "error", message: err.message });
-    }
+    const [results] = await db.query(`
+      SELECT
+        p.id,
+        p.user_id,
+        p.name,
+        p.category,
+        p.quantity,
+        p.description,
+        p.image,
+        p.status,
+        p.expire_date,
+        p.created_at,
+        COALESCE(p.price, 0)                       AS price,
+        u.username,
+        DATEDIFF(p.expire_date, CURDATE())          AS days_left
+      FROM products p
+      JOIN users u ON p.user_id = u.user_id
+      WHERE p.expire_date >= CURDATE()
+      ORDER BY p.expire_date ASC, p.created_at DESC
+    `);
+
     res.json({ status: "success", data: results });
-  });
+  } catch (err) {
+    console.error("GET PRODUCTS ERROR:", err);
+    res.status(500).json({ status: "error", message: err.message });
+  }
 });
 
 module.exports = router;

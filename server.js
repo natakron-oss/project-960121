@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-
 require("dotenv").config();
 
 const app = express();
@@ -9,15 +8,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API
+// ================= API =================
 app.use("/api/auth", require("./backend/routes/authRoutes"));
 app.use("/api/products", require("./backend/routes/productRoutes"));
-app.use("/api/trade", require("./backend/routes/tradeRoutes"));
+app.use("/api/cart", require("./backend/routes/cartRoutes"));
+app.use("/api/trades", require("./backend/routes/tradeRoutes"));
+app.use("/api/orders", require("./backend/routes/orderRoutes"));
+app.use("/api/history", require("./backend/routes/historyRoutes"));
 
-// static frontend
+// ================= STATIC ROOT =================
 app.use(express.static(__dirname));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// home root
+// ================= ROUTE =================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "home.html"));
 });

@@ -1,110 +1,528 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
-	<head>
-		<meta charset="utf-8">
-		 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>ประวัติการเทรด</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-		<link rel="stylesheet" href="CSS/trade.css">
-	</head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประวัติ – Gardenshare</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/home.css">
+  <style>
+    body { display: flex; flex-direction: column; }
+
+    main {
+      flex: 1;
+      max-width: 860px;
+      width: 100%;
+      margin: 32px auto;
+      padding: 0 1.5rem;
+    }
+
+    .page-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--dark);
+    }
+    .page-title i { color: var(--primary); }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Sarabun', sans-serif;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--mid);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .tab-btn:hover { color: var(--dark); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-count {
+      background: var(--border);
+      color: var(--mid);
+      border-radius: 20px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab-btn.active .tab-count { background: var(--primary-lt); color: var(--primary); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SECTION ── */
+    .trade-section { margin-bottom: 28px; }
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mid);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-pending  { background: #f59e0b; }
+    .dot-incoming { background: #3b82f6; }
+    .dot-done     { background: #6b7280; }
+    .dot-bought   { background: #8b5cf6; }
+    .dot-sold     { background: var(--primary); }
+
+    /* ── CARD ── */
+    .history-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .history-card:hover { border-color: #b2d5c0; box-shadow: var(--shadow); }
+
+    .card-inner {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .card-strip {
+      width: 5px;
+      flex-shrink: 0;
+    }
+    .strip-trade-out  { background: #f59e0b; }
+    .strip-trade-in   { background: #3b82f6; }
+    .strip-trade-done { background: #9ca3af; }
+    .strip-bought     { background: #8b5cf6; }
+    .strip-sold       { background: var(--primary); }
+
+    .card-body {
+      flex: 1;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .card-left { flex: 1; min-width: 0; }
+
+    .card-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-id {
+      font-size: 11px;
+      font-weight: 400;
+      color: #aaa;
+    }
+
+    .card-meta {
+      font-size: 12px;
+      color: var(--mid);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .card-meta i { width: 13px; color: #bbb; font-size: 11px; }
+    .card-meta a { color: var(--primary); text-decoration: none; }
+
+    .card-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .s-pending   { background: #fff3cd; color: #856404; border: 1px solid #ffd75e; }
+    .s-accepted  { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .s-rejected  { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .s-paid      { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .s-cancelled { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+    .card-price {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .card-date { font-size: 11px; color: #aaa; }
+
+    .pay-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .pay-cod      { background: #fef9c3; color: #a16207; }
+    .pay-transfer { background: #eff6ff; color: #1d4ed8; }
+    .pay-qrcode   { background: var(--primary-lt); color: var(--primary); }
+
+    .empty {
+      background: var(--white);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: center;
+      color: #aaa;
+      font-size: 13px;
+    }
+    .empty i { display: block; font-size: 28px; margin-bottom: 8px; opacity: .3; }
+
+    .loading { text-align: center; padding: 40px; color: var(--mid); font-size: 14px; }
+  </style>
+</head>
 <body>
-	<!-- Header (copied from cart.html to match cart UI) -->
-	 <header>
-        
-        <div class="header-top">
 
-                <div class="logo">
-                <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
-            </div>
-
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="ค้นหาสินค้า...">
-            </div>
-
-            <div class="header-actions">
-                <a href="cart.html" class="btn cart-btn">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-label">ตะกร้า</span>
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </a>
-
-                <a href="tradehistory.html" class="btn btn-primary">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-
-                 <a href="login.html" class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    <span>เข้าสู่ระบบ</span>
-                </a>
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <img src="image/logo_gardenshare.png" alt="Garden Share logo" width="50" height="50">
+    </div>
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="ค้นหาสินค้า...">
+    </div>
+    <div class="header-actions">
+      <a href="noti.html" class="btn email-btn" style="position:relative;">
+        <i class="fas fa-bell"></i>
+        <span class="massage-label">แจ้งเตือน</span>
+        <span class="massage-badge" id="notifyBadge" style="display:none;">0</span>
+      </a>
+      <a href="cart.html" class="btn cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-label">ตะกร้า</span>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </a>
+      <a href="tradehistory.html" class="btn btn-primary">
+        <i class="fas fa-history"></i>
+        <span>History</span>
+      </a>
+      <!-- User Avatar -->
+      <div class="user-menu" id="userMenu">
+        <button class="user-avatar-btn" id="userAvatarBtn">
+          <div class="avatar-circle" id="avatarCircle">U</div>
+          <span class="username-label" id="usernameLabel">User</span>
+          <i class="fa-solid fa-chevron-down" style="font-size:10px;opacity:.6;"></i>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar" id="dropdownAvatar">U</div>
+            <div>
+              <div class="dropdown-name" id="dropdownName">–</div>
+              <div class="dropdown-email" id="dropdownEmail">–</div>
             </div>
           </div>
-          <div style="display:flex; justify-content:flex-start; padding:8px 16px;"> 
-            <a href="home.html" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#333;font-weight:600;">
-                <i class="fa-solid fa-arrow-left"></i>
-                <span>กลับหน้าหลัก</span>
-            </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item dropdown-logout" id="logoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+          </button>
         </div>
-        <div class="nav-menu">
-        </div>
-       
-    </header>
-
-	<main class="container cart-section">
-		<h1 class="cart-title">ประวัติการเทรด</h1>
-
-		<section id="open-orders" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">1. คำสั่งที่ฉันวางไว้ (ยังไม่ได้เทรด)</h2>
-			<div class="cart-content" id="open-list"></div>
-		</section>
-
-		<section id="incoming-requests" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">2. คนอื่นขอเทรดกับฉัน</h2>
-			<div class="cart-content" id="incoming-list"></div>
-		</section>
-
-		<section id="completed-trades" class="trade-section">
-			<h2 class="cart-title" style="font-size:18px; margin-top:8px;">3. เทรดเสร็จแล้ว</h2>
-			<div class="cart-content" id="completed-list"></div>
-		</section>
-	</main>
-
-	<script src="products.js"></script>
-	<script src="JS/cart.js"></script>
-	<script src="JS/tradehistory.js"></script>
-
-	<!-- Footer (copied from cart.html) -->
-	<footer>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>Gardenshare</h3>
-            <p>Empowering urban communities to grow together and waste less. Your local harvest, shared.</p>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Marketplace</h3>
-            <p>Browse All</p>
-            <p>How It Works</p>
-            <p>Safety & Guidelines</p>
-        </div> <div class="footer-section">
-            <h3>ลิงก์ที่มีประโยชน์</h3>
-            <a href="#">นโยบายความเป็นส่วนตัว</a>
-            <a href="#">เงื่อนไขการใช้บริการ</a>
-            <a href="#">วิธีการชำระเงิน</a>
-        </div>
-        
-        <div class="footer-section">
-            <h3>Legal Framework</h3>
-            <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
-            <p><i class="fas fa-file-contract"></i> Terms of Service</p>
-        </div>
+      </div>
     </div>
-    
-    <div class="footer-bottom">
-        <p>&copy; 2026 Gardenshare. All rights reserved.</p>
+  </div>
+  <div style="display:flex;justify-content:flex-start;padding:8px 16px;">
+    <a href="home.html" class="btn" style="color:var(--mid);gap:8px;">
+      <i class="fa-solid fa-arrow-left"></i><span>กลับหน้าหลัก</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <h1 class="page-title"><i class="fa-solid fa-clock-rotate-left"></i> ประวัติทั้งหมด</h1>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('trade')">
+      <i class="fa-solid fa-arrows-rotate"></i> Trade
+      <span class="tab-count" id="count-trade">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('order')">
+      <i class="fa-solid fa-bag-shopping"></i> คำสั่งซื้อ
+      <span class="tab-count" id="count-order">0</span>
+    </button>
+  </div>
+
+  <!-- TAB: TRADE -->
+  <div class="tab-panel active" id="panel-trade">
+    <div class="trade-section">
+      <div class="section-label"><span class="dot dot-pending"></span> คำขอที่ฉันส่งออก (รอดำเนินการ)</div>
+      <div id="open-list"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
     </div>
+    <div class="trade-section">
+      <div class="section-label"><span class="dot dot-incoming"></span> คนอื่นขอเทรดกับฉัน (รอดำเนินการ)</div>
+      <div id="incoming-list"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+    </div>
+    <div class="trade-section">
+      <div class="section-label"><span class="dot dot-done"></span> ประวัติ Trade (สำเร็จ / ปฏิเสธ)</div>
+      <div id="completed-list"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+    </div>
+  </div>
+
+  <!-- TAB: ORDER -->
+  <div class="tab-panel" id="panel-order">
+    <div class="trade-section">
+      <div class="section-label"><span class="dot dot-bought"></span> คำสั่งซื้อที่ฉันสั่ง</div>
+      <div id="bought-list"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+    </div>
+    <div class="trade-section">
+      <div class="section-label"><span class="dot dot-sold"></span> สินค้าของฉันที่มีคนสั่งซื้อ</div>
+      <div id="sold-list"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>Gardenshare</h3>
+      <p>Empowering urban communities to grow together and waste less.</p>
+    </div>
+    <div class="footer-section">
+      <h3>Marketplace</h3>
+      <p>Browse All</p><p>How It Works</p><p>Safety & Guidelines</p>
+    </div>
+    <div class="footer-section">
+      <h3>ลิงก์ที่มีประโยชน์</h3>
+      <a href="#">นโยบายความเป็นส่วนตัว</a>
+      <a href="#">เงื่อนไขการใช้บริการ</a>
+      <a href="#">วิธีการชำระเงิน</a>
+    </div>
+    <div class="footer-section">
+      <h3>Legal</h3>
+      <p><i class="fas fa-shield-alt"></i> Privacy Policy</p>
+      <p><i class="fas fa-file-contract"></i> Terms of Service</p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2026 Gardenshare. All rights reserved.</p></div>
 </footer>
 
+<script>
+// ════════════════════════════════════════
+//  tradehistory.js (inline)
+// ════════════════════════════════════════
+
+let currentTab = "trade";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initUser();
+  loadAll();
+});
+
+// ── User Avatar ──
+function initUser() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) { window.location.href = "login.html"; return; }
+
+  const name     = user.username || user.name || "User";
+  const email    = user.email || "";
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+
+  document.getElementById("avatarCircle").textContent   = initials;
+  document.getElementById("usernameLabel").textContent  = name.split(" ")[0];
+  document.getElementById("dropdownAvatar").textContent = initials;
+  document.getElementById("dropdownName").textContent   = name;
+  document.getElementById("dropdownEmail").textContent  = email;
+
+  document.getElementById("userAvatarBtn")?.addEventListener("click", e => {
+    e.stopPropagation();
+    document.getElementById("userDropdown").classList.toggle("open");
+  });
+  document.addEventListener("click", () => {
+    document.getElementById("userDropdown")?.classList.remove("open");
+  });
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
+}
+
+// ── Tab switch ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach((b, i) => {
+    b.classList.toggle("active", ["trade","order"][i] === tab);
+  });
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-" + tab).classList.add("active");
+}
+
+// ── Load all data ──
+async function loadAll() {
+  const user   = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.user_id;
+  if (!userId) return;
+
+  try {
+    const [tradeRes, orderRes] = await Promise.all([
+      fetch(`http://localhost:3000/api/history/${userId}`),
+      fetch(`http://localhost:3000/api/history/orders/${userId}`)
+    ]);
+    const tradeData = await tradeRes.json();
+    const orderData = await orderRes.json();
+
+    // ── Trade ──
+    if (tradeData.success) {
+      const data     = tradeData.data;
+      const open     = data.filter(i => i.status === "pending" && i.from_user_id == userId);
+      const incoming = data.filter(i => i.status === "pending" && i.to_user_id == userId);
+      const done     = data.filter(i => i.status !== "pending");
+
+      renderTrade("open-list",      open,     "strip-trade-out");
+      renderTrade("incoming-list",  incoming, "strip-trade-in");
+      renderTrade("completed-list", done,     "strip-trade-done");
+
+      document.getElementById("count-trade").textContent = data.length;
+    }
+
+    // ── Order ──
+    if (orderData.success) {
+      renderOrder("bought-list", orderData.bought || [], "strip-bought", "bought");
+      renderOrder("sold-list",   orderData.sold   || [], "strip-sold",   "sold");
+      document.getElementById("count-order").textContent =
+        (orderData.bought?.length || 0) + (orderData.sold?.length || 0);
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ── Render Trade cards ──
+function renderTrade(containerId, items, stripClass) {
+  const el = document.getElementById(containerId);
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><i class="fa-solid fa-inbox"></i>ยังไม่มีรายการ</div>`;
+    return;
+  }
+
+  el.innerHTML = items.map(item => {
+    const sc = item.status === "accepted" ? "s-accepted"
+             : item.status === "rejected" ? "s-rejected" : "s-pending";
+    const sl = item.status === "accepted" ? "✓ ยอมรับแล้ว"
+             : item.status === "rejected" ? "✗ ปฏิเสธแล้ว" : "⏳ รอดำเนินการ";
+    return `
+      <div class="history-card">
+        <div class="card-inner">
+          <div class="card-strip ${stripClass}"></div>
+          <div class="card-body">
+            <div class="card-left">
+              <div class="card-title">
+                <i class="fa-solid fa-arrows-rotate" style="color:#f59e0b;font-size:12px;"></i>
+                ${item.product_name}
+                <span class="card-id">#${item.trade_id}</span>
+              </div>
+              <div class="card-meta"><i class="fa-solid fa-arrow-right-arrow-left"></i>${item.from_username} → ${item.to_username}</div>
+              <div class="card-meta"><i class="fa-solid fa-box"></i>เสนอ: ${item.offered_item} × ${item.offered_quantity} กก.</div>
+              ${item.phone ? `<div class="card-meta"><i class="fa-solid fa-phone"></i><a href="tel:${item.phone}">${item.phone}</a></div>` : ""}
+              ${item.address ? `<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${item.address}</div>` : ""}
+            </div>
+            <div class="card-right">
+              <div class="status-badge ${sc}">${sl}</div>
+              <div class="card-date">${fmtDate(item.created_at)}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ── Render Order cards ──
+function renderOrder(containerId, items, stripClass, role) {
+  const el = document.getElementById(containerId);
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><i class="fa-solid fa-inbox"></i>ยังไม่มีรายการ</div>`;
+    return;
+  }
+
+  const payLabel = { cod:"💵 เก็บเงินปลายทาง", transfer:"🏦 โอนธนาคาร", qrcode:"📱 QR Code" };
+  const payClass = { cod:"pay-cod", transfer:"pay-transfer", qrcode:"pay-qrcode" };
+
+  const shipLabel = { pickuphome:"📦 จัดส่งตามที่อยู่", pickupschool:"🏠 รับด้วยตนเอง" };
+
+  el.innerHTML = items.map(item => {
+    const sc = item.status === "paid"      ? "s-paid"
+             : item.status === "cancelled" ? "s-cancelled" : "s-pending";
+    const sl = item.status === "paid"      ? "✓ ยืนยันแล้ว"
+             : item.status === "cancelled" ? "✗ ยกเลิก" : "⏳ รอยืนยัน";
+    const pm = item.payment_method || "cod";
+    const sm = item.shipping_method || "pickupschool";
+    const roleIcon  = role === "bought" ? "🛒 ซื้อ" : "🏷️ ขาย";
+
+    return `
+      <div class="history-card">
+        <div class="card-inner">
+          <div class="card-strip ${stripClass}"></div>
+          <div class="card-body">
+            <div class="card-left">
+              <div class="card-title">
+                ${roleIcon}
+                ${item.product_names}
+                <span class="card-id">#${item.order_id}</span>
+              </div>
+              <div class="card-meta"><i class="fa-solid fa-user"></i>${item.fullname}</div>
+              ${item.phone ? `<div class="card-meta"><i class="fa-solid fa-phone"></i><a href="tel:${item.phone}">${item.phone}</a></div>` : ""}
+              ${item.address ? `<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${item.address}</div>` : ""}
+              <div class="card-meta"><i class="fa-solid fa-truck"></i>${shipLabel[sm] || sm}</div>
+            </div>
+            <div class="card-right">
+              <div class="status-badge ${sc}">${sl}</div>
+              <span class="pay-pill ${payClass[pm]}">${payLabel[pm]}</span>
+              <div class="card-price">฿${parseFloat(item.total_price||0).toFixed(2)}</div>
+              <div class="card-date">${fmtDate(item.created_at)}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function fmtDate(ts) {
+  if (!ts) return "";
+  return new Date(ts).toLocaleString("th-TH", { dateStyle:"short", timeStyle:"short" });
+}
+</script>
 </body>
 </html>

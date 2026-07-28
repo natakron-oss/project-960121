@@ -1,154 +1,99 @@
-// tradehistory.js
-// Renders three sections: open orders, incoming requests, completed trades
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.user_id;
 
-document.addEventListener('DOMContentLoaded', () => {
-	// Sample data using product IDs from products.js — displays vegetable names
+  if (!userId) {
+    alert("กรุณา login");
+    return;
+  }
 
-	function formatDate(iso) {
-		const d = new Date(iso);
-		return d.toLocaleString('th-TH');
-	}
+  try {
+    const res = await fetch(`http://localhost:3000/api/history/${userId}`);
+    const result = await res.json();
 
-	// Ensure products.js is loaded (in case page didn't include it)
-	function ensureProductsLoaded(cb) {
-		if (window.products && Array.isArray(window.products)) return cb();
-		const s = document.createElement('script');
-		s.src = 'products.js';
-		s.onload = () => cb();
-		s.onerror = () => { console.error('Cannot load products.js'); cb(); };
-		document.head.appendChild(s);
-	}
+    if (!result.success) return;
 
-	function buildSampleData() {
-		const p = window.products || [];
-		const pick = i => (p[i] ? p[i].id : (i+1));
+    const data = result.data;
 
-		const openOrders = [
-			{
-				id: 'ORD-1001',
-				createdAt: '2026-06-01T10:12:00',
-				items: [ { productId: pick(0), qty: 2 }, { productId: pick(5), qty: 1 } ],
-				price: p[0] ? `฿${p[0].price * 2}` : '฿0',
-				details: 'สั่งขาย/แลกเปลี่ยนผักตามรายการด้านล่าง กรุณาติดต่อเพื่อยืนยันการนัดรับ',
-				counterparty: null,
-				status: 'pending'
-			},
-			{
-				id: 'ORD-1002',
-				createdAt: '2026-06-02T14:05:00',
-				items: [ { productId: pick(2), qty: 1 } ],
-				price: p[2] ? `฿${p[2].price}` : '฿0',
-				details: 'คำสั่งแบบจองล่วงหน้า รอการยืนยันจากผู้ขาย',
-				counterparty: null,
-				status: 'pending'
-			}
-		];
+    const open = [];
+    const incoming = [];
+    const completed = [];
 
-		const incoming = [
-			{
-				id: 'REQ-9001',
-				from: 'user_alice',
-				createdAt: '2026-06-02T16:20:00',
-				offer: { productId: pick(0), qty: 1, price: p[0] ? `฿${p[0].price}` : '' },
-				message: 'สนใจแลกคะน้า 1 กก. ขอวิธีการรับสินค้าและเวลานัดรับ',
-				status: 'requested'
-			}
-		];
+    data.forEach(item => {
 
-		const completed = [
-			{
-				id: 'TX-7001',
-				createdAt: '2026-05-28T09:30:00',
-				executedAt: '2026-05-28T09:45:12',
-				items: [ { productId: pick(9), qty: 6 } ],
-				price: p[9] ? `฿${p[9].price * 6}` : '฿0',
-				details: 'เทรดเสร็จสมบูรณ์ — ผู้ซื้อชำระผ่านพร้อมเพย์ เอกสารการโอนแนบในแชท การรับสินค้าเรียบร้อย',
-				counterparty: 'user_bob',
-				status: 'completed'
-			}
-		];
+      // 🟡 pending = ยังไม่เสร็จ
+      if (item.status === "pending") {
 
-		return { openOrders, incoming, completed };
-	}
+        if (item.from_user_id == userId) {
+          open.push(item);
+        }
 
-	function renderCartStyleList(containerId, items, type) {
-		const container = document.getElementById(containerId);
-		container.innerHTML = '';
-		if (!items || items.length === 0) {
-			const emp = document.createElement('div');
-			emp.className = 'empty-cart-text';
-			emp.textContent = 'ยังไม่มีรายการ';
-			container.appendChild(emp);
-			return;
-		}
+        if (item.to_user_id == userId) {
+          incoming.push(item);
+        }
 
-		// header
-		const header = document.createElement('div');
-		header.className = 'cart-header';
-		header.innerHTML = `
-			<div></div>
-			<div>รายละเอียด</div>
-			<div>ราคา/เงื่อนไข</div>
-			<div>สถานะ</div>
-			<div>เวลา</div>
-			<div></div>
-		`;
-		container.appendChild(header);
+      } 
+      // 🟢 completed / rejected / accepted
+      else {
+        completed.push(item);
+      }
+    });
 
-		function getProductName(id) {
-			const arr = window.products || [];
-			const p = arr.find(x => x.id === id);
-			return p ? p.name : 'ไม่ทราบสินค้า';
-		}
+    renderList("open-list", open, "open");
+    renderList("incoming-list", incoming, "incoming");
+    renderList("completed-list", completed, "completed");
 
-		function itemsToLabel(items) {
-			if (!Array.isArray(items)) return '';
-			return items.map(it => {
-				const pid = it.productId || it.id;
-				const qty = it.qty ? (' x' + it.qty) : '';
-				return `${getProductName(pid)}${qty}`;
-			}).join(', ');
-		}
-
-		items.forEach((o, idx) => {
-			const row = document.createElement('div');
-			row.className = 'cart-item';
-			const name = Array.isArray(o.items) ? itemsToLabel(o.items) : (o.offer ? (o.offer.productId ? `${getProductName(o.offer.productId)} x${o.offer.qty}` : o.offer) : '');
-			const statusLabel = o.status === 'completed' ? 'เสร็จแล้ว' : (type === 'incoming' ? 'คำขอ' : 'รอดำเนินการ');
-			const timeText = o.executedAt ? formatDate(o.executedAt) : formatDate(o.createdAt);
-
-			row.innerHTML = `
-				<input type="checkbox" class="item-checkbox" data-index="${idx}" ${type==='completed' ? '' : 'checked'}>
-				<div class="cart-item-info">
-					<div class="cart-item-name">${o.id} — ${name}</div>
-					<div class="cart-item-meta">${o.counterparty ? 'คู่สัญญา: ' + o.counterparty : (o.from ? 'ผู้เสนอ: ' + o.from : '')}</div>
-				</div>
-				<div class="cart-item-price">${o.price || ''}</div>
-				<div class="cart-item-qty"><span class="status-badge ${o.status==='completed' ? 'completed' : 'pending'}">${statusLabel}</span></div>
-				<div class="cart-item-total">${timeText}</div>
-				<div>
-					${type==='open' && o.status!=='completed' ? '<button class="delete-btn">ยกเลิก</button>' : '<button class="btn-small" disabled>ดู</button>'}
-				</div>
-			`;
-
-			container.appendChild(row);
-
-			// long details row
-			const details = document.createElement('div');
-			details.style.padding = '12px 20px 18px 70px';
-			details.style.background = '#fff';
-			details.style.borderBottom = '1px solid #eee';
-			details.innerHTML = `<div style="color:#666; white-space:pre-line;">${o.details || o.message || ''}</div>`;
-			container.appendChild(details);
-		});
-	}
-
-	// Ensure products loaded, build sample data and render
-	ensureProductsLoaded(() => {
-		const data = buildSampleData();
-		renderCartStyleList('open-list', data.openOrders, 'open');
-		renderCartStyleList('incoming-list', data.incoming, 'incoming');
-		renderCartStyleList('completed-list', data.completed, 'completed');
-	});
-
+  } catch (err) {
+    console.error(err);
+  }
 });
+
+function renderList(containerId, items, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (!items.length) {
+    container.innerHTML = `<div class="empty-cart-text">ยังไม่มีรายการ</div>`;
+    return;
+  }
+
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "cart-item";
+
+    let statusColor = "";
+    if (item.status === "pending") statusColor = "orange";
+    if (item.status === "accepted") statusColor = "green";
+    if (item.status === "rejected") statusColor = "red";
+
+    div.innerHTML = `
+      <div class="cart-item-info">
+        <div class="cart-item-name">
+          ${item.product_name} (Trade #${item.trade_id})
+        </div>
+
+        <div class="cart-item-meta">
+          จาก: ${item.from_username} ➜ ถึง: ${item.to_username}
+        </div>
+
+        <div style="font-size:12px; color:#666;">
+          แลก: ${item.offered_item} x ${item.offered_quantity}
+        </div>
+      </div>
+
+      <div class="cart-item-price"></div>
+
+      <div class="cart-item-qty">
+        <span style="color:${statusColor}; font-weight:bold;">
+          ${item.status}
+        </span>
+      </div>
+
+      <div class="cart-item-total">
+        ${new Date(item.created_at).toLocaleString("th-TH")}
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}

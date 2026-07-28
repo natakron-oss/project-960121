@@ -27,6 +27,12 @@
             </div>
 
             <div class="header-actions">
+                <a href="noti.html" class="btn email-btn" style="position:relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="massage-label">แจ้งเตือน</span>
+                    <span class="massage-badge" id="notifyBadge" style="display:none;">0</span>
+                </a>
+
                 <a href="cart.html" class="btn cart-btn">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-label">ตะกร้า</span>
@@ -38,15 +44,31 @@
                     <span>History</span>
                 </a>
 
-                 <button id="authBtn" class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    <span>Logout</span>
-                </button>
-                
+                <!-- User Avatar Dropdown -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-avatar-btn" id="userAvatarBtn">
+                        <div class="avatar-circle" id="avatarCircle">U</div>
+                        <span class="username-label" id="usernameLabel">User</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size:10px;opacity:.6;"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar" id="dropdownAvatar">U</div>
+                            <div>
+                                <div class="dropdown-name" id="dropdownName">–</div>
+                                <div class="dropdown-email" id="dropdownEmail">–</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item dropdown-logout" id="logoutBtn">
+                            <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+                        </button>
+                    </div>
+                </div>
             </div>
 
           </div>
-        </div>
+    
        
     </header>
 
@@ -58,10 +80,8 @@
         <h1>Garden Share</h1>
         <p>มีผักเหลือ? แลกกับเพื่อนบ้านได้เลย
 แบ่งปันผลผลิตสดใหม่ในชุมชนของคุณ</p>
-<a href="add-product.html" class="hero-btn">
-        + ลงประกาศสินค้า
-    </a>
-        </div>
+    </div>
+        
     </div>
     
     <!-- Main Container -->
@@ -75,22 +95,9 @@
 
     <div class="dropdown-container" style="position: relative; display: inline-block;">
     
-    <button class="category-btn active" onclick="toggleDropdown()">
-        หมวดหมู่
-        <i class="fas fa-caret-down"></i>
-    </button>
-
-    <div id="category-dropdown" class="dropdown-content">
-        <div class="secondary-filters" style="display: flex; flex-direction: column; gap: 1rem;">
-            
-            <div style="display: flex; flex-direction: column; font-size: 0.8rem; color: var(--dark);">
-                <label style="margin-bottom: 0.5rem;">ระยะทาง: <span id="distance-val">10.0</span> กม.</label>
-                <input type="range" id="distance-slider" min="100" max="10000" step="100" value="10000" />
-            </div>
-            
             <select id="type-select" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; width: 100%;">
                 <option value="all">รูปแบบทั้งหมด</option>
-                <option value="swap">แลกเปลี่ยน / ฟรี</option>
+                <option value="trade">แลกเปลี่ยน / ฟรี</option>
                 <option value="sell">ขาย (Direct Sale)</option>
             </select>
             
@@ -152,36 +159,13 @@
         <p>&copy; 2026 Gardenshare. All rights reserved.</p>
     </div>
 </footer>
+    <a href="add-product.html" class="floating-add-btn">
+    + ลงประกาศสินค้า
+</a>
 
-    <script src="JS/add-products.js"></script>
-    <script src="JS/trade.js"></script>
-    <script src="JS/home.js"></script>
-    <script>
-  document.addEventListener("DOMContentLoaded", () => {
-
-    const token = localStorage.getItem("auth_token");
-
-    if (!token) {
-      window.location.href = "login.html";
-    }
-
-    const btn = document.getElementById("authBtn");
-
-    if (btn) {
-      btn.textContent = token ? "Logout" : "Login";
-
-      btn.addEventListener("click", () => {
-        if (token) {
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("user");
-          window.location.href = "login.html";
-        } else {
-          window.location.href = "login.html";
-        }
-      });
-    }
-
-  });
-</script>
+<!-- home.html ต้องเรียงแบบนี้เท่านั้น -->
+<script src="JS/cart.js"></script>   
+<script src="JS/home.js"></script>
+</body>
 </body>
 </html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>การแจ้งเตือน – Gardenshare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --green:       #2d7a4f;
+      --green-soft:  #e8f5ee;
+      --green-mid:   #4aab72;
+      --amber:       #d97706;
+      --amber-soft:  #fffbeb;
+      --red:         #dc2626;
+      --red-soft:    #fef2f2;
+      --blue:        #2563eb;
+      --blue-soft:   #eff6ff;
+      --text:        #1a1f1c;
+      --muted:       #7a8c82;
+      --border:      #e0e8e3;
+      --bg:          #f4f7f5;
+      --white:       #ffffff;
+      --radius:      12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .page-header a.back {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .15s;
+    }
+    .page-header a.back:hover { color: var(--green); }
+    .sep { color: var(--border); }
+    .page-header h1 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-count {
+      background: var(--green);
+      color: #fff;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      padding: 0 24px;
+      gap: 0;
+    }
+    .tab-btn {
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Sarabun', sans-serif;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--muted);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+    .tab-badge {
+      background: var(--red);
+      color: #fff;
+      border-radius: 20px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab-btn.active .tab-badge { background: var(--green); }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 700px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+
+    /* ── NOTI CARD ── */
+    .noti-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .noti-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); border-color: #c3dece; }
+
+    .noti-card-top {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    /* Left accent strip */
+    .noti-strip {
+      width: 5px;
+      flex-shrink: 0;
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .strip-trade  { background: var(--amber); }
+    .strip-order  { background: var(--green); }
+
+    .noti-main {
+      flex: 1;
+      padding: 16px 18px;
+    }
+
+    /* Type label row */
+    .noti-type-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .type-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .pill-trade { background: var(--amber-soft); color: var(--amber); border: 1px solid #fde68a; }
+    .pill-order { background: var(--green-soft); color: var(--green); border: 1px solid #bbf7d0; }
+    .noti-time  { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+    /* Fields */
+    .noti-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 16px;
+    }
+    .noti-field {
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .noti-field .f-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+    }
+    .noti-field .f-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .noti-field .f-value.price {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 1.1rem;
+      color: var(--green);
+    }
+
+    /* Action row */
+    .noti-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--bg);
+    }
+    .btn-action {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Sarabun', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-action:hover   { opacity: .85; }
+    .btn-action:active  { transform: scale(.97); }
+    .btn-action:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-accept  { background: var(--green); color: #fff; }
+    .btn-deny    { background: var(--white); color: var(--red); border: 1px solid var(--red); }
+    .btn-confirm { background: var(--green); color: #fff; }
+    .btn-cancel  { background: var(--white); color: var(--red); border: 1px solid var(--red); }
+
+    /* payment method badge */
+    .pay-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pay-cod      { background: #fef9c3; color: #a16207; }
+    .pay-transfer { background: var(--blue-soft); color: var(--blue); }
+    .pay-qrcode   { background: var(--green-soft); color: var(--green); }
+
+    /* ── EMPTY / LOADING ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+    }
+    .empty-state .e-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+      opacity: .3;
+    }
+    .empty-state p { font-size: 15px; }
+    .loading {
+      text-align: center;
+      padding: 48px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1f1c;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 9999;
+      animation: fadeUp .3s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateX(-50%) translateY(12px); }
+      to   { opacity:1; transform: translateX(-50%) translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      .noti-fields { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <a href="home.html" class="back"><i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก</a>
+  <span class="sep">|</span>
+  <h1>
+    <i class="fa-solid fa-bell" style="color:var(--green);"></i>
+    การแจ้งเตือน
+    <span class="header-count" id="totalCount">0</span>
+  </h1>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" id="tab-all"   onclick="switchTab('all')">
+    <i class="fa-solid fa-inbox"></i> ทั้งหมด
+    <span class="tab-badge" id="badge-all">0</span>
+  </button>
+  <button class="tab-btn" id="tab-trade" onclick="switchTab('trade')">
+    <i class="fa-solid fa-arrows-rotate"></i> Trade Request
+    <span class="tab-badge" id="badge-trade">0</span>
+  </button>
+  <button class="tab-btn" id="tab-order" onclick="switchTab('order')">
+    <i class="fa-solid fa-bag-shopping"></i> คำสั่งซื้อ
+    <span class="tab-badge" id="badge-order">0</span>
+  </button>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+  <div id="notiList">
+    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  noti.js (inline)
+// ════════════════════════════════════════
+
+let allNoti  = [];
+let currentTab = "all";
+
+document.addEventListener("DOMContentLoaded", loadAll);
+
+// ─────────────────────────────────────────
+// LOAD ALL NOTIFICATIONS
+// ─────────────────────────────────────────
+async function loadAll() {
+  const container = document.getElementById("notiList");
+  const user      = JSON.parse(localStorage.getItem("user"));
+  const userId    = user?.user_id;
+
+  if (!userId) {
+    container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-lock e-icon"></i><p>กรุณา Login ก่อนใช้งาน</p></div>`;
+    return;
+  }
+
+  try {
+    // โหลดทั้ง trade + order noti พร้อมกัน
+    const [tradeRes, orderRes] = await Promise.all([
+      fetch(`http://localhost:3000/api/trades/notify/${userId}`),
+      fetch(`http://localhost:3000/api/orders/notify/${userId}`)
+    ]);
+
+    const tradeData = await tradeRes.json();
+    const orderData = await orderRes.json();
+
+    const tradeNoti = ((tradeData.data || []).filter(i => i.status === "pending"))
+      .map(i => ({ ...i, _type: "trade" }));
+
+    const orderNoti = (orderData.data || [])
+      .map(i => ({ ...i, _type: "order" }));
+
+    allNoti = [...tradeNoti, ...orderNoti]
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+    updateBadges();
+    renderTab(currentTab);
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-exclamation e-icon"></i><p>โหลดข้อมูลไม่สำเร็จ</p></div>`;
+  }
+}
+
+// ─────────────────────────────────────────
+// BADGES
+// ─────────────────────────────────────────
+function updateBadges() {
+  const trades = allNoti.filter(n => n._type === "trade");
+  const orders = allNoti.filter(n => n._type === "order");
+  const all    = allNoti;
+
+  document.getElementById("badge-all").textContent   = all.length;
+  document.getElementById("badge-trade").textContent = trades.length;
+  document.getElementById("badge-order").textContent = orders.length;
+  document.getElementById("totalCount").textContent  = all.length;
+
+  // hide badge if 0
+  ["all","trade","order"].forEach(t => {
+    const el = document.getElementById("badge-" + t);
+    el.style.display = parseInt(el.textContent) > 0 ? "inline" : "none";
+  });
+}
+
+// ─────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  const list = tab === "all"   ? allNoti :
+               tab === "trade" ? allNoti.filter(n => n._type === "trade") :
+                                 allNoti.filter(n => n._type === "order");
+  render(list);
+}
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+function render(list) {
+  const container = document.getElementById("notiList");
+  container.innerHTML = "";
+
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-solid fa-bell-slash e-icon"></i>
+        <p>ไม่มีการแจ้งเตือนใหม่</p>
+      </div>`;
+    return;
+  }
+
+  list.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "noti-card";
+    card.id = `card-${item._type}-${item._type === "trade" ? item.trade_id : item.id}`;
+
+    if (item._type === "trade") {
+      card.innerHTML = buildTradeCard(item);
+    } else {
+      card.innerHTML = buildOrderCard(item);
+    }
+    container.appendChild(card);
+  });
+}
+
+// ── Trade Card ──
+function buildTradeCard(item) {
+  const timeStr = formatTime(item.created_at);
+  return `
+    <div class="noti-card-top">
+      <div class="noti-strip strip-trade"></div>
+      <div class="noti-main">
+        <div class="noti-type-row">
+          <span class="type-pill pill-trade">
+            <i class="fa-solid fa-arrows-rotate"></i> Trade Request
+          </span>
+          <span class="noti-time">${timeStr}</span>
+        </div>
+        <div class="noti-fields">
+          <div class="noti-field">
+            <span class="f-label">จาก</span>
+            <span class="f-value">👤 ${item.from_username || "–"}</span>
+          </div>
+          <div class="noti-field">
+            <span class="f-label">สินค้าที่ขอแลก</span>
+            <span class="f-value">🌿 ${item.product_name || "–"}</span>
+          </div>
+          <div class="noti-field">
+            <span class="f-label">เสนอแลกด้วย</span>
+            <span class="f-value">📦 ${item.offered_item || "–"}</span>
+          </div>
+          <div class="noti-field">
+            <span class="f-label">จำนวน</span>
+            <span class="f-value">${item.offered_quantity || "–"} กก.</span>
+          </div>
+          ${item.phone ? `
+          <div class="noti-field">
+            <span class="f-label">เบอร์โทร</span>
+            <span class="f-value"><a href="tel:${item.phone}" style="color:var(--green);text-decoration:none;">${item.phone}</a></span>
+          </div>` : ""}
+          ${item.address ? `
+          <div class="noti-field" style="grid-column:1/-1;">
+            <span class="f-label">ที่อยู่</span>
+            <span class="f-value">📍 ${item.address}</span>
+          </div>` : ""}
+        </div>
+        <div class="noti-actions">
+          <button class="btn-action btn-accept" onclick="updateTrade(${item.trade_id}, 'accepted', this)">
+            <i class="fa-solid fa-check"></i> ยอมรับ
+          </button>
+          <button class="btn-action btn-deny" onclick="updateTrade(${item.trade_id}, 'rejected', this)">
+            <i class="fa-solid fa-xmark"></i> ปฏิเสธ
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Order Card ──
+function buildOrderCard(item) {
+  const timeStr = formatTime(item.created_at);
+  const payLabel = { cod:"เก็บเงินปลายทาง", transfer:"โอนธนาคาร", qrcode:"QR Code" };
+  const payClass = { cod:"pay-cod", transfer:"pay-transfer", qrcode:"pay-qrcode" };
+  const payIcon  = { cod:"fa-hand-holding-dollar", transfer:"fa-building-columns", qrcode:"fa-qrcode" };
+  const pm = item.payment_method || "cod";
+
+  return `
+    <div class="noti-card-top">
+      <div class="noti-strip strip-order"></div>
+      <div class="noti-main">
+        <div class="noti-type-row">
+          <span class="type-pill pill-order">
+            <i class="fa-solid fa-bag-shopping"></i> คำสั่งซื้อใหม่
+          </span>
+          <span class="pay-badge ${payClass[pm]}">
+            <i class="fa-solid ${payIcon[pm]}"></i> ${payLabel[pm]}
+          </span>
+          <span class="noti-time">${timeStr}</span>
+        </div>
+        <div class="noti-fields">
+          <div class="noti-field">
+            <span class="f-label">ชื่อผู้สั่ง</span>
+            <span class="f-value">👤 ${item.fullname || "–"}</span>
+          </div>
+          <div class="noti-field">
+            <span class="f-label">ยอดสั่งซื้อ</span>
+            <span class="f-value price">฿${parseFloat(item.total_price || 0).toFixed(2)}</span>
+          </div>
+          ${item.phone ? `
+          <div class="noti-field">
+            <span class="f-label">เบอร์โทร</span>
+            <span class="f-value"><a href="tel:${item.phone}" style="color:var(--green);text-decoration:none;">${item.phone}</a></span>
+          </div>` : ""}
+          <div class="noti-field">
+            <span class="f-label">จัดส่ง</span>
+            <span class="f-value">${item.shipping_method === "pickuphome" ? "📦 จัดส่งตามที่อยู่" : "🏠 รับด้วยตนเอง"}</span>
+          </div>
+          ${item.address ? `
+          <div class="noti-field" style="grid-column:1/-1;">
+            <span class="f-label">ที่อยู่</span>
+            <span class="f-value">📍 ${item.address}</span>
+          </div>` : ""}
+          ${item.order_id ? `
+          <div class="noti-field">
+            <span class="f-label">หมายเลขออเดอร์</span>
+            <span class="f-value">#${item.order_id}</span>
+          </div>` : ""}
+        </div>
+        <div class="noti-actions">
+          <button class="btn-action btn-confirm" onclick="updateOrder(${item.order_id}, 'paid', this)">
+            <i class="fa-solid fa-circle-check"></i> ยืนยันรับออเดอร์
+          </button>
+          <button class="btn-action btn-cancel" onclick="updateOrder(${item.order_id}, 'cancelled', this)">
+            <i class="fa-solid fa-ban"></i> ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+// ACTIONS
+// ─────────────────────────────────────────
+async function updateTrade(tradeId, status, btn) {
+  const card = document.getElementById(`card-trade-${tradeId}`);
+  card.querySelectorAll("button").forEach(b => b.disabled = true);
+
+  try {
+    const res  = await fetch(`http://localhost:3000/api/trades/status/${tradeId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      removeCard(card);
+      // update in-memory list
+      allNoti = allNoti.filter(n => !(n._type === "trade" && n.trade_id === tradeId));
+      updateBadges();
+      showToast(status === "accepted" ? "✅ ยอมรับ Trade Request แล้ว" : "❌ ปฏิเสธ Trade Request แล้ว");
+    } else {
+      alert(data.message || "เกิดข้อผิดพลาด");
+      card.querySelectorAll("button").forEach(b => b.disabled = false);
+    }
+  } catch (err) {
+    console.error(err);
+    card.querySelectorAll("button").forEach(b => b.disabled = false);
+  }
+}
+
+async function updateOrder(orderId, status, btn) {
+  const card = document.getElementById(`card-order-${orderId}`);
+  card.querySelectorAll("button").forEach(b => b.disabled = true);
+
+  try {
+    const res  = await fetch(`http://localhost:3000/api/orders/status/${orderId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      removeCard(card);
+      allNoti = allNoti.filter(n => !(n._type === "order" && n.order_id === orderId));
+      updateBadges();
+      showToast(status === "paid" ? "✅ ยืนยันออเดอร์แล้ว" : "❌ ยกเลิกออเดอร์แล้ว");
+    } else {
+      alert(data.message || "เกิดข้อผิดพลาด");
+      card.querySelectorAll("button").forEach(b => b.disabled = false);
+    }
+  } catch (err) {
+    console.error(err);
+    card.querySelectorAll("button").forEach(b => b.disabled = false);
+  }
+}
+
+// ─────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────
+function removeCard(card) {
+  card.style.transition = "opacity .3s, transform .3s";
+  card.style.opacity    = "0";
+  card.style.transform  = "translateX(20px)";
+  setTimeout(() => card.remove(), 300);
+}
+
+function formatTime(ts) {
+  if (!ts) return "";
+  const d = new Date(ts);
+  return d.toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" });
+}
+
+function showToast(msg) {
+  const t = document.createElement("div");
+  t.className   = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+</script>
+</body>
+</html>

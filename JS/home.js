@@ -1,263 +1,275 @@
+// ======================
+// INIT
+// ======================
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("auth_token");
+  if (!token) { window.location.href = "login.html"; return; }
 
-// ฟังก์ชันเปิด/ปิด Dropdown
-function toggleDropdown() {
-    document.getElementById("category-dropdown").classList.toggle("show");
-}
+  // ── User Avatar ──
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    const name    = user.username || user.name || "User";
+    const email   = user.email || "";
+    const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 
-// ปิด Dropdown เมื่อคลิกที่อื่นนอกกรอบ
-window.onclick = function(event) {
-    // เช็คว่าจุดที่คลิก ไม่ได้อยู่ใน dropdown-container
-    if (!event.target.closest('.dropdown-container')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
-        }
-    }
-}
+    document.getElementById("avatarCircle").textContent  = initials;
+    document.getElementById("usernameLabel").textContent = name.split(" ")[0]; // ชื่อแรก
+    document.getElementById("dropdownAvatar").textContent = initials;
+    document.getElementById("dropdownName").textContent  = name;
+    document.getElementById("dropdownEmail").textContent = email;
+  }
 
-// (แถม) อัปเดตตัวเลขระยะทางแบบ Real-time เมื่อเลื่อน Slider
-document.getElementById('distance-slider').addEventListener('input', function() {
-    // หาร 1000 เพื่อแปลงเมตรเป็นกิโลเมตร (ตามค่า min/max ที่ตั้งไว้)
-    let km = (this.value / 1000).toFixed(1);
-    document.getElementById('distance-val').innerText = km;
+  // ── Toggle dropdown ──
+  document.getElementById("userAvatarBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("userDropdown").classList.toggle("open");
+  });
+  document.addEventListener("click", () => {
+    document.getElementById("userDropdown")?.classList.remove("open");
+  });
+
+  // ── Logout ──
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
+
+  document.getElementById("type-select")?.addEventListener("change", applyFilters);
+  document.getElementById("searchInput")?.addEventListener("input", applyFilters);
+
+  updateCartBadge();
+  loadProducts();
+  loadNotifyBadge();
 });
-// Cart Management
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let currentFilter = 'all';
-let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 
-// Initialize
-function init() {
-    renderProducts(products);
-    updateCartBadge();
-    updateNavMenu();
-    setupSearch();
-    setupSort();
-}
-// Search Products
-function setupSearch() {
-    const searchInput = document.getElementById('searchInput');
+// ======================
+// GLOBALS
+// ======================
+let allProducts = [];
 
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', function () {
-
-        const keyword = this.value.toLowerCase();
-
-        const filteredProducts = products.filter(product =>
-            product.name.toLowerCase().includes(keyword)
-        );
-
-        renderProducts(filteredProducts);
-    });
+// ======================
+// NOTIFY BADGE
+// ======================
+async function loadNotifyBadge() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+  const userId = user.user_id || user.id;
+  const badge  = document.getElementById("notifyBadge");
+  if (!badge) return;
+  try {
+    const res   = await fetch(`http://localhost:3000/api/trades/notify/${userId}`);
+    const data  = await res.json();
+    const count = (data.data || []).length;
+    badge.textContent   = count;
+    badge.style.display = count > 0 ? "flex" : "none";
+  } catch (err) { console.error(err); }
 }
 
-// ตัวอย่างฟังก์ชัน render สินค้า (นำเฉพาะโครงสร้าง HTML ด้านในไปประยุกต์ใช้)
-const productsGrid = document.getElementById('productsGrid');
+// ======================
+// LOAD PRODUCTS
+// ======================
+async function loadProducts() {
+  const grid = document.getElementById("productsGrid");
+  if (!grid) return;
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;">กำลังโหลด...</div>`;
+  try {
+    const res    = await fetch("http://localhost:3000/api/products");
+    const result = await res.json();
+    allProducts  = result.data || [];
+    renderProducts(allProducts);
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#e74c3c;">โหลดสินค้าไม่สำเร็จ</div>`;
+  }
+}
 
-// ลูปข้อมูล products จากไฟล์ products.js ของมิน
-productsGrid.innerHTML = products.map(product => {
-    
-    // จำลองข้อมูลเสริมให้ตรงกับในรูป (เพราะใน products.js ตอนนี้ยังไม่มีข้อมูลเหล่านี้)
-   const days = product.bestBeforeDays || (product.id % 3 + 1); 
-    const ownerName = product.owner || "Elena S.";
-    
-    // 2. คำนวณสีตามจำนวนวันจริง (ลอจิกทำงานถูกต้องตามเงื่อนไขวัน)
-    let badgeBgColor = '#22c55e'; // ค่าเริ่มต้น: สีเขียว (สดใหม่ แข็งแรง)
-    let badgeTextColor = '#ffffff'; // ตัวหนังสือสีขาว
-    
-    if (days === 1) {
-        badgeBgColor = '#ef4444';  // เหลือ 1 วัน: เปลี่ยนเป็นสีแดง (ใกล้หมดอายุ)
-        badgeTextColor = '#ffffff';
-    } else if (days <= 3) {
-        badgeBgColor = '#F49D73';  // เหลือ 2-3 วัน: เปลี่ยนเป็นสีส้มอิฐ (เริ่มเร่งด่วน)
-        badgeTextColor = '#5C2710'; // ตัวหนังสือสีน้ำตาลเข้ม
-    }
-    
-    return `
-        <div class="product-card">
-            <div class="card-img-container">
-                <img src="${product.image}" alt="${product.name}">
-                
-                <div class="card-badge" style="background-color: ${badgeBgColor}; color: ${badgeTextColor};">
-                    Best Before: ${days} วัน
-                </div>
-            </div>
-            
-            <div class="card-content">
-                <div class="card-title-row">
-                    <h3>${product.name}</h3>
-                </div>
-                
-                <div class="card-owner-row">
-                    <i class="fa-regular fa-user"></i>
-                    <span>${ownerName}</span>
-                </div>
-                <div class="product-stock">📦 เหลือ ${product.stock} กก.</div>
-                
-                <div class="card-footer-row">
-                    <button class="card-btn-cart" onclick="addToCart(${product.id})">
-                        <i class="fa-solid fa-shopping-cart"></i> ใส่ตะกร้า
-                    </button>
-                    <button class="card-btn-buy" onclick="buyNow(${product.id})">
-                        ซื้อสินค้า
-                    </button>
-                </div>
-                
-            </div>
-        </div>
-    `;
-}).join('');
+// ======================
+// RENDER PRODUCTS
+// ======================
+function renderProducts(products) {
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = "";
 
+  if (!products.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#aaa;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🌱</div>
+      <div>ไม่พบสินค้าที่ตรงกัน</div></div>`;
+    return;
+  }
 
-// Filter Products
-function filterProducts(category) {
-    currentFilter = category;
-    const navLinks = document.querySelectorAll('.nav-link');
-    const categoryBtns = document.querySelectorAll('.category-btn');
+  products.forEach((p) => {
+    const pid       = p.id;
+    const days      = Number.isFinite(parseInt(p.days_left)) ? parseInt(p.days_left) : 0;
+    const isExpired = days <= 0;
 
-    // Remove active class from all nav links and category buttons
-    navLinks.forEach(link => link.classList.remove('active'));
-    categoryBtns.forEach(btn => btn.classList.remove('active'));
+    // Badge style
+    let badgeBg = "#16a34a", badgeColor = "#fff";
+    if (isExpired)       { badgeBg = "#6b7280"; }
+    else if (days === 1) { badgeBg = "#ef4444"; }
+    else if (days <= 3)  { badgeBg = "#f59e0b"; badgeColor = "#7c2d12"; }
 
-    // Add active class to the clicked button or link
-    // Try to find the button or link that matches the category
-    navLinks.forEach(link => {
-        if ((category === 'all' && link.textContent.includes('หน้าแรก')) || link.textContent.trim() === category) {
-            link.classList.add('active');
-        }
-    });
-    categoryBtns.forEach(btn => {
-        if ((category === 'all' && btn.textContent.includes('ทั้งหมด')) || btn.textContent.trim() === category) {
-            btn.classList.add('active');
-        }
-    });
+    const badgeText = isExpired ? "หมดอายุ" : `⏰ ${days} วัน`;
 
-    // Filter products
-    let filteredProducts = [];
-    if (category === 'all') {
-        filteredProducts = products;
+    // Action button
+    let actionBtn = "";
+    if (isExpired) {
+      actionBtn = `<button class="buy-btn" disabled>ไม่สามารถซื้อได้</button>`;
+    } else if (p.status === "trade") {
+      actionBtn = `<button class="trade-btn" data-pid="${pid}">🔄 ขอแลก</button>`;
     } else {
-        filteredProducts = products.filter(product => product.category === category);
+      actionBtn = `<button class="buy-btn" data-pid="${pid}">🛒 ใส่ตะกร้า</button>`;
     }
-    renderProducts(filteredProducts);
+
+    const priceHTML = p.status === "sell" && parseFloat(p.price) > 0
+      ? `<p class="product-price">฿${parseFloat(p.price).toFixed(2)} / กก.</p>`
+      : "";
+
+    const statusLabel = p.status === "trade"
+      ? `<div class="product-status" style="background:#fff7ed;color:#b45309;">🔄 แลกเปลี่ยน</div>`
+      : `<div class="product-status">💰 ขาย</div>`;
+
+    const card = document.createElement("div");
+    card.className   = "product-card";
+    card.dataset.pid = pid;
+    card.innerHTML = `
+      <div class="card-img-container">
+        <img src="http://localhost:3000/uploads/${p.image}" alt="${p.name}"
+             onerror="this.src='image/no-image.png'">
+        <div class="card-badge" style="background:${badgeBg};color:${badgeColor};">${badgeText}</div>
+      </div>
+      <div class="card-content">
+        <h3>${p.name}</h3>
+        <p>👤 ${p.username}</p>
+        <p>📦 ${p.quantity} กก.</p>
+        ${priceHTML}
+        ${statusLabel}
+        <div class="card-footer-row">${actionBtn}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // card body click → modal
+  grid.querySelectorAll(".product-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      openDetailModal(card.dataset.pid);
+    });
+  });
+
+  grid.querySelectorAll(".buy-btn[data-pid]").forEach(btn =>
+    btn.addEventListener("click", (e) => { e.stopPropagation(); addToCart(btn.dataset.pid); })
+  );
+  grid.querySelectorAll(".trade-btn[data-pid]").forEach(btn =>
+    btn.addEventListener("click", (e) => { e.stopPropagation(); goTrade(btn.dataset.pid); })
+  );
 }
-// Add To Cart
-function addToCart(productId) {
 
-    const product = products.find(p => p.id === productId);
+// ======================
+// DETAIL MODAL — redesigned
+// ======================
+function openDetailModal(pid) {
+  const p = allProducts.find(x => String(x.id) === String(pid));
+  if (!p) return;
 
-    if (!product) return;
+  const days      = Number.isFinite(parseInt(p.days_left)) ? parseInt(p.days_left) : 0;
+  const isExpired = days <= 0;
+  const price     = parseFloat(p.price) || 0;
 
-    cart.push(product);
+  const priceBlock = p.status === "sell" && price > 0
+    ? `<div style="font-family:'Prompt',sans-serif;font-size:1.5rem;font-weight:800;color:#2d7a4f;line-height:1;">
+         ฿${price.toFixed(2)} <span style="font-size:0.9rem;font-weight:500;color:#7a9486;">/ กก.</span>
+       </div>`
+    : `<div style="display:inline-flex;align-items:center;gap:6px;background:#fff7ed;color:#b45309;border:1px solid #fcd34d;padding:5px 14px;border-radius:20px;font-weight:700;font-size:0.9rem;">
+         🔄 แลกเปลี่ยน
+       </div>`;
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+  const expBadge = isExpired
+    ? `<span style="background:#6b7280;color:#fff;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">หมดอายุ</span>`
+    : days <= 3
+    ? `<span style="background:#ef4444;color:#fff;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">เหลือ ${days} วัน!</span>`
+    : `<span style="background:#dcfce7;color:#166534;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">เหลือ ${days} วัน</span>`;
 
-    updateCartBadge();
+  const actionBtn = isExpired
+    ? `<button disabled style="flex:1;padding:12px;background:#e5e7eb;color:#9ca3af;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:not-allowed;">ไม่สามารถดำเนินการได้</button>`
+    : p.status === "trade"
+    ? `<button onclick="goTrade(${p.id})" style="flex:1;padding:12px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;">🔄 ขอแลกเปลี่ยน</button>`
+    : `<button onclick="addToCart(${p.id})" style="flex:1;padding:12px;background:#2d7a4f;color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;">🛒 ใส่ตะกร้า</button>`;
 
-    alert(product.name + ' ถูกเพิ่มลงตะกร้าแล้ว');
-}
-// Update Cart Badge
-function updateCartBadge() {
+  document.getElementById("detailContent").innerHTML = `
+    <div style="padding:0 1.5rem 1.5rem;">
+      <!-- รูปภาพ -->
+      <div style="width:100%;height:220px;border-radius:12px;overflow:hidden;margin-bottom:16px;">
+        <img src="http://localhost:3000/uploads/${p.image}" alt="${p.name}"
+             onerror="this.src='image/no-image.png'"
+             style="width:100%;height:100%;object-fit:cover;">
+      </div>
 
-    const badge = document.getElementById('cartBadge');
+      <!-- ชื่อ + badge -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <h3 style="font-family:'Prompt',sans-serif;font-size:1.3rem;font-weight:700;color:#1a2e1f;line-height:1.3;">
+          ${p.name}
+        </h3>
+        ${expBadge}
+      </div>
 
-    if (!badge) return;
+      <!-- ราคา -->
+      <div style="margin-bottom:14px;">${priceBlock}</div>
 
-    badge.textContent = cart.length;
-}
-// Show Product Detail
-function showDetail(productId) {
-
-    const product = products.find(p => p.id === productId);
-
-    if (!product) return;
-
-    const modal = document.getElementById('detailModal');
-    const detailContent = document.getElementById('detailContent');
-
-    detailContent.innerHTML = `
-        <div class="detail-container">
-
-            <img src="${product.image}" 
-                 alt="${product.name}" 
-                 style="width:100%; max-width:300px; border-radius:10px;">
-
-            <h2>${product.name}</h2>
-
-            <p>${product.description}</p>
-
-            <h3>${product.price} บาท / กก.</h3>
-
-            <button onclick="addToCart(${product.id})">
-                เพิ่มลงตะกร้า
-            </button>
-
+      <!-- info grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:#f4f7f5;border-radius:8px;padding:10px 12px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;">เจ้าของ</div>
+          <div style="font-size:0.9rem;font-weight:600;color:#1a2e1f;margin-top:2px;">👤 ${p.username}</div>
         </div>
-    `;
+        <div style="background:#f4f7f5;border-radius:8px;padding:10px 12px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;">ปริมาณ</div>
+          <div style="font-size:0.9rem;font-weight:600;color:#1a2e1f;margin-top:2px;">📦 ${p.quantity} กก.</div>
+        </div>
+      </div>
 
-    modal.style.display = 'flex';
+      <!-- คำอธิบาย -->
+      ${p.description ? `
+        <div style="background:#f4f7f5;border-radius:8px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:0.72rem;color:#7a9486;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">รายละเอียด</div>
+          <div style="font-size:0.88rem;color:#444;line-height:1.6;">${p.description}</div>
+        </div>` : ""}
+
+      <!-- action button -->
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        ${actionBtn}
+      </div>
+    </div>`;
+
+  document.getElementById("detailModal").style.display = "flex";
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. ค้นหาปุ่มทั้ง 2 ตัวจาก HTML
-    const fabAddItem = document.getElementById('fab-add-item');
-    const btnAddHarvest = document.getElementById('btn-add-harvest');
-    
-    // สมมติว่าเรามี Modal Container อยู่ใน HTML (id="add-item-modal")
-    const addItemModal = document.getElementById('add-item-modal');
-
-    // 2. สร้างฟังก์ชันสำหรับเปิด Modal
-    function openAddListingModal() {
-        console.log('Opening Add Item Modal...');
-        // ลบคลาส hidden เพื่อแสดง Modal
-        if (addItemModal) {
-            addItemModal.classList.remove('hidden');
-            // ทำงานอื่นๆ เช่น reset ค่าในฟอร์ม
-        } else {
-            // ถ้ายังไม่ได้สร้าง Modal UI ใน HTML จะเด้ง Alert แทนก่อน
-            alert('โชว์หน้าต่าง List Your Garden Harvest!');
-        }
-    }
-
-    // 3. ผูก Event Click ให้กับปุ่ม ถ้าปุ่มนั้นมีอยู่บนหน้าจอ
-    if (fabAddItem) {
-        fabAddItem.addEventListener('click', openAddListingModal);
-    }
-
-    if (btnAddHarvest) {
-        btnAddHarvest.addEventListener('click', openAddListingModal);
-    }
-});
 
 function closeModal() {
-    document.getElementById('detailModal').style.display = 'none';
+  document.getElementById("detailModal").style.display = "none";
 }
 
-// Setup Sort
-function setupSort() {
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("detailModal")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+});
 
-    const sortSelect = document.getElementById('sortSelect');
-
-    if (!sortSelect) return;
-
-    sortSelect.addEventListener('change', function () {
-
-        let sortedProducts = [...products];
-
-        if (this.value === 'low-high') {
-            sortedProducts.sort((a, b) => a.price - b.price);
-        }
-
-        if (this.value === 'high-low') {
-            sortedProducts.sort((a, b) => b.price - a.price);
-        }
-
-        renderProducts(sortedProducts);
-    });
+// ======================
+// FILTERS
+// ======================
+function applyFilters() {
+  const keyword = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const type    = document.getElementById("type-select")?.value || "all";
+  let filtered  = [...allProducts];
+  if (keyword)        filtered = filtered.filter(p => p.name.toLowerCase().includes(keyword));
+  if (type !== "all") filtered = filtered.filter(p => p.status === type);
+  renderProducts(filtered);
 }
-// Run init when DOM is ready
-window.addEventListener('DOMContentLoaded', init);
+
+// ======================
+// TRADE
+// ======================
+function goTrade(id) {
+  closeModal();
+  window.location.href = `trade-request.html?id=${id}`;
+}

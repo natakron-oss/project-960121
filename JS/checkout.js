@@ -1,215 +1,205 @@
-// ใช้ข้อมูลตะกร้าจาก localStorage (`cart`) และ/หรือ catalog จาก products.js
+// ════════════════════════════════════════
+//  checkout.js  – Gardenshare
+//  ส่ง order ผ่าน API + ป้องกันซื้อของตัวเอง
+// ════════════════════════════════════════
+
 const SHIPPING_COST = 0;
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    loadCartItems();
-    attachFormListener();
+document.addEventListener("DOMContentLoaded", () => {
+  checkAuth();
+  loadCartItems();
+  attachFormListener();
+  setupPaymentToggle();
 });
 
-// Listen for cart updates (from other parts of the app)
-window.addEventListener('cartUpdated', function (e) {
-    loadCartItems();
-});
+window.addEventListener("cartUpdated", loadCartItems);
+window.addEventListener("storage", (e) => { if (e.key === "cart") loadCartItems(); });
 
-// Also listen to storage events (cross-tab)
-window.addEventListener('storage', function (e) {
-    if (e.key === 'cart') {
-        loadCartItems();
-    }
-});
+// ─────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────
+function checkAuth() {
+  const token = localStorage.getItem("auth_token");
+  if (!token) { window.location.href = "login.html"; }
+}
 
-// Load cart items from localStorage (no fallback products here)
+// ─────────────────────────────────────────
+// LOAD CART
+// ─────────────────────────────────────────
 function loadCartItems() {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    displayProducts(cartItems);
-    calculateTotals(cartItems);
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  displayProducts(cart);
+  calculateTotals(cart);
 }
 
-// Display products in the order summary
+// ─────────────────────────────────────────
+// DISPLAY PRODUCTS
+// ─────────────────────────────────────────
 function displayProducts(products) {
-    const productsList = document.getElementById('productsList');
-    const summaryRow = document.getElementById('summaryRow');
+  const productsList = document.getElementById("productsList");
+  if (!productsList) return;
 
-    if (!products || products.length === 0) {
-        summaryRow.innerHTML = `
-            <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
-                ตะกร้าว่างเปล่า
-            </td>
-        `;
-        productsList.innerHTML = '';
-        return;
-    }
+  if (!products.length) {
+    productsList.innerHTML = `
+      <tr><td colspan="3" style="padding:20px;text-align:center;color:#999;">ตะกร้าว่างเปล่า</td></tr>`;
+    return;
+  }
 
-    // Clear products list
-    // ตัวอย่าง JS ที่ถูกต้อง
-productsList.innerHTML = products.map(product => `
-    <tr style="border-bottom: 1px solid #e0e0e0;">
-        <td style="text-align: left; padding: 12px 8px;">${product.name}</td>
-        <td style="text-align: center; padding: 12px 8px;">${product.quantity}</td>
-        <td style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--primary);">
-            ${(product.price * product.quantity).toFixed(2)} บาท
-        </td>
+  productsList.innerHTML = products.map(p => `
+    <tr style="border-bottom:1px solid #e0e0e0;">
+      <td style="text-align:left;padding:12px 8px;">${p.name}</td>
+      <td style="text-align:center;padding:12px 8px;">${p.quantity}</td>
+      <td style="text-align:right;padding:12px 8px;font-weight:600;color:var(--primary);">
+        ${((p.price || 0) * (p.quantity || 1)).toFixed(2)} บาท
+      </td>
     </tr>
-`).join('');
-    // Update summary table
-    summaryRow.innerHTML = products.map(product => `
-        <tr style="border-bottom: 1px solid #e0e0e0;">
-            <td>${product.name}</td>
-            <td>${product.quantity}</td>
-            <td>${(product.price * product.quantity).toFixed(2)} บาท</td>
-        </tr>
-    `).join('');
+  `).join("");
 }
 
-// Calculate and display totals
+// ─────────────────────────────────────────
+// TOTALS
+// ─────────────────────────────────────────
 function calculateTotals(products) {
-    const subtotal = products.reduce((sum, product) => {
-        const qty = product.quantity || 1;
-        return sum + (product.price * qty);
-    }, 0);
+  const subtotal   = products.reduce((sum, p) => sum + (parseFloat(p.price) || 0) * (parseInt(p.quantity) || 1), 0);
+  const shipping   = products.length > 0 ? SHIPPING_COST : 0;
+  const grandTotal = subtotal + shipping;
 
-    const shipping = products.length > 0 ? SHIPPING_COST : 0;
-    const grandTotal = subtotal + shipping;
-
-    const subtotalEl = document.getElementById('subtotal');
-    const shippingEl = document.getElementById('shipping');
-    const grandEl = document.getElementById('grandTotal');
-    if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + ' บาท';
-    if (shippingEl) shippingEl.textContent = shipping.toFixed(2) + ' บาท';
-    if (grandEl) grandEl.textContent = '฿' + grandTotal.toFixed(2);
+  const el = (id) => document.getElementById(id);
+  if (el("subtotal"))   el("subtotal").textContent   = subtotal.toFixed(2)   + " บาท";
+  if (el("shipping"))   el("shipping").textContent   = shipping.toFixed(2)   + " บาท";
+  if (el("grandTotal")) el("grandTotal").textContent = "฿" + grandTotal.toFixed(2);
 }
 
-// Attach form submit listener
-function attachFormListener() {
-    const form = document.getElementById('customerForm');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        submitOrder();
+// ─────────────────────────────────────────
+// PAYMENT METHOD TOGGLE
+// — แสดง/ซ่อน section พิเศษตาม payment
+// ─────────────────────────────────────────
+function setupPaymentToggle() {
+  document.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+      const val = radio.value;
+      const qrSection      = document.getElementById("qrSection");
+      const transferSection = document.getElementById("transferSection");
+      if (qrSection)       qrSection.style.display       = val === "qrcode"   ? "block" : "none";
+      if (transferSection) transferSection.style.display = val === "transfer"  ? "block" : "none";
     });
+  });
 }
 
-// Submit order
-function submitOrder() {
-    const fullname = document.getElementById('fullname').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
-
-    // Validate form
-    if (!fullname || !phone || !address) {
-        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-        return;
-    }
-
-    // Save order
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-
-    const order = {
-        id: 'ORD-' + Date.now(),
-        fullname: fullname,
-        phone: phone,
-        address: address,
-        shippingMethod: shippingMethod,
-        items: cartItems,
-        date: new Date().toLocaleDateString('th-TH'),
-        status: 'pending'
-    };
-
-    // Store order in localStorage
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-
-    // Show success message
-    alert('สั่งซื้อสำเร็จ! รหัสคำสั่ง: ' + order.id);
-
-    // Clear form and cart
-    document.getElementById('customerForm').reset();
-    localStorage.removeItem('cart');
-
-    // Show a simple confirmation modal/alert and keep orders saved
-    // (orders already saved above)
-
-    // Redirect to home page
-    window.location.href = 'home.html';
+// ─────────────────────────────────────────
+// FORM SUBMIT
+// ─────────────────────────────────────────
+function attachFormListener() {
+  document.getElementById("customerForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    submitOrder();
+  });
 }
 
-// Format currency
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('th-TH', {
-        style: 'currency',
-        currency: 'THB'
-    }).format(amount);
-}
+async function submitOrder() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) { alert("กรุณา Login ก่อน"); window.location.href = "login.html"; return; }
 
-// Get cart summary
-function getCartSummary() {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-    const shipping = cartItems.length > 0 ? SHIPPING_COST : 0;
+  const fullname        = document.getElementById("fullname").value.trim();
+  const phone           = document.getElementById("phone").value.trim();
+  const address         = document.getElementById("address").value.trim();
+  const shippingMethod  = document.querySelector('input[name="shipping"]:checked')?.value  || "pickupschool";
+  const paymentMethod   = document.querySelector('input[name="payment"]:checked')?.value   || "cod";
 
-    return {
-        items: cartItems,
-        subtotal: subtotal,
-        shipping: shipping,
-        total: subtotal + shipping
-    };
-}
+  if (!fullname || !phone || !address) {
+    showAlert("กรุณากรอกข้อมูลให้ครบถ้วน", "error");
+    return;
+  }
 
-// Update cart display
-function updateCartDisplay() {
-    const summary = getCartSummary();
-    displayProducts(summary.items);
-    
-    document.getElementById('subtotal').textContent = summary.subtotal.toFixed(2) + ' บาท';
-    document.getElementById('shipping').textContent = summary.shipping.toFixed(2) + ' บาท';
-    document.getElementById('grandTotal').textContent = '฿' + summary.total.toFixed(2);
-}
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (!cart.length) { showAlert("ตะกร้าว่างเปล่า", "error"); return; }
 
-// Add product to cart (can be called from other pages)
-function addToCart(product) {
-    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  // ── Client-side block: ห้ามซื้อของตัวเอง ──
+  const selfItem = cart.find(item => item.seller_id && String(item.seller_id) === String(user.user_id));
+  if (selfItem) {
+    showAlert(`ไม่สามารถสั่งซื้อสินค้าของตัวเองได้ (${selfItem.name})`, "error");
+    return;
+  }
 
-    const existingProduct = cartItems.find(item => item.id === product.id);
+  // ── Map items ──
+  const items = cart.map(p => ({
+    product_id: p.id,
+    quantity:   parseInt(p.quantity) || 1
+  }));
 
-    if (existingProduct) {
-        existingProduct.quantity += product.quantity || 1;
+  // ── Disable submit btn ──
+  const submitBtn = document.querySelector(".btn-submit");
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "กำลังส่งคำสั่งซื้อ..."; }
+
+  try {
+    const res  = await fetch("http://localhost:3000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+      },
+      body: JSON.stringify({
+        user_id: user.user_id,
+        fullname,
+        phone,
+        address,
+        shipping_method: shippingMethod,
+        payment_method:  paymentMethod,
+        items
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // ลบ cart ออก
+      localStorage.removeItem("cart");
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      // ไปหน้า payment พร้อม order_id
+      if (paymentMethod === "qrcode" || paymentMethod === "transfer") {
+        window.location.href = `payment.html?order_id=${data.order_id}&method=${paymentMethod}`;
+      } else {
+        // COD → ไปหน้า success
+        window.location.href = `order-success.html?order_id=${data.order_id}`;
+      }
     } else {
-        cartItems.push(product);
+      showAlert(data.message || "เกิดข้อผิดพลาด", "error");
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ยืนยันการสั่งซื้อ"; }
     }
 
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-    // notify other parts
-    try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
-    catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
-    updateCartDisplay();
+  } catch (err) {
+    console.error(err);
+    showAlert("ไม่สามารถเชื่อมต่อ server ได้", "error");
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ยืนยันการสั่งซื้อ"; }
+  }
 }
 
-// Remove product from cart
-function removeFromCart(productId) {
-    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    cartItems = cartItems.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-    try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
-    catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
-    updateCartDisplay();
-}
+// ─────────────────────────────────────────
+// ALERT HELPER
+// ─────────────────────────────────────────
+function showAlert(message, type = "info") {
+  // ลบ alert เก่า
+  document.querySelectorAll(".checkout-alert").forEach(el => el.remove());
 
-// Update product quantity
-function updateProductQuantity(productId, quantity) {
-    let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  const colors = {
+    error:   { bg: "#fef2f2", border: "#fecaca", text: "#dc2626", icon: "fa-circle-exclamation" },
+    success: { bg: "#f0fdf4", border: "#bbf7d0", text: "#16a34a", icon: "fa-circle-check" },
+    info:    { bg: "#eff6ff", border: "#bfdbfe", text: "#2563eb", icon: "fa-circle-info" }
+  };
+  const c = colors[type] || colors.info;
 
-    const product = cartItems.find(item => item.id === productId);
-    if (product) {
-        product.quantity = quantity;
-        if (quantity <= 0) {
-            removeFromCart(productId);
-        } else {
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: cartItems } })); }
-            catch (e) { window.dispatchEvent(new Event('cartUpdated')); }
-            updateCartDisplay();
-        }
-    }
+  const div = document.createElement("div");
+  div.className = "checkout-alert";
+  div.style.cssText = `
+    position:fixed;top:80px;left:50%;transform:translateX(-50%);
+    background:${c.bg};border:1px solid ${c.border};color:${c.text};
+    padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;
+    display:flex;align-items:center;gap:8px;z-index:9999;
+    box-shadow:0 4px 16px rgba(0,0,0,.12);min-width:280px;
+    animation: slideDown .3s ease;
+  `;
+  div.innerHTML = `<i class="fa-solid ${c.icon}"></i> ${message}`;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 4000);
 }
